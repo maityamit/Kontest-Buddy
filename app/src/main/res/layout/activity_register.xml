@@ -1,9 +1,290 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#1A1A1A"
     tools:context=".Auth.RegisterActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="30dp"
+        android:orientation="vertical">
+
+
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/kogo"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="20dp"
+            android:text="Kompettive Koding Helper"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="30dp"
+            android:text="Your ultimate coding buddy..."
+            android:textColor="@android:color/white"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/register_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:backgroundTint="#2A2A2A"
+            android:textCursorDrawable="@null"
+            android:hint="Enter your Name*"
+            android:paddingStart="20dp"
+            android:inputType="textPersonName"
+            android:textColor="@android:color/white"
+            android:textColorHint="#959595"
+            android:background="@drawable/all_rounded"/>
+
+
+        <EditText
+            android:id="@+id/register_user_email"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:textCursorDrawable="@null"
+            android:backgroundTint="#2A2A2A"
+            android:layout_marginTop="10dp"
+            android:hint="Enter your Email*"
+            android:paddingStart="20dp"
+            android:inputType="textEmailAddress"
+            android:textColor="@android:color/white"
+            android:textColorHint="#959595"
+            android:background="@drawable/all_rounded"/>
+
+        <EditText
+            android:id="@+id/register_user_password"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:backgroundTint="#2A2A2A"
+            android:textCursorDrawable="@null"
+            android:layout_marginTop="10dp"
+            android:hint="Enter your Password*"
+            android:paddingStart="20dp"
+            android:inputType="textPassword"
+            android:textColor="@android:color/white"
+            android:textColorHint="#959595"
+            android:background="@drawable/all_rounded"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:weightSum="12"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:cardCornerRadius="5dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/leetcode"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <EditText
+                android:id="@+id/register_user_leetcode"
+                android:layout_width="0dp"
+                android:layout_weight="10"
+                android:layout_height="50dp"
+                android:backgroundTint="#2A2A2A"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:textCursorDrawable="@null"
+                android:hint="LeetCode ID (optional)"
+                android:paddingStart="20dp"
+                android:inputType="textShortMessage"
+                android:textColor="@android:color/white"
+                android:textColorHint="#959595"
+                android:background="@drawable/all_rounded"/>
+
+
+            <TextView
+                android:id="@+id/leetcode_verify_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:text="@string/verify"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:weightSum="12"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:cardCornerRadius="5dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/codeforces"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <EditText
+                android:id="@+id/register_user_codeforces"
+                android:layout_width="0dp"
+                android:layout_weight="10"
+                android:layout_height="50dp"
+                android:backgroundTint="#2A2A2A"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:textCursorDrawable="@null"
+                android:hint="CodeForces ID (optional)"
+                android:paddingStart="20dp"
+                android:inputType="textShortMessage"
+                android:textColor="@android:color/white"
+                android:textColorHint="#959595"
+                android:background="@drawable/all_rounded"/>
+
+
+            <TextView
+                android:id="@+id/codeforces_verify_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:text="@string/verify"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:weightSum="12"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:cardCornerRadius="5dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/codechef"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <EditText
+                android:id="@+id/register_user_codechef"
+                android:layout_width="0dp"
+                android:layout_weight="10"
+                android:layout_height="50dp"
+                android:backgroundTint="#2A2A2A"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:textCursorDrawable="@null"
+                android:hint="CodeChef ID (optional)"
+                android:paddingStart="20dp"
+                android:inputType="textShortMessage"
+                android:textColor="@android:color/white"
+                android:textColorHint="#959595"
+                android:background="@drawable/all_rounded"/>
+
+
+            <TextView
+                android:id="@+id/codechef_verify_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:text="@string/verify"/>
+
+        </LinearLayout>
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/register_user_button"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:text="Register"
+            android:backgroundTint="#FFA116"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:textAllCaps="false"
+            android:background="@drawable/all_rounded"
+            android:layout_gravity="center_horizontal"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="40dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Already Sign-up"
+                android:textSize="18sp"
+                android:textColor="@android:color/white"/>
+
+            <TextView
+                android:id="@+id/already_sign_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:textSize="18sp"
+                android:textColor="@android:color/white"
+                android:text="@string/sign_in"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</ScrollView>

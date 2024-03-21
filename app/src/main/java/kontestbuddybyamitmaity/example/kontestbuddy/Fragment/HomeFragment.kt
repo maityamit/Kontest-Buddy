@@ -25,7 +25,7 @@ class HomeFragment : Fragment() {
 
         // Update the Refresh Button
         // Retrieve the details from firebase -> Call the API to Fetch Latest Data -> set into Container -> Store Local Storage
-        
+
 
 
         return view
