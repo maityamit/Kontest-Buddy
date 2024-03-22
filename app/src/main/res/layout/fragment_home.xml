@@ -19,6 +19,7 @@
             android:layout_margin="10dp">
 
             <TextView
+                android:id="@+id/userNameinMainPage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="👋 Hello, User"
@@ -47,6 +48,7 @@
                     android:text="Last Update"/>
 
                 <TextView
+                    android:id="@+id/lastUpdateHomeMainPage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#6F6F6F"
@@ -103,6 +105,7 @@
 
 
                             <TextView
+                                android:id="@+id/lcUserNameMainPage"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="#6F6F6F"
@@ -121,6 +124,7 @@
                                     android:textSize="12sp"/>
 
                                 <TextView
+                                    android:id="@+id/lcUserRatingsMainPage"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="1000"
@@ -143,6 +147,7 @@
                                     android:textSize="12sp"/>
 
                                 <TextView
+                                    android:id="@+id/lcUsertopMainPage"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="15.5%"
@@ -173,6 +178,7 @@
                             android:orientation="horizontal">
 
                             <TextView
+                                android:id="@+id/lcUsercontestMainPage"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="10"
@@ -197,6 +203,7 @@
                             android:orientation="horizontal">
 
                             <TextView
+                                android:id="@+id/lcUserglobalMainPage"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="1000"
@@ -266,6 +273,7 @@
 
 
                             <TextView
+                                android:id="@+id/cfUserNameMainPage"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="#6F6F6F"
@@ -284,6 +292,7 @@
                                     android:textSize="12sp"/>
 
                                 <TextView
+                                    android:id="@+id/cfUserRatingsMainPage"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="1000"
@@ -335,6 +344,7 @@
 
 
                             <TextView
+                                android:id="@+id/ccUserNameMainPage"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="#6F6F6F"
@@ -353,6 +363,7 @@
                                     android:textSize="12sp"/>
 
                                 <TextView
+                                    android:id="@+id/ccUserRatingsMainPage"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="1000"

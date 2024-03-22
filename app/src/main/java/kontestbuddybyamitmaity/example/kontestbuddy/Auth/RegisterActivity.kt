@@ -2,18 +2,26 @@ package kontestbuddybyamitmaity.example.kontestbuddy.Auth
 
 import android.app.ProgressDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -22,6 +30,12 @@ class RegisterActivity : AppCompatActivity() {
     private var leetcode_verify = false
     private var codeforces_verify = false
     private var codechef_verify = false
+    private var ratingsLC = ""
+    private var toppercentageLC = ""
+    private var livecontestLC = ""
+    private var globalrankingLC = ""
+    private var ratingsCF = ""
+    private var ratingCC = ""
     private lateinit var progressDialog: ProgressDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,19 +50,96 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         findViewById<TextView>(R.id.leetcode_verify_button).setOnClickListener {
-            val user_leetcode = findViewById<EditText>(R.id.register_user_leetcode).text.toString()
 
+            val user_leetcode = findViewById<EditText>(R.id.register_user_leetcode).text.toString()
+            if(user_leetcode.isBlank()){
+                Toast.makeText(applicationContext,"Enter the UserName",Toast.LENGTH_SHORT).show()
+            }else {
+                progressDialog.show()
+                val apiTask = LeetCodeVerifyApiTask { isValid ->
+
+                    if(isValid?.get("isValid").toString()=="\"true\""){
+
+                        var txt = findViewById<TextView>(R.id.leetcode_verify_button)
+                        txt.text = "Verified"
+                        txt.setTextColor(Color.GREEN)
+                        findViewById<EditText>(R.id.register_user_leetcode).isEnabled = false
+                        findViewById<TextView>(R.id.leetcode_verify_button).isEnabled = false
+                        leetcode_verify = true
+                        ratingsLC = (isValid?.get("rating")).toString()
+                        toppercentageLC = isValid?.get("topPercentage").toString()
+                        livecontestLC = isValid?.get("attendedContestsCount").toString()
+                        globalrankingLC = isValid?.get("globalRanking").toString()
+
+
+                    }else{
+                        Toast.makeText(applicationContext, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                    }
+
+                    progressDialog.dismiss()
+
+                }
+                apiTask.execute(user_leetcode)
+            }
         }
 
         findViewById<TextView>(R.id.codeforces_verify_button).setOnClickListener {
-            val user_codeforces = findViewById<EditText>(R.id.register_user_codeforces).text.toString()
 
+            val user_codeforces = findViewById<EditText>(R.id.register_user_codeforces).text.toString()
+            if(user_codeforces.isBlank()){
+                Toast.makeText(applicationContext,"Enter the UserName",Toast.LENGTH_SHORT).show()
+            }else {
+                progressDialog.show()
+                val apiTask = CodeForcesVerifyApiTask { isValid ->
+
+                    if(isValid?.get("isValid").toString()=="\"true\""){
+                        var txt = findViewById<TextView>(R.id.codeforces_verify_button)
+                        txt.text = "Verified"
+                        txt.setTextColor(Color.GREEN)
+                        findViewById<EditText>(R.id.register_user_codeforces).isEnabled = false
+                        findViewById<TextView>(R.id.codeforces_verify_button).isEnabled = false
+                        codeforces_verify = true
+                        ratingsCF = isValid?.get("rating").toString()
+
+                    }else{
+                        Toast.makeText(applicationContext, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                    }
+
+                    progressDialog.dismiss()
+
+                }
+                apiTask.execute(user_codeforces)
+            }
         }
 
         findViewById<TextView>(R.id.codechef_verify_button).setOnClickListener {
-            val user_codechef = findViewById<EditText>(R.id.register_user_codechef).text.toString()
 
+            val user_codechef = findViewById<EditText>(R.id.register_user_codechef).text.toString()
+            if(user_codechef.isBlank()){
+                Toast.makeText(applicationContext,"Enter the UserName",Toast.LENGTH_SHORT).show()
+            }else {
+                progressDialog.show()
+                val apiTask = CodeChefVerifyApiTask { isValid ->
+
+                    if(isValid?.get("isValid").toString()=="\"true\""){
+                        var txt = findViewById<TextView>(R.id.codechef_verify_button)
+                        txt.text = "Verified"
+                        txt.setTextColor(Color.GREEN)
+                        findViewById<EditText>(R.id.register_user_codechef).isEnabled = false
+                        findViewById<TextView>(R.id.codechef_verify_button).isEnabled = false
+                        codechef_verify = true
+                        ratingCC = isValid?.get("rating").toString()
+
+                    }else{
+                        Toast.makeText(applicationContext, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                    }
+                    progressDialog.dismiss()
+
+                }
+                apiTask.execute(user_codechef)
+            }
         }
+
 
         findViewById<Button>(R.id.register_user_button).setOnClickListener{
 
@@ -105,9 +196,7 @@ class RegisterActivity : AppCompatActivity() {
                         val userId = user?.uid.toString()
                         val userInfo = db.collection("users")
                         userInfo.document(userId).set(userData)
-                        val intent:Intent = Intent(applicationContext, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
+                        storeDataIntoSharePref(userData)
                     }else {
                         Toast.makeText(
                             baseContext,
@@ -117,9 +206,33 @@ class RegisterActivity : AppCompatActivity() {
                     }
                 } else {
                     // If sign in fails, display a message to the user.
-                    Toast.makeText(baseContext, "Creating User failed.", Toast.LENGTH_SHORT,).show()
+                    Toast.makeText(baseContext, "Creating User failed.", Toast.LENGTH_SHORT).show()
                 }
                 progressDialog.dismiss()
             }
+    }
+
+    private fun storeDataIntoSharePref(userData: HashMap<String, String>) {
+        val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
+        val myEdit = sharedPreferences.edit()
+        for(ele in userData){
+            myEdit.putString(ele.key, ele.value)
+        }
+        val currentTimestamp: Long = System.currentTimeMillis()
+        val dateFormat = SimpleDateFormat("dd/MM/yy - hh:mm a", Locale.getDefault())
+        myEdit.putString("lastUpdate",dateFormat.format(Date(currentTimestamp)))
+        myEdit.putString("ratingsLC",ratingsLC)
+        myEdit.putString("toppercentageLC",toppercentageLC)
+        myEdit.putString("livecontestLC",livecontestLC)
+        myEdit.putString("globalrankingLC",globalrankingLC)
+        myEdit.putString("ratingsCF",ratingsCF)
+        myEdit.putString("ratingCC",ratingCC)
+
+        myEdit.apply()
+
+        val intent:Intent = Intent(applicationContext, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+
     }
 }
