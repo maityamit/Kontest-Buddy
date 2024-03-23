@@ -25,6 +25,7 @@ import com.google.gson.JsonObject
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Compare.CFcompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Compare.LCcompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 import kotlinx.coroutines.CoroutineScope
@@ -54,6 +55,7 @@ class HomeFragment : Fragment() {
     lateinit var mainHomePageRatingsRefresh:ImageView
     private lateinit var progressDialog: ProgressDialog
     lateinit var CompareButtonLeetCode:CardView
+    lateinit var CompareButtonCodeForces:CardView
     val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreateView(
@@ -77,6 +79,10 @@ class HomeFragment : Fragment() {
 
         CompareButtonLeetCode.setOnClickListener {
             context?.let { it1 -> CustomDialog(it1, this) }?.show()
+        }
+
+        CompareButtonCodeForces.setOnClickListener{
+            context?.let { it1 -> CustomDialog2(it1, this) }?.show()
         }
 
 
@@ -152,8 +158,97 @@ class HomeFragment : Fragment() {
             }
             okButton.setOnClickListener {
                 if(lcUser1verify && lcUser2verify){
-                    Toast.makeText(context,"True",Toast.LENGTH_SHORT).show()
-                    var intent:Intent = Intent(context,LCcompareActivity::class.java)
+                    val intent:Intent = Intent(context,LCcompareActivity::class.java)
+                    intent.putExtra("userName1",leetCodeUserName1)
+                    intent.putExtra("userName2",leetCodeUserName2)
+                    context.startActivity(intent)
+                }
+            }
+
+//            okButton.setOnClickListener {
+//                val inputText = editText.text.toString()
+//                listener.onDialogOkButtonClicked(inputText)
+//                dismiss()
+//            }
+        }
+
+        interface DialogListener {
+            fun onDialogOkButtonClicked(inputText: String)
+        }
+    }
+
+    class CustomDialog2(context: Context, private val listener: HomeFragment) : Dialog(context) {
+
+        var progressDialog: ProgressDialog = ProgressDialog(context)
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(R.layout.codeforces_compare_two_users_layout)
+
+            val editText1 = findViewById<EditText>(R.id.codeforces_compare_inputUser1)
+            val editText2 = findViewById<EditText>(R.id.codeforces_compare_inputUser2)
+
+            val verify1 = findViewById<TextView>(R.id.codeforces_compare_inputUser1_Verify)
+            val verify2 = findViewById<TextView>(R.id.codeforces_compare_inputUser2_verify)
+            val okButton = findViewById<Button>(R.id.codeforces_compare_Button)
+
+            var codeforcesUserName1:String = ""
+            var codeforcesUserName2:String = ""
+            var cfUser1verify = false
+            var cfUser2verify = false
+
+            verify1.setOnClickListener {
+                val user_codeforces = editText1.text.toString()
+                if(user_codeforces.isBlank()){
+                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
+                }else {
+                    progressDialog.show()
+                    val apiTask = CodeForcesVerifyApiTask { isValid ->
+                        if(isValid?.get("isValid").toString()=="\"true\""){
+                            verify1.text = "Verified"
+                            verify1.setTextColor(Color.GREEN)
+                            verify1.isEnabled = false
+                            editText1.isEnabled = false
+                            cfUser1verify = true
+                            codeforcesUserName1 = editText1.text.toString()
+
+                        }else{
+                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                        }
+                        progressDialog.dismiss()
+                    }
+                    apiTask.execute(user_codeforces)
+                }
+            }
+
+            verify2.setOnClickListener {
+                val user_codeforces = editText2.text.toString()
+                if(user_codeforces.isBlank()){
+                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
+                }else {
+                    progressDialog.show()
+                    val apiTask = CodeForcesVerifyApiTask { isValid ->
+                        if(isValid?.get("isValid").toString()=="\"true\""){
+                            verify2.text = "Verified"
+                            verify2.setTextColor(Color.GREEN)
+                            verify2.isEnabled = false
+                            editText2.isEnabled = false
+                            cfUser2verify = true
+                            codeforcesUserName2 = editText2.text.toString()
+
+                        }else{
+                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                        }
+                        progressDialog.dismiss()
+                    }
+                    apiTask.execute(user_codeforces)
+                }
+            }
+            okButton.setOnClickListener {
+                if(cfUser1verify && cfUser2verify){
+                    val intent:Intent = Intent(context, CFcompareActivity::class.java)
+                    intent.putExtra("userName1",codeforcesUserName1)
+                    intent.putExtra("userName2",codeforcesUserName2)
                     context.startActivity(intent)
                 }
             }
@@ -309,6 +404,7 @@ class HomeFragment : Fragment() {
         lastUpdateHomeMainPage = view.findViewById(R.id.lastUpdateHomeMainPage)
         mainHomePageRatingsRefresh = view.findViewById(R.id.mainHomePageRatingsRefresh)
         CompareButtonLeetCode = view.findViewById(R.id.CompareButtonLeetCode)
+        CompareButtonCodeForces = view.findViewById(R.id.CompareButtonCodeForces)
     }
 
 }

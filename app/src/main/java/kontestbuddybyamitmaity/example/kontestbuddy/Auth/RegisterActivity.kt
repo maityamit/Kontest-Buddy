@@ -57,9 +57,7 @@ class RegisterActivity : AppCompatActivity() {
             }else {
                 progressDialog.show()
                 val apiTask = LeetCodeVerifyApiTask { isValid ->
-
                     if(isValid?.get("isValid").toString()=="\"true\""){
-
                         var txt = findViewById<TextView>(R.id.leetcode_verify_button)
                         txt.text = "Verified"
                         txt.setTextColor(Color.GREEN)
@@ -70,8 +68,6 @@ class RegisterActivity : AppCompatActivity() {
                         toppercentageLC = isValid?.get("topPercentage").toString()
                         livecontestLC = isValid?.get("attendedContestsCount").toString()
                         globalrankingLC = isValid?.get("globalRanking").toString()
-
-
                     }else{
                         Toast.makeText(applicationContext, "This UserName is not valid",Toast.LENGTH_SHORT).show()
                     }
