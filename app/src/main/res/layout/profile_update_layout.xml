@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#1A1A1A"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/white"
+        android:text="(Caution: after update it will redirect automatically to the Login Page)"/>
+
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:weightSum="12"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:cardCornerRadius="5dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/leetcode"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <EditText
+            android:id="@+id/_register_user_leetcode"
+            android:layout_width="0dp"
+            android:layout_weight="10"
+            android:layout_height="50dp"
+            android:backgroundTint="#2A2A2A"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textCursorDrawable="@null"
+            android:hint="LeetCode ID (optional)"
+            android:paddingStart="20dp"
+            android:inputType="textShortMessage"
+            android:textColor="@android:color/white"
+            android:textColorHint="#959595"
+            android:background="@drawable/all_rounded"/>
+
+
+        <TextView
+            android:id="@+id/_leetcode_verify_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:text="@string/verify"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:weightSum="12"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:cardCornerRadius="5dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/codeforces"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <EditText
+            android:id="@+id/_register_user_codeforces"
+            android:layout_width="0dp"
+            android:layout_weight="10"
+            android:layout_height="50dp"
+            android:backgroundTint="#2A2A2A"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textCursorDrawable="@null"
+            android:hint="CodeForces ID (optional)"
+            android:paddingStart="20dp"
+            android:inputType="textShortMessage"
+            android:textColor="@android:color/white"
+            android:textColorHint="#959595"
+            android:background="@drawable/all_rounded"/>
+
+
+        <TextView
+            android:id="@+id/_codeforces_verify_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:text="@string/verify"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:weightSum="12"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:cardCornerRadius="5dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/codechef"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <EditText
+            android:id="@+id/_register_user_codechef"
+            android:layout_width="0dp"
+            android:layout_weight="10"
+            android:layout_height="50dp"
+            android:backgroundTint="#2A2A2A"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textCursorDrawable="@null"
+            android:hint="CodeChef ID (optional)"
+            android:paddingStart="20dp"
+            android:inputType="textShortMessage"
+            android:textColor="@android:color/white"
+            android:textColorHint="#959595"
+            android:background="@drawable/all_rounded"/>
+
+
+        <TextView
+            android:id="@+id/_codechef_verify_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:text="@string/verify"/>
+
+    </LinearLayout>
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/_register_user_button"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:text="Update"
+        android:backgroundTint="#FFA116"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="15dp"
+        android:textAllCaps="false"
+        android:background="@drawable/all_rounded"
+        android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>

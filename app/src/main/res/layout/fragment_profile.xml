@@ -43,16 +43,31 @@
 
             </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:id="@+id/profile_frag_userName"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:layout_marginStart="20sp"
                 android:layout_marginTop="5dp"
-                android:textSize="18sp"
-                android:text="User Name"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/profile_frag_userName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="User Name"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/profile_frag_user_edit"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/baseline_edit_24"/>
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/profile_frag_userEmail"
@@ -103,12 +118,7 @@
                         android:text="NA"
                         android:textColor="@android:color/white"/>
 
-                    <ImageView
-                        android:id="@+id/profile_frag_userLC_edit"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginStart="10dp"
-                        android:src="@drawable/baseline_edit_24"/>
+
 
 
                 </LinearLayout>
@@ -141,12 +151,7 @@
                         android:text="NA"
                         android:textSize="15sp"
                         android:textColor="@android:color/white"/>
-                    <ImageView
-                        android:id="@+id/profile_frag_userCF_edit"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginStart="10dp"
-                        android:src="@drawable/baseline_edit_24"/>
+
 
                 </LinearLayout>
 
@@ -178,12 +183,6 @@
                         android:text="NA"
                         android:textSize="15sp"
                         android:textColor="@android:color/white"/>
-                    <ImageView
-                        android:id="@+id/profile_frag_userCC_edit"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginStart="10dp"
-                        android:src="@drawable/baseline_edit_24"/>
 
                 </LinearLayout>
 

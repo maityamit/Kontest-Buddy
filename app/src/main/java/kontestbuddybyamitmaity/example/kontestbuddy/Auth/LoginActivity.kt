@@ -37,6 +37,8 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         progressDialog = ProgressDialog(this)
+        progressDialog.setCancelable(false)
+        progressDialog.setCanceledOnTouchOutside(false)
 
 
         findViewById<TextView>(R.id.sign_up_redirect).setOnClickListener {

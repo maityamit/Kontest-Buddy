@@ -42,6 +42,8 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(R.layout.activity_register)
         auth = Firebase.auth
         progressDialog= ProgressDialog(this)
+        progressDialog.setCancelable(false)
+        progressDialog.setCanceledOnTouchOutside(false)
 
 
         findViewById<TextView>(R.id.already_sign_in).setOnClickListener {
@@ -50,7 +52,6 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         findViewById<TextView>(R.id.leetcode_verify_button).setOnClickListener {
-
             val user_leetcode = findViewById<EditText>(R.id.register_user_leetcode).text.toString()
             if(user_leetcode.isBlank()){
                 Toast.makeText(applicationContext,"Enter the UserName",Toast.LENGTH_SHORT).show()

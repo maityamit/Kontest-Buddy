@@ -70,6 +70,8 @@ class HomeFragment : Fragment() {
         // Inflate the layout for this fragment
         val view:View  = inflater.inflate(R.layout.fragment_home, container, false)
         progressDialog = ProgressDialog(context)
+        progressDialog.setCancelable(false)
+        progressDialog.setCanceledOnTouchOutside(false)
 
         // Initialization
         initialization(view)
@@ -348,11 +350,11 @@ class HomeFragment : Fragment() {
             val leetcode_leaderboard_inputUser2:EditText = findViewById(R.id.leetcode_leaderboard_inputUser2)
             val leetcode_leaderboard_inputUser2_Verify:TextView = findViewById(R.id.leetcode_leaderboard_inputUser2_verify)
             leetcode_leaderboard_inputUser2_Verify.setOnClickListener {
-                val strUser:String = leetcode_leaderboard_inputUser2.text.toString()+";"
+                var strUser:String = leetcode_leaderboard_inputUser2.text.toString()
                 if(strUser.isBlank()){
                     Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
                 }else{
-
+                    strUser+=";"
                     progressDialog.show()
                     val db = Firebase.firestore
                     val auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -512,11 +514,11 @@ class HomeFragment : Fragment() {
             val codeforces_leaderboard_inputUser2:EditText = findViewById(R.id.codeforces_leaderboard_inputUser2)
             val codeforces_leaderboard_inputUser2_Verify:TextView = findViewById(R.id.codeforces_leaderboard_inputUser2_verify)
             codeforces_leaderboard_inputUser2_Verify.setOnClickListener {
-                val strUser:String = codeforces_leaderboard_inputUser2.text.toString()+";"
+                var strUser:String = codeforces_leaderboard_inputUser2.text.toString()
                 if(strUser.isBlank()){
                     Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
                 }else{
-
+                    strUser+=";"
                     progressDialog.show()
                     val db = Firebase.firestore
                     val auth: FirebaseAuth = FirebaseAuth.getInstance()

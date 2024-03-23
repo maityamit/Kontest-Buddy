@@ -36,6 +36,9 @@ class CFcompareActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cfcompare)
         progressDialog= ProgressDialog(this)
+        progressDialog.setCancelable(false)
+        progressDialog.setCanceledOnTouchOutside(false)
+
         initialization()
         val extras = intent.extras
         val userName1 = extras?.getString("userName1")
