@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.text.style.TtsSpan.CardinalBuilder
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -63,10 +62,13 @@ class HomeFragment : Fragment() {
     lateinit var LeaderboardButtonLeetCode:CardView
     lateinit var LeaderboardButtonCodeForces:CardView
 
+    lateinit var leetcode_leaderboard_Button:CardView
+    lateinit var codeforces_leaderboard_Button:CardView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         val view:View  = inflater.inflate(R.layout.fragment_home, container, false)
         progressDialog = ProgressDialog(context)
@@ -98,6 +100,79 @@ class HomeFragment : Fragment() {
 
         LeaderboardButtonCodeForces.setOnClickListener{
             context?.let { it1 -> CustomDialog4(it1, this) }?.show()
+        }
+
+
+        leetcode_leaderboard_Button.setOnClickListener{
+            progressDialog.show()
+            val db = Firebase.firestore
+            val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+            val userID = auth.currentUser?.uid.toString()
+            val docRef = db.collection("users").document(userID)
+            docRef.get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val document = task.result
+                    if (document != null) {
+
+                        val LCleader = document.getString("LCleader")
+                        if(LCleader?.isNotBlank()==true){
+                            progressDialog.dismiss()
+                            val intent:Intent = Intent(context,LCrankingActivity::class.java)
+                            intent.putExtra("userNames",LCleader)
+                            startActivity(intent)
+                        }else{
+                            progressDialog.dismiss()
+                            Toast.makeText(context,"You have not any friends !!",Toast.LENGTH_SHORT).show()
+                        }
+
+                    } else {
+                        progressDialog.dismiss()
+                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                } else {
+                    progressDialog.dismiss()
+                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+
+        codeforces_leaderboard_Button.setOnClickListener{
+            progressDialog.show()
+            val db = Firebase.firestore
+            val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+            val userID = auth.currentUser?.uid.toString()
+            val docRef = db.collection("users").document(userID)
+            docRef.get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val document = task.result
+                    if (document != null) {
+
+                        val LCleader = document.getString("CFleader")
+                        if(LCleader?.isNotBlank()==true){
+                            progressDialog.dismiss()
+                            val intent:Intent = Intent(context, CFrankingActivity::class.java)
+                            intent.putExtra("userNames",LCleader)
+                            startActivity(intent)
+                        }else{
+                            progressDialog.dismiss()
+                            Toast.makeText(context,"You have not any friends !!",Toast.LENGTH_SHORT).show()
+                        }
+
+                    } else {
+                        progressDialog.dismiss()
+                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                } else {
+                    progressDialog.dismiss()
+                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
         }
 
 
@@ -400,43 +475,6 @@ class HomeFragment : Fragment() {
                 }
             }
 
-            val leetcodeLeaderBoardButton = findViewById<Button>(R.id.leetcode_leaderboard_Button)
-            leetcodeLeaderBoardButton.setOnClickListener {
-                progressDialog.show()
-                val db = Firebase.firestore
-                val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-                val userID = auth.currentUser?.uid.toString()
-                val docRef = db.collection("users").document(userID)
-                docRef.get().addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val document = task.result
-                        if (document != null) {
-
-                            val LCleader = document.getString("LCleader")
-                            if(LCleader?.isNotBlank()==true){
-                                progressDialog.dismiss()
-                                val intent:Intent = Intent(context,LCrankingActivity::class.java)
-                                intent.putExtra("userNames",LCleader)
-                                context.startActivity(intent)
-                            }else{
-                                progressDialog.dismiss()
-                                Toast.makeText(context,"You have not any friends !!",Toast.LENGTH_SHORT).show()
-                            }
-
-                        } else {
-                            progressDialog.dismiss()
-                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    } else {
-                        progressDialog.dismiss()
-                        Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
-            }
-
         }
 
         interface DialogListener {
@@ -560,43 +598,6 @@ class HomeFragment : Fragment() {
                             Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
                                 .show()
                         }
-                    }
-                }
-            }
-
-            val codeforcesLeaderBoardButton = findViewById<Button>(R.id.codeforces_leaderboard_Button)
-            codeforcesLeaderBoardButton.setOnClickListener {
-                progressDialog.show()
-                val db = Firebase.firestore
-                val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-                val userID = auth.currentUser?.uid.toString()
-                val docRef = db.collection("users").document(userID)
-                docRef.get().addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val document = task.result
-                        if (document != null) {
-
-                            val LCleader = document.getString("CFleader")
-                            if(LCleader?.isNotBlank()==true){
-                                progressDialog.dismiss()
-                                val intent:Intent = Intent(context, CFrankingActivity::class.java)
-                                intent.putExtra("userNames",LCleader)
-                                context.startActivity(intent)
-                            }else{
-                                progressDialog.dismiss()
-                                Toast.makeText(context,"You have not any friends !!",Toast.LENGTH_SHORT).show()
-                            }
-
-                        } else {
-                            progressDialog.dismiss()
-                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    } else {
-                        progressDialog.dismiss()
-                        Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                            .show()
                     }
                 }
             }
@@ -746,8 +747,11 @@ class HomeFragment : Fragment() {
         mainHomePageRatingsRefresh = view.findViewById(R.id.mainHomePageRatingsRefresh)
         CompareButtonLeetCode = view.findViewById(R.id.CompareButtonLeetCode)
         CompareButtonCodeForces = view.findViewById(R.id.CompareButtonCodeForces)
-        LeaderboardButtonLeetCode = view.findViewById(R.id.LeaderboardButtonLeetCode)
-        LeaderboardButtonCodeForces = view.findViewById(R.id.LeaderboardButtonCodeForces)
+        LeaderboardButtonLeetCode = view.findViewById(R.id.ADDLeaderboardButtonLeetCode)
+        LeaderboardButtonCodeForces = view.findViewById(R.id.ADDLeaderboardButtonCodeForces)
+
+        codeforces_leaderboard_Button = view.findViewById(R.id.LeaderboardButtonCodeForces)
+        leetcode_leaderboard_Button = view.findViewById(R.id.LeaderboardButtonLeetCode)
     }
 
 }

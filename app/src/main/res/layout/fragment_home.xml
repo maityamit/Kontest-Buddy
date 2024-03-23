@@ -456,8 +456,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#6F6F6F"
-                            android:textSize="14sp"
-                            android:text="Friends"/>
+                            android:textSize="12sp"
+                            android:text="Leaderboard"/>
 
 
                     </LinearLayout>
@@ -503,8 +503,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#6F6F6F"
-                            android:textSize="14sp"
-                            android:text="Friends"/>
+                            android:textSize="12sp"
+                            android:text="Leaderboard"/>
 
 
                     </LinearLayout>
@@ -575,6 +575,120 @@
             </androidx.cardview.widget.CardView>
 
 
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:weightSum="3">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/ADDLeaderboardButtonLeetCode"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="5dp"
+                app:cardCornerRadius="10dp"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:background="@drawable/theme_tiles"
+                    android:orientation="horizontal">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        app:cardCornerRadius="5dp">
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/leetcode"/>
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#6F6F6F"
+                            android:textSize="12sp"
+                            android:gravity="center"
+                            android:text="Add/Remove\nFriends"/>
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/ADDLeaderboardButtonCodeForces"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
+                app:cardCornerRadius="10dp"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:background="@drawable/theme_tiles"
+                    android:orientation="horizontal">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        app:cardCornerRadius="5dp">
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/codeforces"/>
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#6F6F6F"
+                            android:gravity="center"
+                            android:textSize="12sp"
+                            android:text="Add/Remove\nFriends"/>
+
+
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+
+
+
+
+
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 
@@ -658,29 +772,31 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
                             android:layout_centerInParent="true"
+                            android:gravity="center"
                             android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:text="User1"
                                 android:textColor="@color/white"
-                                android:textSize="16sp"
-                                android:text="User1"/>
+                                android:textSize="16sp" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
-                                android:textColor="#6F6F6F"
                                 android:layout_marginEnd="10dp"
-                                android:text="v/s"/>
+                                android:text="v/s"
+                                android:textColor="#6F6F6F" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:text="User2"
                                 android:textColor="@color/white"
-                                android:textSize="16sp"
-                                android:text="User2"/>
+                                android:textSize="16sp" />
 
                         </LinearLayout>
 
@@ -775,6 +891,26 @@
                 </androidx.cardview.widget.CardView>
 
             </LinearLayout>
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="30dp"
+            android:layout_margin="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#6F6F6F"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:text="More Exciting Feature Coming Soon !!"/>
 
 
 
