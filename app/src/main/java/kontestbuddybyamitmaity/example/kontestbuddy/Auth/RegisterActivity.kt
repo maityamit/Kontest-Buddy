@@ -179,7 +179,9 @@ class RegisterActivity : AppCompatActivity() {
             "userEmail" to userEmail,
             "userLeetcode" to userLeetcode,
             "userCodeforces" to userCodeforces,
-            "userCodechef" to userCodechef
+            "userCodechef" to userCodechef,
+            "LCleader" to "",
+            "CFleader" to ""
         )
 
 

@@ -9,4 +9,7 @@
 
     <string name="verify"><u>Verify</u></string>
 
+    <string name="verifyandadd"><u>Verify &amp; Add</u></string>
+    <string name="verifyandremove"><u>Verify &amp; Remove</u></string>
+
 </resources>
