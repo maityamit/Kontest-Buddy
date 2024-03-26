@@ -22,6 +22,9 @@ class CFrankingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_cfranking)
 
         progressDialog= ProgressDialog(this)
+        progressDialog.setCancelable(false)
+        progressDialog.setCanceledOnTouchOutside(false)
+        
         val extras = intent.extras
         val userNames = extras?.getString("userNames")?.dropLast(1)
         callTheAPI(userNames)

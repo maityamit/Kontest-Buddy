@@ -1,5 +1,6 @@
 package kontestbuddybyamitmaity.example.kontestbuddy.Auth
 
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Color
@@ -37,6 +38,7 @@ class RegisterActivity : AppCompatActivity() {
     private var ratingsCF = ""
     private var ratingCC = ""
     private lateinit var progressDialog: ProgressDialog
+    @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)

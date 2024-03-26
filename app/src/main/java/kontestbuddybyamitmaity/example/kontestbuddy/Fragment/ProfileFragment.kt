@@ -91,7 +91,6 @@ class ProfileFragment : Fragment() {
                             findViewById<EditText>(R.id._register_user_leetcode).isEnabled = false
                             findViewById<TextView>(R.id._leetcode_verify_button).isEnabled = false
                             leetcode_verify = true
-
                         }else{
                             Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
                         }
@@ -203,9 +202,6 @@ class ProfileFragment : Fragment() {
 
 
         }
-        interface DialogListener {
-            fun onDialogOkButtonClicked(inputText: String)
-        }
     }
 
     override fun onAttach(context: Context) {
@@ -220,7 +216,6 @@ class ProfileFragment : Fragment() {
     }
 
     private fun retrieveData(view: View) {
-
         val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
             AppCompatActivity.MODE_PRIVATE
         )
