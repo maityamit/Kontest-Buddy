@@ -18,6 +18,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -27,7 +29,10 @@ import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiT
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Compare.CFcompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Compare.LCcompareActivity
+import kontestbuddybyamitmaity.example.kontestbuddy.CurrentFriends.CodeForcesFrndAdapter
+import kontestbuddybyamitmaity.example.kontestbuddy.CurrentFriends.LeetCodeCurrentFrndAdapter
 import kontestbuddybyamitmaity.example.kontestbuddy.R
+import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.CFCustomAdapter
 import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.CFrankingActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.LCrankingActivity
 import kotlinx.coroutines.CoroutineScope
@@ -254,12 +259,6 @@ class HomeFragment : Fragment() {
                     context.startActivity(intent)
                 }
             }
-
-//            okButton.setOnClickListener {
-//                val inputText = editText.text.toString()
-//                listener.onDialogOkButtonClicked(inputText)
-//                dismiss()
-//            }
         }
 
         interface DialogListener {
@@ -363,8 +362,62 @@ class HomeFragment : Fragment() {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.leetcode_leaderboard_dialoguebox)
 
+
+            val current_user_list_show_recyclerView_leetcode:RecyclerView = findViewById(R.id.current_user_list_show_recyclerView_leetcode)
+            progressDialog.show()
+            val db = Firebase.firestore
+            val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+            val userID = auth.currentUser?.uid.toString()
+            val docRef = db.collection("users").document(userID)
+            docRef.get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val document = task.result
+                    if (document != null) {
+                        val LCleader = document.getString("LCleader")
+                        // Toast.makeText(context,LCleader.toString(),Toast.LENGTH_SHORT).show()
+
+                        if (LCleader != null) {
+                            if (LCleader.isBlank()){
+                                Toast.makeText(context,"You haven't any friends yet!",Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        val list:MutableList<String> = mutableListOf()
+                        var temp:String = ""
+                        if (LCleader != null) {
+                            for(ele in LCleader){
+                                if(ele==';'){
+                                    list.add(temp)
+                                    temp = ""
+                                }else{
+                                    temp+=ele
+                                }
+                            }
+                        }
+                        current_user_list_show_recyclerView_leetcode.layoutManager = LinearLayoutManager(context)
+                        current_user_list_show_recyclerView_leetcode.adapter = list.let { it1 ->
+                            LeetCodeCurrentFrndAdapter(
+                                it1
+                            )
+                        }
+                        progressDialog.dismiss()
+
+                    } else {
+                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+                            .show()
+                        progressDialog.dismiss()
+                    }
+                } else {
+                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                    progressDialog.dismiss()
+                }
+            }
+
             val leetcode_leaderboard_inputUser1:EditText = findViewById(R.id.leetcode_leaderboard_inputUser1)
             val leetcode_leaderboard_inputUser1_Verify:TextView = findViewById(R.id.leetcode_leaderboard_inputUser1_Verify)
+            val leetcode_leaderboard_all_frinds_show:TextView = findViewById(R.id.show_leetcode_current_friends)
+
             leetcode_leaderboard_inputUser1_Verify.setOnClickListener {
                 val strUser:String = leetcode_leaderboard_inputUser1.text.toString()
                 if(strUser.isBlank()){
@@ -475,12 +528,59 @@ class HomeFragment : Fragment() {
                 }
             }
 
+            leetcode_leaderboard_all_frinds_show.setOnClickListener {
+                progressDialog.show()
+                val db = Firebase.firestore
+                val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+                val userID = auth.currentUser?.uid.toString()
+                val docRef = db.collection("users").document(userID)
+                docRef.get().addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val document = task.result
+                        if (document != null) {
+                            val LCleader = document.getString("LCleader")
+                           // Toast.makeText(context,LCleader.toString(),Toast.LENGTH_SHORT).show()
+                            val list:MutableList<String> = mutableListOf()
+                            var temp:String = ""
+                            if (LCleader != null) {
+                                for(ele in LCleader){
+                                    if(ele==';'){
+                                        list.add(temp)
+                                        temp = ""
+                                    }else{
+                                        temp+=ele
+                                    }
+                                }
+                            }
+                            current_user_list_show_recyclerView_leetcode.layoutManager = LinearLayoutManager(context)
+                            current_user_list_show_recyclerView_leetcode.adapter = list.let { it1 ->
+                                LeetCodeCurrentFrndAdapter(
+                                    it1
+                                )
+                            }
+                            progressDialog.dismiss()
+
+                        } else {
+                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+                                .show()
+                            progressDialog.dismiss()
+                        }
+                    } else {
+                        Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+                            .show()
+                        progressDialog.dismiss()
+                    }
+                }
+            }
+
         }
 
         interface DialogListener {
             fun onDialogOkButtonClicked(inputText: String)
         }
     }
+
 
     class CustomDialog4(context: Context, private val listener: HomeFragment) : Dialog(context) {
 
@@ -489,6 +589,59 @@ class HomeFragment : Fragment() {
             super.onCreate(savedInstanceState)
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.codeforces_leaderboard_dialoguebox)
+
+
+            val current_user_list_show_recyclerView_codeforces:RecyclerView = findViewById(R.id.current_user_list_show_recyclerView_codeforces)
+            progressDialog.show()
+            val db = Firebase.firestore
+            val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+            val userID = auth.currentUser?.uid.toString()
+            val docRef = db.collection("users").document(userID)
+            docRef.get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val document = task.result
+                    if (document != null) {
+                        val LCleader = document.getString("CFleader")
+                        // Toast.makeText(context,LCleader.toString(),Toast.LENGTH_SHORT).show()
+
+                        if (LCleader != null) {
+                            if (LCleader.isBlank()){
+                                Toast.makeText(context,"You haven't any friends yet!",Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        val list:MutableList<String> = mutableListOf()
+                        var temp:String = ""
+                        if (LCleader != null) {
+                            for(ele in LCleader){
+                                if(ele==';'){
+                                    list.add(temp)
+                                    temp = ""
+                                }else{
+                                    temp+=ele
+                                }
+                            }
+                        }
+                        current_user_list_show_recyclerView_codeforces.layoutManager = LinearLayoutManager(context)
+                        current_user_list_show_recyclerView_codeforces.adapter = list.let { it1 ->
+                            CodeForcesFrndAdapter(
+                                it1
+                            )
+                        }
+                        progressDialog.dismiss()
+
+                    } else {
+                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+                            .show()
+                        progressDialog.dismiss()
+                    }
+                } else {
+                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                    progressDialog.dismiss()
+                }
+            }
+
 
             val codeforces_leaderboard_inputUser1:EditText = findViewById(R.id.codeforces_leaderboard_inputUser1)
             val codeforces_leaderboard_inputUser1_Verify:TextView = findViewById(R.id.codeforces_leaderboard_inputUser1_Verify)
@@ -601,6 +754,54 @@ class HomeFragment : Fragment() {
                     }
                 }
             }
+
+            val show_codeforces_current_friends:TextView = findViewById(R.id.show_codeforces_current_friends)
+            show_codeforces_current_friends.setOnClickListener {
+                progressDialog.show()
+                val db = Firebase.firestore
+                val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+                val userID = auth.currentUser?.uid.toString()
+                val docRef = db.collection("users").document(userID)
+                docRef.get().addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val document = task.result
+                        if (document != null) {
+                            val LCleader = document.getString("CFleader")
+                            // Toast.makeText(context,LCleader.toString(),Toast.LENGTH_SHORT).show()
+                            val list:MutableList<String> = mutableListOf()
+                            var temp:String = ""
+                            if (LCleader != null) {
+                                for(ele in LCleader){
+                                    if(ele==';'){
+                                        list.add(temp)
+                                        temp = ""
+                                    }else{
+                                        temp+=ele
+                                    }
+                                }
+                            }
+                            current_user_list_show_recyclerView_codeforces.layoutManager = LinearLayoutManager(context)
+                            current_user_list_show_recyclerView_codeforces.adapter = list.let { it1 ->
+                                CodeForcesFrndAdapter(
+                                    it1
+                                )
+                            }
+                            progressDialog.dismiss()
+
+                        } else {
+                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+                                .show()
+                            progressDialog.dismiss()
+                        }
+                    } else {
+                        Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+                            .show()
+                        progressDialog.dismiss()
+                    }
+                }
+            }
+
 
         }
 

@@ -61,7 +61,7 @@ class RegisterActivity : AppCompatActivity() {
                 progressDialog.show()
                 val apiTask = LeetCodeVerifyApiTask { isValid ->
                     if(isValid?.get("isValid").toString()=="\"true\""){
-                        var txt = findViewById<TextView>(R.id.leetcode_verify_button)
+                        val txt = findViewById<TextView>(R.id.leetcode_verify_button)
                         txt.text = "Verified"
                         txt.setTextColor(Color.GREEN)
                         findViewById<EditText>(R.id.register_user_leetcode).isEnabled = false

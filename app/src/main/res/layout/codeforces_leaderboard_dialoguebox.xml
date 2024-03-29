@@ -92,7 +92,7 @@
         android:weightSum="12"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp">
@@ -137,6 +137,27 @@
             android:text="@string/verifyandremove"/>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/show_codeforces_current_friends"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_gravity="center_horizontal"
+        android:padding="5dp"
+        android:textColor="@color/white"
+        android:drawableStart="@drawable/baseline_refresh_24"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#2A2A2A"
+        android:background="@drawable/all_rounded"
+        android:text="Refresh Current Friends List"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/current_user_list_show_recyclerView_codeforces"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="30dp"
+        android:layout_height="200dp"/>
 
 
 </LinearLayout>
