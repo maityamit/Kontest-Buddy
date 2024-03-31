@@ -24,11 +24,9 @@ class LCrankingActivity : AppCompatActivity() {
         progressDialog.setCancelable(false)
 
         initialization()
-
         val extras = intent.extras
         val userNames = extras?.getString("userNames")?.dropLast(1)
         callTheAPI(userNames)
-
     }
 
 

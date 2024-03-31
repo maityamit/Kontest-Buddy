@@ -13,8 +13,9 @@ import java.io.IOException
 class LeetCodeVerifyApiTask(private val callback: (JsonObject?) -> Unit) : AsyncTask<String, Void, JsonObject?>() {
 
     override fun doInBackground(vararg params: String): JsonObject? {
-        val baseUrl = "https://cooperative-jade-sun-hat.cyclic.app/"
-        val endpoint = "/isLCExist"
+
+        val baseUrl = "https://kontest-jdca.onrender.com"
+        val endpoint = "isLCExist"
         val username = params[0]
 
         // Create MultipartBody for form-data
@@ -35,6 +36,8 @@ class LeetCodeVerifyApiTask(private val callback: (JsonObject?) -> Unit) : Async
         try {
             // Execute the request and get the response
             val response = client.newCall(request).execute()
+
+            Log.e("AMITA",response.toString())
 
             // Check if the response is successful
             if (response.isSuccessful) {

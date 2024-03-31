@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -34,16 +37,16 @@
             android:exported="false" />
         <activity
             android:name=".Ranking.LCrankingActivity"
-            android:exported="true"></activity>
+            android:exported="true"/>
         <activity
             android:name=".Compare.CFcompareActivity"
             android:exported="false" />
         <activity
             android:name=".Compare.LCcompareActivity"
-            android:exported="true"></activity>
+            android:exported="true"/>
         <activity
             android:name=".MainActivity"
-            android:exported="true"></activity>
+            android:exported="true"/>
 
         <meta-data
             android:name="preloaded_fonts"

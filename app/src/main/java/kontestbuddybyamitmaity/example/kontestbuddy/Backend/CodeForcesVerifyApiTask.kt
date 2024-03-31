@@ -15,8 +15,8 @@ import java.io.IOException
 class CodeForcesVerifyApiTask(private val callback: (JsonObject?) -> Unit) : AsyncTask<String, Void, JsonObject?>() {
 
     override fun doInBackground(vararg params: String): JsonObject? {
-        val baseUrl = "https://cooperative-jade-sun-hat.cyclic.app/"
-        val endpoint = "/isCFExist"
+        val baseUrl = "https://kontest-jdca.onrender.com"
+        val endpoint = "isCFExist"
         val username = params[0]
 
         // Create MultipartBody for form-data

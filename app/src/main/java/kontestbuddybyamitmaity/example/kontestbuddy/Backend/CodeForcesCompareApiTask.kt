@@ -12,8 +12,8 @@ import java.io.IOException
 class CodeForcesCompareApiTask(private val callback: (String?) -> Unit) : AsyncTask<String, Void, String?>() {
 
     override fun doInBackground(vararg params: String): String? {
-        val baseUrl = "https://cooperative-jade-sun-hat.cyclic.app/"
-        val endpoint = "/cfCompare"
+        val baseUrl = "https://kontest-jdca.onrender.com"
+        val endpoint = "cfCompare"
         val username = params[0]
 
         // Create MultipartBody for form-data
