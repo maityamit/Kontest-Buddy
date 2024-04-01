@@ -4,6 +4,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -14,6 +15,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonObject
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.DummyAPI
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
@@ -39,6 +41,9 @@ class LoginActivity : AppCompatActivity() {
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
         progressDialog.setCanceledOnTouchOutside(false)
+
+        startTestAPI()
+
 
 
         findViewById<TextView>(R.id.sign_up_redirect).setOnClickListener {
@@ -178,4 +183,17 @@ class LoginActivity : AppCompatActivity() {
         myEdit.apply()
 
     }
+
+    private fun startTestAPI() {
+        val apiTask = DummyAPI { isValid ->
+            if(isValid?.get("message").toString().isNotBlank()){
+                Log.e("API_TEST_START","API Started")
+            }else{
+                Toast.makeText(applicationContext, "API Facing Some Issue",Toast.LENGTH_SHORT).show()
+            }
+        }
+        apiTask.execute("am")
+    }
+
+
 }

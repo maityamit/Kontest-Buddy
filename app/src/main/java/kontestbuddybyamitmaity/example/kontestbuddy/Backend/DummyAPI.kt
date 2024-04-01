@@ -4,32 +4,30 @@ import android.os.AsyncTask
 import android.util.Log
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import kontestbuddybyamitmaity.example.kontestbuddy.R
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
-class LeetCodeLeaderApiTask(private val callback: (String?) -> Unit) : AsyncTask<String, Void, String?>() {
+class DummyAPI(private val callback: (JsonObject?) -> Unit) : AsyncTask<String, Void, JsonObject?>() {
 
-    override fun doInBackground(vararg params: String): String? {
+    override fun doInBackground(vararg params: String): JsonObject? {
         val baseUrl = "https://kontest-jdca.onrender.com"
-        val endpoint = "lcLeader"
         val username = params[0]
 
-        // Create MultipartBody for form-data
-        val requestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("userNames", username)
-            .build()
 
         // Create OkHttpClient instance
-        val client = OkHttpClient()
+        val client = OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS) // Adjust timeout duration here
+            .readTimeout(60, TimeUnit.SECONDS) // Adjust timeout duration here
+            .writeTimeout(60, TimeUnit.SECONDS) // Adjust timeout duration here
+            .build()
 
         // Build the request
         val request = Request.Builder()
-            .url("$baseUrl/$endpoint")
-            .post(requestBody)
+            .url("$baseUrl/")
+            .get()
             .build()
 
         try {
@@ -39,9 +37,11 @@ class LeetCodeLeaderApiTask(private val callback: (String?) -> Unit) : AsyncTask
             // Check if the response is successful
             if (response.isSuccessful) {
                 // Parse the JSON response
-                val jsonResponse = response.body?.string()
-                return jsonResponse
 
+                val jsonResponse = response.body?.string()
+                Log.e("ApiTask", jsonResponse.toString())
+                val isValid = parseJsonResponse(jsonResponse)
+                return isValid
             } else {
                 Log.e("ApiTask", "Request failed with code: ${response.code}")
             }
@@ -53,7 +53,7 @@ class LeetCodeLeaderApiTask(private val callback: (String?) -> Unit) : AsyncTask
     }
 
 
-    override fun onPostExecute(result: String?) {
+    override fun onPostExecute(result: JsonObject?) {
         // Callback to handle the result
         callback(result)
     }
@@ -62,14 +62,9 @@ class LeetCodeLeaderApiTask(private val callback: (String?) -> Unit) : AsyncTask
         try {
             // Parse the JSON response
             val jsonObject = jsonResponse?.let { JsonParser().parse(it).asJsonObject }
-
-            val parser = JsonParser()
-            val jsonArray = parser.parse(jsonResponse).asJsonArray
-
-            for(element in jsonArray){
-                Log.e("AMIIIIT",element.asJsonObject.toString())
-            }
-            return jsonArray.get(0).asJsonObject
+//            Log.e("KLKSK",jsonObject.toString())
+//            val isValid = jsonObject?.get("isValid").toString()
+            return jsonObject
         } catch (e: Exception) {
             Log.e("ApiTask", "Error parsing JSON response: ${e.message}")
         }
@@ -77,3 +72,4 @@ class LeetCodeLeaderApiTask(private val callback: (String?) -> Unit) : AsyncTask
         return null
     }
 }
+

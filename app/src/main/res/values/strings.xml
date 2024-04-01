@@ -12,4 +12,6 @@
     <string name="verifyandadd"><u>Verify &amp; Add</u></string>
     <string name="verifyandremove"><u>Verify &amp; Remove</u></string>
 
+    <string name="API_BASE_URL">https://kontest-jdca.onrender.com</string>
+
 </resources>
