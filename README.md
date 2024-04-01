@@ -16,3 +16,15 @@ The main two features of this application are Compare Two Users and Ranking with
 Compare Two Users: You can compare two users of LeetCode or CodeForces and compare between them and compete.
 
 Ranking with your peers: You can add your friends or remove your friends and automatically it will show a leaderboard with your friends.
+
+## 📸 Screenshots
+
+||||
+|:----------------------------------------:|:-----------------------------------------:|:-----------------------------------------: |
+| ![Imgur](Demo/1.png) | ![Imgur](Demo/2.png) | ![Imgur](Demo/3.png) |
+| ![Imgur](Demo/4.png) | ![Imgur](Demo/5.png) | ![Imgur](Demo/6.png) |
+
+<br>
+
+Amit Maity <br>
+maityamit307@gmail.com
