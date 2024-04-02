@@ -10,6 +10,7 @@ import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 class LeetCodeCompareApiTask(private val callback: (String?) -> Unit) : AsyncTask<String, Void, String?>() {
 
@@ -25,7 +26,11 @@ class LeetCodeCompareApiTask(private val callback: (String?) -> Unit) : AsyncTas
             .build()
 
         // Create OkHttpClient instance
-        val client = OkHttpClient()
+        val client = OkHttpClient.Builder()
+            .connectTimeout(75, TimeUnit.SECONDS) // Adjust timeout duration here
+            .readTimeout(75, TimeUnit.SECONDS) // Adjust timeout duration here
+            .writeTimeout(75, TimeUnit.SECONDS) // Adjust timeout duration here
+            .build()
 
         // Build the request
         val request = Request.Builder()

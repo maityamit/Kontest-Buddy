@@ -19,9 +19,9 @@ class DummyAPI(private val callback: (JsonObject?) -> Unit) : AsyncTask<String, 
 
         // Create OkHttpClient instance
         val client = OkHttpClient.Builder()
-            .connectTimeout(60, TimeUnit.SECONDS) // Adjust timeout duration here
-            .readTimeout(60, TimeUnit.SECONDS) // Adjust timeout duration here
-            .writeTimeout(60, TimeUnit.SECONDS) // Adjust timeout duration here
+            .connectTimeout(75, TimeUnit.SECONDS) // Adjust timeout duration here
+            .readTimeout(75, TimeUnit.SECONDS) // Adjust timeout duration here
+            .writeTimeout(75, TimeUnit.SECONDS) // Adjust timeout duration here
             .build()
 
         // Build the request
