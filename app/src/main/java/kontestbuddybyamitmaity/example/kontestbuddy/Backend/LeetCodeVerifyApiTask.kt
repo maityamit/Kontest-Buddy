@@ -6,6 +6,7 @@ import android.widget.Toast
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import kontestbuddybyamitmaity.example.kontestbuddy.R
+import okhttp3.FormBody
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -16,23 +17,22 @@ class LeetCodeVerifyApiTask(private val callback: (JsonObject?) -> Unit) : Async
 
     override fun doInBackground(vararg params: String): JsonObject? {
 
-        val baseUrl = "https://kontest-jdca.onrender.com"
+        val baseUrl = "https://express-liard-nine.vercel.app"
         val endpoint = "isLCExist"
         val username = params[0]
 
         // Create MultipartBody for form-data
-        val requestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("userName", username)
+//        val requestBody = MultipartBody.Builder()
+//            .setType(MultipartBody.FORM)
+//            .addFormDataPart("userName", username)
+//            .build()
+        val requestBody = FormBody.Builder()
+            .add("userName", username)
             .build()
 
         // Create OkHttpClient instance
 
-        val client = OkHttpClient.Builder()
-            .connectTimeout(120, TimeUnit.SECONDS) // Adjust timeout duration here
-            .readTimeout(120, TimeUnit.SECONDS) // Adjust timeout duration here
-            .writeTimeout(120, TimeUnit.SECONDS) // Adjust timeout duration here
-            .build()
+        val client = OkHttpClient()
 
         // Build the request
         val request = Request.Builder()

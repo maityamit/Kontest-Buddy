@@ -43,10 +43,6 @@ class LoginActivity : AppCompatActivity() {
         progressDialog.setCanceledOnTouchOutside(false)
         progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
 
-        startTestAPI()
-
-
-
         findViewById<TextView>(R.id.sign_up_redirect).setOnClickListener {
             val intent: Intent = Intent(applicationContext, RegisterActivity::class.java)
             startActivity(intent)
@@ -185,16 +181,6 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    private fun startTestAPI() {
-        val apiTask = DummyAPI { isValid ->
-            if(isValid?.get("message").toString().isNotBlank()){
-                Log.e("API_TEST_START","API Started")
-            }else{
-                Toast.makeText(applicationContext, "API Facing Some Issue",Toast.LENGTH_SHORT).show()
-            }
-        }
-        apiTask.execute("am")
-    }
 
 
 }

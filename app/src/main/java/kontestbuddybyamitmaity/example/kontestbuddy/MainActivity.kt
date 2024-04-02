@@ -29,8 +29,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-        startTestAPI()
-
         linearLayout = findViewById(R.id.main_act_nav_layout)
         navigationBarView = findViewById(R.id.bottom_navigation)
         loadFragment(HomeFragment())
@@ -54,16 +52,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startTestAPI() {
-        val apiTask = DummyAPI { isValid ->
-            if(isValid?.get("message").toString().isNotBlank()){
-                Log.e("API_TEST_START","API Started")
-            }else{
-                Toast.makeText(applicationContext, "API Facing Some Issue",Toast.LENGTH_SHORT).show()
-            }
-        }
-        apiTask.execute("am")
-    }
 
     private  fun loadFragment(fragment: Fragment){
         val transaction = supportFragmentManager.beginTransaction()
