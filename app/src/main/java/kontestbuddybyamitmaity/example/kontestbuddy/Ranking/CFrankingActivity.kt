@@ -24,6 +24,7 @@ class CFrankingActivity : AppCompatActivity() {
         progressDialog= ProgressDialog(this)
         progressDialog.setCancelable(false)
         progressDialog.setCanceledOnTouchOutside(false)
+        progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
         
         val extras = intent.extras
         val userNames = extras?.getString("userNames")?.dropLast(1)

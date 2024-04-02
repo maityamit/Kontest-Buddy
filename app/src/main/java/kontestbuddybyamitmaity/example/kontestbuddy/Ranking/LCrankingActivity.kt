@@ -22,6 +22,7 @@ class LCrankingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_lcranking)
         progressDialog= ProgressDialog(this)
         progressDialog.setCancelable(false)
+        progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
 
         initialization()
         val extras = intent.extras

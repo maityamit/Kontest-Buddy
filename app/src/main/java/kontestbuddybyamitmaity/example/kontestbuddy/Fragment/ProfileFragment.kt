@@ -48,6 +48,9 @@ class ProfileFragment : Fragment() {
         progressDialog = ProgressDialog(context)
         progressDialog.setCancelable(false)
         progressDialog.setCanceledOnTouchOutside(false)
+        progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
+
+
         auth = FirebaseAuth.getInstance()
         retrieveData(view)
 

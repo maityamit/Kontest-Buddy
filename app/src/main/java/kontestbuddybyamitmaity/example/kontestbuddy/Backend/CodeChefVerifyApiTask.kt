@@ -28,9 +28,9 @@ class CodeChefVerifyApiTask(private val callback: (JsonObject?) -> Unit) : Async
 
         // Create OkHttpClient instance
         val client = OkHttpClient.Builder()
-            .connectTimeout(75, TimeUnit.SECONDS) // Adjust timeout duration here
-            .readTimeout(75, TimeUnit.SECONDS) // Adjust timeout duration here
-            .writeTimeout(75, TimeUnit.SECONDS) // Adjust timeout duration here
+            .connectTimeout(120, TimeUnit.SECONDS) // Adjust timeout duration here
+            .readTimeout(120, TimeUnit.SECONDS) // Adjust timeout duration here
+            .writeTimeout(120, TimeUnit.SECONDS) // Adjust timeout duration here
             .build()
 
         // Build the request

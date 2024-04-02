@@ -46,6 +46,7 @@ class RegisterActivity : AppCompatActivity() {
         progressDialog= ProgressDialog(this)
         progressDialog.setCancelable(false)
         progressDialog.setCanceledOnTouchOutside(false)
+        progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
 
 
         findViewById<TextView>(R.id.already_sign_in).setOnClickListener {
