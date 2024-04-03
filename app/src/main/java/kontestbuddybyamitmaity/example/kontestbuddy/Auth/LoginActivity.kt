@@ -1,22 +1,28 @@
 package kontestbuddybyamitmaity.example.kontestbuddy.Auth
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.app.Dialog
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonObject
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.DummyAPI
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Fragment.ProfileFragment
 import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 import kotlinx.coroutines.CoroutineScope
@@ -24,10 +30,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
 
 class LoginActivity : AppCompatActivity() {
 
@@ -66,7 +72,45 @@ class LoginActivity : AppCompatActivity() {
                 signinWithEmailAndPass(user_email, user_password)
             }
         }
+
+        findViewById<TextView>(R.id.forgetPassWordTextView).setOnClickListener {
+
+
+            val messageBoxView = LayoutInflater.from(this).inflate(R.layout.forget_password, null)
+            val emailID = messageBoxView.findViewById<EditText>(R.id.forget_user_email)
+            val messageBoxBuilder = AlertDialog.Builder(this).setView(messageBoxView)
+            val  messageBoxInstance = messageBoxBuilder.show()
+            val editTextBox = messageBoxInstance.findViewById<EditText>(R.id.forget_user_email)
+            messageBoxInstance.findViewById<Button>(R.id.forgetpasswordButton_button).setOnClickListener {
+                val emailIDString: String = editTextBox.text.toString()
+
+                if (emailIDString.isBlank()) {
+                    Toast.makeText(this, "Please Enter Your Email ID !!", Toast.LENGTH_SHORT).show()
+                } else {
+                    progressDialog.show()
+                    FirebaseAuth.getInstance().sendPasswordResetEmail(emailIDString)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                emailID.text = null
+                                progressDialog.dismiss()
+                                messageBoxInstance.dismiss()
+                                Toast.makeText(
+                                    this,
+                                    "Password Reset Email Sent.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
+        }
     }
+
 
     private fun signinWithEmailAndPass(userEmail: String, userPassword: String) {
         auth = FirebaseAuth.getInstance()
