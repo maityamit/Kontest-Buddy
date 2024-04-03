@@ -136,7 +136,7 @@ class RegisterActivity : AppCompatActivity() {
                     progressDialog.dismiss()
 
                 }
-                apiTask.execute(user_codechef)
+                apiTask.execute(user_codechef,"isCCExist")
             }
         }
 

@@ -20,11 +20,6 @@ class LeetCodeCompareApiTask(private val callback: (String?) -> Unit) : AsyncTas
         val endpoint = "lcCompare"
         val username = params[0]
 
-        // Create MultipartBody for form-data
-//        val requestBody = MultipartBody.Builder()
-//            .setType(MultipartBody.FORM)
-//            .addFormDataPart("userNames", username)
-//            .build()
         val requestBody = FormBody.Builder()
             .add("userNames", username)
             .build()

@@ -19,11 +19,6 @@ class CodeForcesLeaderApiTask(private val callback: (String?) -> Unit) : AsyncTa
         val endpoint = "cfLeader"
         val username = params[0]
 
-        // Create MultipartBody for form-data
-//        val requestBody = MultipartBody.Builder()
-//            .setType(MultipartBody.FORM)
-//            .addFormDataPart("userNames", username)
-//            .build()
         val requestBody = FormBody.Builder()
             .add("userNames", username)
             .build()

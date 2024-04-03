@@ -21,11 +21,6 @@ class LeetCodeVerifyApiTask(private val callback: (JsonObject?) -> Unit) : Async
         val endpoint = "isLCExist"
         val username = params[0]
 
-        // Create MultipartBody for form-data
-//        val requestBody = MultipartBody.Builder()
-//            .setType(MultipartBody.FORM)
-//            .addFormDataPart("userName", username)
-//            .build()
         val requestBody = FormBody.Builder()
             .add("userName", username)
             .build()

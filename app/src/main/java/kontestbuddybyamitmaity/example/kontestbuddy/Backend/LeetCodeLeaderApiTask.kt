@@ -19,11 +19,6 @@ class LeetCodeLeaderApiTask(private val callback: (String?) -> Unit) : AsyncTask
         val endpoint = "lcLeader"
         val username = params[0]
 
-        // Create MultipartBody for form-data
-//        val requestBody = MultipartBody.Builder()
-//            .setType(MultipartBody.FORM)
-//            .addFormDataPart("userNames", username)
-//            .build()
         val requestBody = FormBody.Builder()
             .add("userNames", username)
             .build()

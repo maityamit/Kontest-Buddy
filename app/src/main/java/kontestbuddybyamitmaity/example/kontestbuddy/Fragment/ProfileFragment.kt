@@ -80,6 +80,18 @@ class ProfileFragment : Fragment() {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.profile_update_layout)
 
+            val sharedPreferences = context.getSharedPreferences("userDataStoreLocal",
+                AppCompatActivity.MODE_PRIVATE
+            )
+            val lcUserName:String? = sharedPreferences?.getString("userLeetcode","")
+            val cfUserName:String? = sharedPreferences?.getString("userCodeforces","")
+            val ccUserName:String? = sharedPreferences?.getString("userCodechef","")
+
+            findViewById<EditText>(R.id._register_user_leetcode).setText(lcUserName)
+            findViewById<EditText>(R.id._register_user_codeforces).setText(cfUserName)
+            findViewById<EditText>(R.id._register_user_codechef).setText(ccUserName)
+
+
             findViewById<TextView>(R.id._leetcode_verify_button).setOnClickListener {
                 val user_leetcode = findViewById<EditText>(R.id._register_user_leetcode).text.toString()
                 if(user_leetcode.isBlank()){
