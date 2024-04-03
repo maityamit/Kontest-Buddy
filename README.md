@@ -1,7 +1,7 @@
 # Kontest Buddy
 Compare with your peers and compete !
 
-## 🔗 Download the App [70+ Downloads]
+## 🔗 Download the App [100+ Downloads]
 
 <a href="https://play.google.com/store/apps/details?id=kontestbuddybyamitmaity.example.kontestbuddy">
 <img src="https://github.com/maityamit/Heritsm-Heritage_of_India-Application/blob/master/Demo/800px-Google_Play_Store_badge_EN.svg.png" width="20%" /></a>
