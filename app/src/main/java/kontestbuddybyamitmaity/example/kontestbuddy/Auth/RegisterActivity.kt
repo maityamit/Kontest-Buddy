@@ -27,7 +27,7 @@ import java.util.Locale
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-    val db = Firebase.firestore
+    private val db = Firebase.firestore
     private var leetcode_verify = false
     private var codeforces_verify = false
     private var codechef_verify = false
@@ -50,7 +50,7 @@ class RegisterActivity : AppCompatActivity() {
 
 
         findViewById<TextView>(R.id.already_sign_in).setOnClickListener {
-            val intent: Intent = Intent(applicationContext,LoginActivity::class.java)
+            val intent = Intent(applicationContext,LoginActivity::class.java)
             startActivity(intent)
         }
 
