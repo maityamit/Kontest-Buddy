@@ -59,22 +59,4 @@ class LeetCodeCompareApiTask(private val callback: (String?) -> Unit) : AsyncTas
         callback(result)
     }
 
-    private fun parseJsonResponse(jsonResponse: String?): JsonObject? {
-        try {
-            // Parse the JSON response
-            val jsonObject = jsonResponse?.let { JsonParser().parse(it).asJsonObject }
-
-            val parser = JsonParser()
-            val jsonArray = parser.parse(jsonResponse).asJsonArray
-
-            for(element in jsonArray){
-                Log.e("AMIIIIT",element.asJsonObject.toString())
-            }
-            return jsonArray.get(0).asJsonObject
-        } catch (e: Exception) {
-            Log.e("ApiTask", "Error parsing JSON response: ${e.message}")
-        }
-
-        return null
-    }
 }

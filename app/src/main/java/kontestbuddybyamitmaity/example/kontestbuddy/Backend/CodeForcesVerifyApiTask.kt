@@ -24,6 +24,7 @@ class CodeForcesVerifyApiTask(private val callback: (JsonObject?) -> Unit) : Asy
 
         val requestBody = FormBody.Builder()
             .add("userName", username)
+            .add("am","ams")
             .build()
 
         // Create OkHttpClient instance
@@ -63,10 +64,7 @@ class CodeForcesVerifyApiTask(private val callback: (JsonObject?) -> Unit) : Asy
 
     private fun parseJsonResponse(jsonResponse: String?): JsonObject? {
         try {
-            // Parse the JSON response
             val jsonObject = jsonResponse?.let { JsonParser().parse(it).asJsonObject }
-//            Log.e("KLKSK",jsonObject.toString())
-//            val isValid = jsonObject?.get("isValid").toString()
             return jsonObject
         } catch (e: Exception) {
             Log.e("ApiTask", "Error parsing JSON response: ${e.message}")

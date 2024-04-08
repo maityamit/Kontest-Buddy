@@ -1,15 +1,10 @@
 package kontestbuddybyamitmaity.example.kontestbuddy.Auth
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.Dialog
 import android.app.ProgressDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -22,7 +17,6 @@ import com.google.gson.JsonObject
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Fragment.ProfileFragment
 import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 import kotlinx.coroutines.CoroutineScope
@@ -39,7 +33,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var progressDialog: ProgressDialog
     private lateinit var auth: FirebaseAuth
-    val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
         progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
 
         findViewById<TextView>(R.id.sign_up_redirect).setOnClickListener {
-            val intent: Intent = Intent(applicationContext, RegisterActivity::class.java)
+            val intent = Intent(applicationContext, RegisterActivity::class.java)
             startActivity(intent)
         }
         if (FirebaseAuth.getInstance().currentUser != null) {
@@ -60,16 +54,16 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
         findViewById<Button>(R.id.sign_in_button).setOnClickListener {
-            val user_email = findViewById<EditText>(R.id.login_user_email).text.toString()
-            val user_password = findViewById<EditText>(R.id.login_user_pass).text.toString()
+            val userEmail = findViewById<EditText>(R.id.login_user_email).text.toString()
+            val userPassword = findViewById<EditText>(R.id.login_user_pass).text.toString()
 
-            if (user_email.isBlank()) {
+            if (userEmail.isBlank()) {
                 Toast.makeText(applicationContext, "Enter Your Email", Toast.LENGTH_SHORT).show()
-            } else if (user_password.isBlank()) {
+            } else if (userPassword.isBlank()) {
                 Toast.makeText(applicationContext, "Enter Your Password", Toast.LENGTH_SHORT).show()
             } else {
                 progressDialog.show()
-                signinWithEmailAndPass(user_email, user_password)
+                signinWithEmailAndPass(userEmail, userPassword)
             }
         }
 
@@ -185,7 +179,7 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    fun callApiTasks(
+    private fun callApiTasks(
         userLeetCode: String?,
         userCodeforces: String?,
         userCodechef: String?,
@@ -202,7 +196,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    fun handleAllApiResults(results: List<JsonObject?>) {
+    private fun handleAllApiResults(results: List<JsonObject?>) {
         // Handle individual API results here
         val resultLeetCode = results[0]
         val resultCodeforces = results[1]
