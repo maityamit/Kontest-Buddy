@@ -16,6 +16,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.GFGVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
@@ -31,12 +32,17 @@ class RegisterActivity : AppCompatActivity() {
     private var leetcode_verify = false
     private var codeforces_verify = false
     private var codechef_verify = false
+    private var gfg_verify = false
     private var ratingsLC = ""
     private var toppercentageLC = ""
     private var livecontestLC = ""
     private var globalrankingLC = ""
     private var ratingsCF = ""
     private var ratingCC = ""
+    private var gfg_rating = ""
+    private var gfg_problem_solved = ""
+    private var gfg_monthlyCodingScore = ""
+    private var gfg_articlesPublished = ""
     private lateinit var progressDialog: ProgressDialog
     @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -136,7 +142,39 @@ class RegisterActivity : AppCompatActivity() {
                     progressDialog.dismiss()
 
                 }
-                apiTask.execute(user_codechef,"isCCExist")
+                apiTask.execute(user_codechef)
+            }
+        }
+
+        findViewById<TextView>(R.id.gfg_verify_button).setOnClickListener {
+
+            val user_gfg = findViewById<EditText>(R.id.register_user_gfg).text.toString()
+            if(user_gfg.isBlank()){
+                Toast.makeText(applicationContext,"Enter the UserName",Toast.LENGTH_SHORT).show()
+            }else {
+                progressDialog.show()
+                val apiTask = GFGVerifyApiTask { isValid ->
+
+                    if(isValid?.get("isValid").toString()=="\"true\""){
+                        val txt = findViewById<TextView>(R.id.gfg_verify_button)
+                        txt.text = "Verified"
+                        txt.setTextColor(Color.GREEN)
+                        findViewById<EditText>(R.id.register_user_gfg).isEnabled = false
+                        findViewById<TextView>(R.id.gfg_verify_button).isEnabled = false
+                        gfg_verify = true
+
+                        gfg_rating = isValid?.get("rating").toString()
+                        gfg_problem_solved = isValid?.get("problem_solved").toString()
+                        gfg_monthlyCodingScore = isValid?.get("monthlyCodingScore").toString()
+                        gfg_articlesPublished = isValid?.get("articlesPublished").toString()
+
+                    }else{
+                        Toast.makeText(applicationContext, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                    }
+                    progressDialog.dismiss()
+
+                }
+                apiTask.execute(user_gfg)
             }
         }
 
@@ -229,6 +267,10 @@ class RegisterActivity : AppCompatActivity() {
         myEdit.putString("globalrankingLC",globalrankingLC)
         myEdit.putString("ratingsCF",ratingsCF)
         myEdit.putString("ratingCC",ratingCC)
+        myEdit.putString("gfg_rating",gfg_rating)
+        myEdit.putString("gfg_problem_solved",gfg_problem_solved)
+        myEdit.putString("gfg_monthlyCodingScore",gfg_monthlyCodingScore)
+        myEdit.putString("gfg_articlesPublished",gfg_articlesPublished)
 
         myEdit.apply()
 
