@@ -16,6 +16,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonObject
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.GFGVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
@@ -138,8 +139,9 @@ class LoginActivity : AppCompatActivity() {
                     val userLeetcode = document.getString("userLeetcode")
                     val userName = document.getString("userName")
                     val userEmail = document.getString("userEmail")
+                    val userGFG = document.getString("userGFG")
 
-                    retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef,userName,userEmail)
+                    retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef,userName,userEmail,userGFG)
 
                 } else {
                     Toast.makeText(applicationContext, "No Such document", Toast.LENGTH_SHORT)
@@ -154,7 +156,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?, userName: String?, userEmail: String?) {
+    private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?, userName: String?, userEmail: String?, userGFG: String?) {
 
         val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
         val myEdit = sharedPreferences.edit()
@@ -163,12 +165,14 @@ class LoginActivity : AppCompatActivity() {
         myEdit.putString("userLeetcode",userLeetcode)
         myEdit.putString("userCodeforces",userCodeforces)
         myEdit.putString("userCodechef",userCodechef)
+        myEdit.putString("userGFG",userGFG)
         myEdit.apply()
 
         callApiTasks(
             userLeetCode = userLeetcode,
             userCodeforces = userCodeforces,
             userCodechef = userCodechef,
+            userGFG = userGFG,
             onAllApiResultsAvailable = {
                 progressDialog.dismiss()
                 val intent: Intent = Intent(applicationContext, MainActivity::class.java)
@@ -183,6 +187,7 @@ class LoginActivity : AppCompatActivity() {
         userLeetCode: String?,
         userCodeforces: String?,
         userCodechef: String?,
+        userGFG: String?,
         onAllApiResultsAvailable: () -> Unit
     ) {
         coroutineScope.launch {
@@ -190,7 +195,8 @@ class LoginActivity : AppCompatActivity() {
             val resultLeetCode = async { LeetCodeVerifyApiTask{}.execute(userLeetCode).get() }
             val resultCodeforces = async { CodeForcesVerifyApiTask{}.execute(userCodeforces).get() }
             val resultCodeChef = async { CodeChefVerifyApiTask{}.execute(userCodechef).get() }
-            val allResults = awaitAll(resultLeetCode, resultCodeforces, resultCodeChef)
+            val resultGFG = async { GFGVerifyApiTask{}.execute(userGFG).get() }
+            val allResults = awaitAll(resultLeetCode, resultCodeforces, resultCodeChef, resultGFG)
             handleAllApiResults(allResults)
             onAllApiResultsAvailable()
         }
@@ -201,6 +207,7 @@ class LoginActivity : AppCompatActivity() {
         val resultLeetCode = results[0]
         val resultCodeforces = results[1]
         val resultCodeChef = results[2]
+        val resultGFG = results[3]
 
         val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
         val myEdit = sharedPreferences.edit()
@@ -214,6 +221,10 @@ class LoginActivity : AppCompatActivity() {
         myEdit.putString("globalrankingLC",resultLeetCode?.get("globalRanking").toString())
         myEdit.putString("ratingsCF",resultCodeforces?.get("rating").toString())
         myEdit.putString("ratingCC",resultCodeChef?.get("rating").toString())
+        myEdit.putString("gfg_rating",resultGFG?.get("rating").toString())
+        myEdit.putString("gfg_problem_solved",resultGFG?.get("problem_solved").toString())
+        myEdit.putString("gfg_monthlyCodingScore",resultGFG?.get("monthlyCodingScore").toString())
+        myEdit.putString("gfg_articlesPublished",resultGFG?.get("articlesPublished").toString())
 
         myEdit.apply()
 

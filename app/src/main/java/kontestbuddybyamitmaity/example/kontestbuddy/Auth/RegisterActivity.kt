@@ -187,6 +187,7 @@ class RegisterActivity : AppCompatActivity() {
             val user_leetcode = findViewById<EditText>(R.id.register_user_leetcode).text.toString()
             val user_codeforces = findViewById<EditText>(R.id.register_user_codeforces).text.toString()
             val user_codechef= findViewById<EditText>(R.id.register_user_codechef).text.toString()
+            val user_gfg = findViewById<EditText>(R.id.register_user_gfg).text.toString()
 
             if(user_name.isBlank()){
                 Toast.makeText(applicationContext,"Enter Your Name",Toast.LENGTH_SHORT).show()
@@ -200,22 +201,26 @@ class RegisterActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext,"Please verify the CF account",Toast.LENGTH_SHORT).show()
             }else if(user_codechef.isNotBlank() && !codechef_verify){
                 Toast.makeText(applicationContext,"Please verify the CC account",Toast.LENGTH_SHORT).show()
+            }else if(user_gfg.isNotBlank() && !gfg_verify){
+                Toast.makeText(applicationContext,"Please verify the GFG account",Toast.LENGTH_SHORT).show()
             }else{
                 progressDialog.show()
                 var lc = "";
                 var cf = "";
                 var cc = "";
+                var gfg = ""
                 if(user_leetcode.isNotBlank()) lc = user_leetcode;
                 if(user_codeforces.isNotBlank()) cf = user_codeforces;
                 if(user_codechef.isNotBlank()) cc = user_codechef;
-                createANewUserOnFirebase(user_name,user_password,user_email,lc,cf,cc)
+                if(user_gfg.isNotBlank()) gfg = user_gfg
+                createANewUserOnFirebase(user_name,user_password,user_email,lc,cf,cc,gfg)
             }
         }
 
 
     }
 
-    private fun createANewUserOnFirebase(userName: String, userPassword: String, userEmail: String, userLeetcode: String, userCodeforces: String, userCodechef: String) {
+    private fun createANewUserOnFirebase(userName: String, userPassword: String, userEmail: String, userLeetcode: String, userCodeforces: String, userCodechef: String,userGfg:String) {
         val userData = hashMapOf(
             "userName" to userName,
             "userEmail" to userEmail,
@@ -223,7 +228,8 @@ class RegisterActivity : AppCompatActivity() {
             "userCodeforces" to userCodeforces,
             "userCodechef" to userCodechef,
             "LCleader" to "",
-            "CFleader" to ""
+            "CFleader" to "",
+            "userGFG" to userGfg
         )
 
 
