@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 class CodeChefVerifyApiTask(private val callback: (JsonObject?) -> Unit) : AsyncTask<String, Void, JsonObject?>() {
 
     override fun doInBackground(vararg params: String): JsonObject? {
-        val baseUrl = "https://express-liard-nine.vercel.app"
+        val baseUrl = "ZZZZZZ"
         val endpoint = "isCCExist"
         val username = params[0]
 
