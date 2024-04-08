@@ -17,7 +17,7 @@ class LeetCodeVerifyApiTask(private val callback: (JsonObject?) -> Unit) : Async
 
     override fun doInBackground(vararg params: String): JsonObject? {
 
-        val baseUrl = "https://express-liard-nine.vercel.app"
+        val baseUrl = "ZZZZZZ"
         val endpoint = "isLCExist"
         val username = params[0]
 
