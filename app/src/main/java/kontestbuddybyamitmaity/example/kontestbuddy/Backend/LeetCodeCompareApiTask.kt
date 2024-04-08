@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
 class LeetCodeCompareApiTask(private val callback: (String?) -> Unit) : AsyncTask<String, Void, String?>() {
 
     override fun doInBackground(vararg params: String): String? {
-        val baseUrl = "https://express-liard-nine.vercel.app"
+        val baseUrl = "ZZZZZZ"
         val endpoint = "lcCompare"
         val username = params[0]
 
