@@ -26,6 +26,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonObject
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.GFGVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Compare.CFcompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Compare.LCcompareActivity
@@ -66,9 +67,13 @@ class HomeFragment : Fragment() {
     val coroutineScope = CoroutineScope(Dispatchers.Main)
     lateinit var LeaderboardButtonLeetCode:CardView
     lateinit var LeaderboardButtonCodeForces:CardView
-
     lateinit var leetcode_leaderboard_Button:CardView
     lateinit var codeforces_leaderboard_Button:CardView
+
+    lateinit var gfgUserName:TextView
+    lateinit var gfgRatings:TextView
+    lateinit var gfgProblemsSolved:TextView
+    lateinit var gfgArticlerPublished:TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -832,6 +837,13 @@ class HomeFragment : Fragment() {
         cfUserName.text = sharedPreferences?.getString("userCodeforces","")
         ccUserName.text = sharedPreferences?.getString("userCodechef","")
         lastUpdateHomeMainPage.text = sharedPreferences?.getString("lastUpdate","")
+
+        gfgUserName.text = sharedPreferences?.getString("userGFG","")
+        gfgRatings.text = sharedPreferences?.getString("gfg_rating","")
+        gfgProblemsSolved.text = sharedPreferences?.getString("gfg_problem_solved","")
+        gfgArticlerPublished.text = sharedPreferences?.getString("gfg_articlesPublished","")
+
+
     }
 
     private fun retrieveDataFromtheFirebase() {
@@ -849,8 +861,9 @@ class HomeFragment : Fragment() {
                     val userCodeforces = document.getString("userCodeforces")
                     val userLeetcode = document.getString("userLeetcode")
                     val userName = document.getString("userName")
+                    val userGFG = document.getString("userGFG")
 
-                    retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef,userName)
+                    retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef,userName,userGFG)
 
                 } else {
                     Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
@@ -863,7 +876,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?, userName: String?) {
+    private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?, userName: String?,userGFG: String?) {
 
         val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
             AppCompatActivity.MODE_PRIVATE
@@ -874,6 +887,7 @@ class HomeFragment : Fragment() {
             myEdit.putString("userLeetcode",userLeetcode)
             myEdit.putString("userCodeforces",userCodeforces)
             myEdit.putString("userCodechef",userCodechef)
+            myEdit.putString("userGFG",userGFG)
             myEdit.apply()
         }
 
@@ -881,6 +895,7 @@ class HomeFragment : Fragment() {
             userLeetCode = userLeetcode,
             userCodeforces = userCodeforces,
             userCodechef = userCodechef,
+            userGFG = userGFG,
             onAllApiResultsAvailable = {
                 progressDialog.dismiss()
                 allDataSettoTheUI()
@@ -893,6 +908,7 @@ class HomeFragment : Fragment() {
         userLeetCode: String?,
         userCodeforces: String?,
         userCodechef: String?,
+        userGFG: String?,
         onAllApiResultsAvailable: () -> Unit
     ) {
         coroutineScope.launch {
@@ -900,7 +916,8 @@ class HomeFragment : Fragment() {
             val resultLeetCode = async { LeetCodeVerifyApiTask{}.execute(userLeetCode).get() }
             val resultCodeforces = async { CodeForcesVerifyApiTask{}.execute(userCodeforces).get() }
             val resultCodeChef = async { CodeChefVerifyApiTask{}.execute(userCodechef).get() }
-            val allResults = awaitAll(resultLeetCode, resultCodeforces, resultCodeChef)
+            val resultGFG = async { GFGVerifyApiTask{}.execute(userGFG).get() }
+            val allResults = awaitAll(resultLeetCode, resultCodeforces, resultCodeChef, resultGFG)
             handleAllApiResults(allResults)
             onAllApiResultsAvailable()
         }
@@ -911,6 +928,7 @@ class HomeFragment : Fragment() {
         val resultLeetCode = results[0]
         val resultCodeforces = results[1]
         val resultCodeChef = results[2]
+        val resultGFG = results[3]
 
         val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
             AppCompatActivity.MODE_PRIVATE
@@ -927,6 +945,10 @@ class HomeFragment : Fragment() {
             myEdit.putString("globalrankingLC",resultLeetCode?.get("globalRanking").toString())
             myEdit.putString("ratingsCF",resultCodeforces?.get("rating").toString())
             myEdit.putString("ratingCC",resultCodeChef?.get("rating").toString())
+            myEdit.putString("gfg_rating",resultGFG?.get("rating").toString())
+            myEdit.putString("gfg_problem_solved",resultGFG?.get("problem_solved").toString())
+            myEdit.putString("gfg_monthlyCodingScore",resultGFG?.get("monthlyCodingScore").toString())
+            myEdit.putString("gfg_articlesPublished",resultGFG?.get("articlesPublished").toString())
 
             myEdit.apply()
         }
@@ -951,9 +973,12 @@ class HomeFragment : Fragment() {
         CompareButtonCodeForces = view.findViewById(R.id.CompareButtonCodeForces)
         LeaderboardButtonLeetCode = view.findViewById(R.id.ADDLeaderboardButtonLeetCode)
         LeaderboardButtonCodeForces = view.findViewById(R.id.ADDLeaderboardButtonCodeForces)
-
         codeforces_leaderboard_Button = view.findViewById(R.id.LeaderboardButtonCodeForces)
         leetcode_leaderboard_Button = view.findViewById(R.id.LeaderboardButtonLeetCode)
+        gfgUserName = view.findViewById(R.id.gfgUserNameMainPage)
+        gfgRatings = view.findViewById(R.id.gfgUserRatingsMainPage)
+        gfgProblemsSolved = view.findViewById(R.id.gfgProblemSolvedMainPage)
+        gfgArticlerPublished = view.findViewById(R.id.gfgArticlesPublishedMainPage)
     }
 
 }

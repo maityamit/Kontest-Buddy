@@ -27,6 +27,7 @@ import com.google.firebase.ktx.Firebase
 import kontestbuddybyamitmaity.example.kontestbuddy.Auth.LoginActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.GFGVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Compare.LCcompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
@@ -75,6 +76,7 @@ class ProfileFragment : Fragment() {
         private var leetcode_verify = false
         private var codeforces_verify = false
         private var codechef_verify = false
+        private var gfg_verify = false
         @SuppressLint("CutPasteId")
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -87,10 +89,12 @@ class ProfileFragment : Fragment() {
             val lcUserName:String? = sharedPreferences?.getString("userLeetcode","")
             val cfUserName:String? = sharedPreferences?.getString("userCodeforces","")
             val ccUserName:String? = sharedPreferences?.getString("userCodechef","")
+            val gfgUserName:String? = sharedPreferences?.getString("userGFG","")
 
             findViewById<EditText>(R.id._register_user_leetcode).setText(lcUserName)
             findViewById<EditText>(R.id._register_user_codeforces).setText(cfUserName)
             findViewById<EditText>(R.id._register_user_codechef).setText(ccUserName)
+            findViewById<EditText>(R.id._register_user_gfg).setText(gfgUserName)
 
 
             findViewById<TextView>(R.id._leetcode_verify_button).setOnClickListener {
@@ -170,11 +174,40 @@ class ProfileFragment : Fragment() {
                 }
             }
 
+            findViewById<TextView>(R.id._gfg_verify_button).setOnClickListener {
+
+                val user_gfg = findViewById<EditText>(R.id._register_user_gfg).text.toString()
+                if(user_gfg.isBlank()){
+                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
+                }else {
+                    progressDialog.show()
+                    val apiTask = GFGVerifyApiTask { isValid ->
+
+                        if(isValid?.get("isValid").toString()=="\"true\""){
+                            val txt = findViewById<TextView>(R.id._gfg_verify_button)
+                            txt.text = "Verified"
+                            txt.setTextColor(Color.GREEN)
+                            findViewById<EditText>(R.id._register_user_gfg).isEnabled = false
+                            findViewById<TextView>(R.id._gfg_verify_button).isEnabled = false
+                            gfg_verify = true
+
+
+                        }else{
+                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                        }
+                        progressDialog.dismiss()
+
+                    }
+                    apiTask.execute(user_gfg)
+                }
+            }
+
             findViewById<Button>(R.id._register_user_button).setOnClickListener{
 
                 val user_leetcode = findViewById<EditText>(R.id._register_user_leetcode).text.toString()
                 val user_codeforces = findViewById<EditText>(R.id._register_user_codeforces).text.toString()
                 val user_codechef= findViewById<EditText>(R.id._register_user_codechef).text.toString()
+                val user_gfg= findViewById<EditText>(R.id._register_user_gfg).text.toString()
 
                 if(user_leetcode.isNotBlank() && !leetcode_verify){
                     Toast.makeText(context,"Please verify the LC account",Toast.LENGTH_SHORT).show()
@@ -182,18 +215,23 @@ class ProfileFragment : Fragment() {
                     Toast.makeText(context,"Please verify the CF account",Toast.LENGTH_SHORT).show()
                 }else if(user_codechef.isNotBlank() && !codechef_verify){
                     Toast.makeText(context,"Please verify the CC account",Toast.LENGTH_SHORT).show()
+                }else if(user_gfg.isNotBlank() && !gfg_verify){
+                    Toast.makeText(context,"Please verify the GFG account",Toast.LENGTH_SHORT).show()
                 }else{
                     progressDialog.show()
                     var lc = "";
                     var cf = "";
                     var cc = "";
+                    var gfg = ""
                     if(user_leetcode.isNotBlank()) lc = user_leetcode;
                     if(user_codeforces.isNotBlank()) cf = user_codeforces;
                     if(user_codechef.isNotBlank()) cc = user_codechef;
+                    if(user_gfg.isNotBlank()) gfg = user_gfg
                     val userData = hashMapOf(
                         "userLeetcode" to lc,
                         "userCodeforces" to cf,
-                        "userCodechef" to cc
+                        "userCodechef" to cc,
+                        "userGFG" to gfg
                     )
                     val db = Firebase.firestore
                     val user = FirebaseAuth.getInstance().currentUser
@@ -225,11 +263,6 @@ class ProfileFragment : Fragment() {
         // Now you can access the activity property safely
     }
 
-    private fun closeApp(){
-        val intent:Intent = Intent(context, LoginActivity::class.java)
-        startActivity(intent)
-        activity?.finish()
-    }
 
     private fun retrieveData(view: View) {
         val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
@@ -240,5 +273,6 @@ class ProfileFragment : Fragment() {
         view.findViewById<TextView>(R.id.profile_frag_userLC).text = sharedPreferences?.getString("userLeetcode","")
         view.findViewById<TextView>(R.id.profile_frag_userCF).text = sharedPreferences?.getString("userCodeforces","")
         view.findViewById<TextView>(R.id.profile_frag_userCC).text = sharedPreferences?.getString("userCodechef","")
+        view.findViewById<TextView>(R.id.profile_frag_userGFG).text = sharedPreferences?.getString("userGFG","")
     }
 }
