@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -16,6 +16,9 @@
         android:theme="@style/Theme.KontestBuddy"
         tools:targetApi="31">
         <activity
+            android:name=".ResourceActivity"
+            android:exported="false" />
+        <activity
             android:name=".SpalshActivity"
             android:exported="true">
             <intent-filter>
@@ -26,9 +29,7 @@
         </activity>
         <activity
             android:name=".Auth.LoginActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".Auth.RegisterActivity"
             android:exported="false" />
@@ -37,24 +38,20 @@
             android:exported="false" />
         <activity
             android:name=".Ranking.LCrankingActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".Compare.CFcompareActivity"
             android:exported="false" />
         <activity
             android:name=".Compare.LCcompareActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
-            android:exported="true"/>
+            android:exported="true" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-
-
     </application>
-
-
 
 </manifest>

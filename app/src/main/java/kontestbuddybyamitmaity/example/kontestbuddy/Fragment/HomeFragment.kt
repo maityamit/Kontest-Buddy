@@ -37,6 +37,7 @@ import kontestbuddybyamitmaity.example.kontestbuddy.R
 import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.CFCustomAdapter
 import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.CFrankingActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.LCrankingActivity
+import kontestbuddybyamitmaity.example.kontestbuddy.ResourceActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -70,6 +71,7 @@ class HomeFragment : Fragment() {
     lateinit var LeaderboardButtonCodeForces:TextView
     lateinit var leetcode_leaderboard_Button:LinearLayout
     lateinit var codeforces_leaderboard_Button:CardView
+    lateinit var resource_layout_button:CardView
 
     lateinit var gfgUserName:TextView
     lateinit var gfgRatings:TextView
@@ -112,6 +114,11 @@ class HomeFragment : Fragment() {
 
         LeaderboardButtonCodeForces.setOnClickListener{
             context?.let { it1 -> CustomDialog4(it1, this) }?.show()
+        }
+
+        resource_layout_button.setOnClickListener {
+            val intent:Intent = Intent(context, ResourceActivity::class.java)
+            startActivity(intent)
         }
 
 
@@ -979,6 +986,7 @@ class HomeFragment : Fragment() {
         gfgRatings = view.findViewById(R.id.gfgUserRatingsMainPage)
         gfgProblemsSolved = view.findViewById(R.id.gfgProblemSolvedMainPage)
         gfgArticlerPublished = view.findViewById(R.id.gfgArticlesPublishedMainPage)
+        resource_layout_button = view.findViewById(R.id.resource_layout_button)
     }
 
 }
