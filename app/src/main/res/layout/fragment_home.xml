@@ -529,6 +529,7 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/resource_layout_button"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_marginStart="5dp"
