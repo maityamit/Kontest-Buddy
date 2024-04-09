@@ -14,6 +14,7 @@ import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -65,9 +66,9 @@ class HomeFragment : Fragment() {
     lateinit var CompareButtonLeetCode:CardView
     lateinit var CompareButtonCodeForces:CardView
     val coroutineScope = CoroutineScope(Dispatchers.Main)
-    lateinit var LeaderboardButtonLeetCode:CardView
-    lateinit var LeaderboardButtonCodeForces:CardView
-    lateinit var leetcode_leaderboard_Button:CardView
+    lateinit var LeaderboardButtonLeetCode:TextView
+    lateinit var LeaderboardButtonCodeForces:TextView
+    lateinit var leetcode_leaderboard_Button:LinearLayout
     lateinit var codeforces_leaderboard_Button:CardView
 
     lateinit var gfgUserName:TextView
@@ -595,7 +596,6 @@ class HomeFragment : Fragment() {
             super.onCreate(savedInstanceState)
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.codeforces_leaderboard_dialoguebox)
-
 
             val current_user_list_show_recyclerView_codeforces:RecyclerView = findViewById(R.id.current_user_list_show_recyclerView_codeforces)
             progressDialog.show()
