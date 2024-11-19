@@ -19,6 +19,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -26,6 +27,7 @@ import kontestbuddybyamitmaity.example.kontestbuddy.Auth.LoginActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Compare.LCcompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 
 
@@ -72,7 +74,6 @@ class ProfileFragment : Fragment() {
         private var leetcode_verify = false
         private var codeforces_verify = false
         private var codechef_verify = false
-        private var gfg_verify = false
         @SuppressLint("CutPasteId")
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -85,12 +86,10 @@ class ProfileFragment : Fragment() {
             val lcUserName:String? = sharedPreferences?.getString("userLeetcode","")
             val cfUserName:String? = sharedPreferences?.getString("userCodeforces","")
             val ccUserName:String? = sharedPreferences?.getString("userCodechef","")
-            val gfgUserName:String? = sharedPreferences?.getString("userGFG","")
 
             findViewById<EditText>(R.id._register_user_leetcode).setText(lcUserName)
             findViewById<EditText>(R.id._register_user_codeforces).setText(cfUserName)
             findViewById<EditText>(R.id._register_user_codechef).setText(ccUserName)
-            findViewById<EditText>(R.id._register_user_gfg).setText(gfgUserName)
 
 
             findViewById<TextView>(R.id._leetcode_verify_button).setOnClickListener {
@@ -170,8 +169,6 @@ class ProfileFragment : Fragment() {
                 }
             }
 
-
-
             findViewById<Button>(R.id._register_user_button).setOnClickListener{
 
                 val user_leetcode = findViewById<EditText>(R.id._register_user_leetcode).text.toString()
@@ -189,7 +186,6 @@ class ProfileFragment : Fragment() {
                     var lc = "";
                     var cf = "";
                     var cc = "";
-                    var gfg = ""
                     if(user_leetcode.isNotBlank()) lc = user_leetcode;
                     if(user_codeforces.isNotBlank()) cf = user_codeforces;
                     if(user_codechef.isNotBlank()) cc = user_codechef;
@@ -228,6 +224,11 @@ class ProfileFragment : Fragment() {
         // Now you can access the activity property safely
     }
 
+    private fun closeApp(){
+        val intent:Intent = Intent(context, LoginActivity::class.java)
+        startActivity(intent)
+        activity?.finish()
+    }
 
     private fun retrieveData(view: View) {
         val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
@@ -238,6 +239,5 @@ class ProfileFragment : Fragment() {
         view.findViewById<TextView>(R.id.profile_frag_userLC).text = sharedPreferences?.getString("userLeetcode","")
         view.findViewById<TextView>(R.id.profile_frag_userCF).text = sharedPreferences?.getString("userCodeforces","")
         view.findViewById<TextView>(R.id.profile_frag_userCC).text = sharedPreferences?.getString("userCodechef","")
-        view.findViewById<TextView>(R.id.profile_frag_userGFG).text = sharedPreferences?.getString("userGFG","")
     }
 }

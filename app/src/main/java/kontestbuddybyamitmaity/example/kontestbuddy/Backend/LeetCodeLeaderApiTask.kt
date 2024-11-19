@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 class LeetCodeLeaderApiTask(private val callback: (String?) -> Unit) : AsyncTask<String, Void, String?>() {
 
     override fun doInBackground(vararg params: String): String? {
-        val baseUrl = R.string.API_BASE_URL.toString()
+        val baseUrl = "ZZZZZZ"
         val endpoint = "lcLeader"
         val username = params[0]
 
