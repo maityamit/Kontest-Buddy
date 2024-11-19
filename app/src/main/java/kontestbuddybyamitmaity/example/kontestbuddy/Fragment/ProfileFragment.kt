@@ -19,17 +19,13 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kontestbuddybyamitmaity.example.kontestbuddy.Auth.LoginActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.GFGVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Compare.LCcompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 
 
@@ -174,40 +170,13 @@ class ProfileFragment : Fragment() {
                 }
             }
 
-            findViewById<TextView>(R.id._gfg_verify_button).setOnClickListener {
 
-                val user_gfg = findViewById<EditText>(R.id._register_user_gfg).text.toString()
-                if(user_gfg.isBlank()){
-                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
-                }else {
-                    progressDialog.show()
-                    val apiTask = GFGVerifyApiTask { isValid ->
-
-                        if(isValid?.get("isValid").toString()=="\"true\""){
-                            val txt = findViewById<TextView>(R.id._gfg_verify_button)
-                            txt.text = "Verified"
-                            txt.setTextColor(Color.GREEN)
-                            findViewById<EditText>(R.id._register_user_gfg).isEnabled = false
-                            findViewById<TextView>(R.id._gfg_verify_button).isEnabled = false
-                            gfg_verify = true
-
-
-                        }else{
-                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
-                        }
-                        progressDialog.dismiss()
-
-                    }
-                    apiTask.execute(user_gfg)
-                }
-            }
 
             findViewById<Button>(R.id._register_user_button).setOnClickListener{
 
                 val user_leetcode = findViewById<EditText>(R.id._register_user_leetcode).text.toString()
                 val user_codeforces = findViewById<EditText>(R.id._register_user_codeforces).text.toString()
                 val user_codechef= findViewById<EditText>(R.id._register_user_codechef).text.toString()
-                val user_gfg= findViewById<EditText>(R.id._register_user_gfg).text.toString()
 
                 if(user_leetcode.isNotBlank() && !leetcode_verify){
                     Toast.makeText(context,"Please verify the LC account",Toast.LENGTH_SHORT).show()
@@ -215,8 +184,6 @@ class ProfileFragment : Fragment() {
                     Toast.makeText(context,"Please verify the CF account",Toast.LENGTH_SHORT).show()
                 }else if(user_codechef.isNotBlank() && !codechef_verify){
                     Toast.makeText(context,"Please verify the CC account",Toast.LENGTH_SHORT).show()
-                }else if(user_gfg.isNotBlank() && !gfg_verify){
-                    Toast.makeText(context,"Please verify the GFG account",Toast.LENGTH_SHORT).show()
                 }else{
                     progressDialog.show()
                     var lc = "";
@@ -226,12 +193,10 @@ class ProfileFragment : Fragment() {
                     if(user_leetcode.isNotBlank()) lc = user_leetcode;
                     if(user_codeforces.isNotBlank()) cf = user_codeforces;
                     if(user_codechef.isNotBlank()) cc = user_codechef;
-                    if(user_gfg.isNotBlank()) gfg = user_gfg
                     val userData = hashMapOf(
                         "userLeetcode" to lc,
                         "userCodeforces" to cf,
-                        "userCodechef" to cc,
-                        "userGFG" to gfg
+                        "userCodechef" to cc
                     )
                     val db = Firebase.firestore
                     val user = FirebaseAuth.getInstance().currentUser
