@@ -17,6 +17,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -31,6 +32,9 @@ import kontestbuddybyamitmaity.example.kontestbuddy.Compare.LCcompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.CurrentFriends.CodeForcesFrndAdapter
 import kontestbuddybyamitmaity.example.kontestbuddy.CurrentFriends.LeetCodeCurrentFrndAdapter
 import kontestbuddybyamitmaity.example.kontestbuddy.R
+import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.CFCustomAdapter
+import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.CFrankingActivity
+import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.LCrankingActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -57,13 +61,14 @@ class HomeFragment : Fragment() {
     lateinit var lastUpdateHomeMainPage:TextView
     lateinit var mainHomePageRatingsRefresh:ImageView
     private lateinit var progressDialog: ProgressDialog
-//    lateinit var CompareButtonLeetCode:CardView
-//    lateinit var CompareButtonCodeForces:CardView
+    lateinit var CompareButtonLeetCode:CardView
+    lateinit var CompareButtonCodeForces:CardView
     val coroutineScope = CoroutineScope(Dispatchers.Main)
-//    lateinit var LeaderboardButtonLeetCode:TextView
-//    lateinit var LeaderboardButtonCodeForces:TextView
-//    lateinit var leetcode_leaderboard_Button:LinearLayout
-//    lateinit var codeforces_leaderboard_Button:CardView
+    lateinit var LeaderboardButtonLeetCode:CardView
+    lateinit var LeaderboardButtonCodeForces:CardView
+
+    lateinit var leetcode_leaderboard_Button:CardView
+    lateinit var codeforces_leaderboard_Button:CardView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,94 +92,94 @@ class HomeFragment : Fragment() {
             retrieveDataFromtheFirebase()
         }
 
-//        CompareButtonLeetCode.setOnClickListener {
-//            context?.let { it1 -> CustomDialog(it1, this) }?.show()
-//        }
-//
-//        CompareButtonCodeForces.setOnClickListener{
-//            context?.let { it1 -> CustomDialog2(it1, this) }?.show()
-//        }
-//
-//        LeaderboardButtonLeetCode.setOnClickListener{
-//            context?.let { it1 -> CustomDialog3(it1, this) }?.show()
-//        }
-//
-//        LeaderboardButtonCodeForces.setOnClickListener{
-//            context?.let { it1 -> CustomDialog4(it1, this) }?.show()
-//        }
+        CompareButtonLeetCode.setOnClickListener {
+            context?.let { it1 -> CustomDialog(it1, this) }?.show()
+        }
+
+        CompareButtonCodeForces.setOnClickListener{
+            context?.let { it1 -> CustomDialog2(it1, this) }?.show()
+        }
+
+        LeaderboardButtonLeetCode.setOnClickListener{
+            context?.let { it1 -> CustomDialog3(it1, this) }?.show()
+        }
+
+        LeaderboardButtonCodeForces.setOnClickListener{
+            context?.let { it1 -> CustomDialog4(it1, this) }?.show()
+        }
 
 
-//        leetcode_leaderboard_Button.setOnClickListener{
-//            progressDialog.show()
-//            val db = Firebase.firestore
-//            val auth: FirebaseAuth = FirebaseAuth.getInstance()
-//
-//            val userID = auth.currentUser?.uid.toString()
-//            val docRef = db.collection("users").document(userID)
-//            docRef.get().addOnCompleteListener { task ->
-//                if (task.isSuccessful) {
-//                    val document = task.result
-//                    if (document != null) {
-//
-//                        val LCleader = document.getString("LCleader")
-//                        if(LCleader?.isNotBlank()==true){
-//                            progressDialog.dismiss()
-//                            val intent:Intent = Intent(context,LCrankingActivity::class.java)
-//                            intent.putExtra("userNames",LCleader)
-//                            startActivity(intent)
-//                        }else{
-//                            progressDialog.dismiss()
-//                            Toast.makeText(context,"You have not any friends !!",Toast.LENGTH_SHORT).show()
-//                        }
-//
-//                    } else {
-//                        progressDialog.dismiss()
-//                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-//                            .show()
-//                    }
-//                } else {
-//                    progressDialog.dismiss()
-//                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//            }
-//        }
-//
-//        codeforces_leaderboard_Button.setOnClickListener{
-//            progressDialog.show()
-//            val db = Firebase.firestore
-//            val auth: FirebaseAuth = FirebaseAuth.getInstance()
-//
-//            val userID = auth.currentUser?.uid.toString()
-//            val docRef = db.collection("users").document(userID)
-//            docRef.get().addOnCompleteListener { task ->
-//                if (task.isSuccessful) {
-//                    val document = task.result
-//                    if (document != null) {
-//
-//                        val LCleader = document.getString("CFleader")
-//                        if(LCleader?.isNotBlank()==true){
-//                            progressDialog.dismiss()
-//                            val intent:Intent = Intent(context, CFrankingActivity::class.java)
-//                            intent.putExtra("userNames",LCleader)
-//                            startActivity(intent)
-//                        }else{
-//                            progressDialog.dismiss()
-//                            Toast.makeText(context,"You have not any friends !!",Toast.LENGTH_SHORT).show()
-//                        }
-//
-//                    } else {
-//                        progressDialog.dismiss()
-//                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-//                            .show()
-//                    }
-//                } else {
-//                    progressDialog.dismiss()
-//                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//            }
-//        }
+        leetcode_leaderboard_Button.setOnClickListener{
+            progressDialog.show()
+            val db = Firebase.firestore
+            val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+            val userID = auth.currentUser?.uid.toString()
+            val docRef = db.collection("users").document(userID)
+            docRef.get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val document = task.result
+                    if (document != null) {
+
+                        val LCleader = document.getString("LCleader")
+                        if(LCleader?.isNotBlank()==true){
+                            progressDialog.dismiss()
+                            val intent:Intent = Intent(context,LCrankingActivity::class.java)
+                            intent.putExtra("userNames",LCleader)
+                            startActivity(intent)
+                        }else{
+                            progressDialog.dismiss()
+                            Toast.makeText(context,"You have not any friends !!",Toast.LENGTH_SHORT).show()
+                        }
+
+                    } else {
+                        progressDialog.dismiss()
+                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                } else {
+                    progressDialog.dismiss()
+                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+
+        codeforces_leaderboard_Button.setOnClickListener{
+            progressDialog.show()
+            val db = Firebase.firestore
+            val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+            val userID = auth.currentUser?.uid.toString()
+            val docRef = db.collection("users").document(userID)
+            docRef.get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val document = task.result
+                    if (document != null) {
+
+                        val LCleader = document.getString("CFleader")
+                        if(LCleader?.isNotBlank()==true){
+                            progressDialog.dismiss()
+                            val intent:Intent = Intent(context, CFrankingActivity::class.java)
+                            intent.putExtra("userNames",LCleader)
+                            startActivity(intent)
+                        }else{
+                            progressDialog.dismiss()
+                            Toast.makeText(context,"You have not any friends !!",Toast.LENGTH_SHORT).show()
+                        }
+
+                    } else {
+                        progressDialog.dismiss()
+                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                } else {
+                    progressDialog.dismiss()
+                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
 
 
         return view
@@ -586,6 +591,7 @@ class HomeFragment : Fragment() {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.codeforces_leaderboard_dialoguebox)
 
+
             val current_user_list_show_recyclerView_codeforces:RecyclerView = findViewById(R.id.current_user_list_show_recyclerView_codeforces)
             progressDialog.show()
             val db = Firebase.firestore
@@ -826,9 +832,6 @@ class HomeFragment : Fragment() {
         cfUserName.text = sharedPreferences?.getString("userCodeforces","")
         ccUserName.text = sharedPreferences?.getString("userCodechef","")
         lastUpdateHomeMainPage.text = sharedPreferences?.getString("lastUpdate","")
-
-
-
     }
 
     private fun retrieveDataFromtheFirebase() {
@@ -846,9 +849,8 @@ class HomeFragment : Fragment() {
                     val userCodeforces = document.getString("userCodeforces")
                     val userLeetcode = document.getString("userLeetcode")
                     val userName = document.getString("userName")
-                    val userGFG = document.getString("userGFG")
 
-                    retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef,userName,userGFG)
+                    retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef,userName)
 
                 } else {
                     Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
@@ -861,7 +863,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?, userName: String?,userGFG: String?) {
+    private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?, userName: String?) {
 
         val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
             AppCompatActivity.MODE_PRIVATE
@@ -872,7 +874,6 @@ class HomeFragment : Fragment() {
             myEdit.putString("userLeetcode",userLeetcode)
             myEdit.putString("userCodeforces",userCodeforces)
             myEdit.putString("userCodechef",userCodechef)
-            myEdit.putString("userGFG",userGFG)
             myEdit.apply()
         }
 
@@ -880,7 +881,6 @@ class HomeFragment : Fragment() {
             userLeetCode = userLeetcode,
             userCodeforces = userCodeforces,
             userCodechef = userCodechef,
-            userGFG = userGFG,
             onAllApiResultsAvailable = {
                 progressDialog.dismiss()
                 allDataSettoTheUI()
@@ -893,7 +893,6 @@ class HomeFragment : Fragment() {
         userLeetCode: String?,
         userCodeforces: String?,
         userCodechef: String?,
-        userGFG: String?,
         onAllApiResultsAvailable: () -> Unit
     ) {
         coroutineScope.launch {
@@ -912,7 +911,6 @@ class HomeFragment : Fragment() {
         val resultLeetCode = results[0]
         val resultCodeforces = results[1]
         val resultCodeChef = results[2]
-        val resultGFG = results[3]
 
         val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
             AppCompatActivity.MODE_PRIVATE
@@ -949,13 +947,13 @@ class HomeFragment : Fragment() {
         ccUserName  = view.findViewById(R.id.ccUserNameMainPage);
         lastUpdateHomeMainPage = view.findViewById(R.id.lastUpdateHomeMainPage)
         mainHomePageRatingsRefresh = view.findViewById(R.id.mainHomePageRatingsRefresh)
-//        CompareButtonLeetCode = view.findViewById(R.id.CompareButtonLeetCode)
-//        CompareButtonCodeForces = view.findViewById(R.id.CompareButtonCodeForces)
-//        LeaderboardButtonLeetCode = view.findViewById(R.id.ADDLeaderboardButtonLeetCode)
-//        LeaderboardButtonCodeForces = view.findViewById(R.id.ADDLeaderboardButtonCodeForces)
-//        codeforces_leaderboard_Button = view.findViewById(R.id.LeaderboardButtonCodeForces)
-//        leetcode_leaderboard_Button = view.findViewById(R.id.LeaderboardButtonLeetCode)
-//        resource_layout_button = view.findViewById(R.id.resource_layout_button)
+        CompareButtonLeetCode = view.findViewById(R.id.CompareButtonLeetCode)
+        CompareButtonCodeForces = view.findViewById(R.id.CompareButtonCodeForces)
+        LeaderboardButtonLeetCode = view.findViewById(R.id.ADDLeaderboardButtonLeetCode)
+        LeaderboardButtonCodeForces = view.findViewById(R.id.ADDLeaderboardButtonCodeForces)
+
+        codeforces_leaderboard_Button = view.findViewById(R.id.LeaderboardButtonCodeForces)
+        leetcode_leaderboard_Button = view.findViewById(R.id.LeaderboardButtonLeetCode)
     }
 
 }

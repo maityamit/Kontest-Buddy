@@ -243,6 +243,7 @@
 
         </LinearLayout>
 
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/register_user_button"
             android:layout_width="100dp"
