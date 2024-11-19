@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
@@ -47,12 +48,17 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(applicationContext, RegisterActivity::class.java)
             startActivity(intent)
         }
+
+
         if (FirebaseAuth.getInstance().currentUser != null) {
             val intent = Intent(applicationContext, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
         }
+
+
+
         findViewById<Button>(R.id.sign_in_button).setOnClickListener {
             val userEmail = findViewById<EditText>(R.id.login_user_email).text.toString()
             val userPassword = findViewById<EditText>(R.id.login_user_pass).text.toString()
@@ -111,9 +117,7 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(userEmail, userPassword)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success
                     retrieveDataFromtheFirebase()
-                    // You can navigate to the next activity or perform other actions here
                 } else {
                     // If sign in fails, display a message to the user.
                     Toast.makeText(this, task.exception.toString(), Toast.LENGTH_SHORT).show()
@@ -156,6 +160,10 @@ class LoginActivity : AppCompatActivity() {
 
     private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?, userName: String?, userEmail: String?) {
 
+
+
+        Log.e("DataAmit", "${userLeetcode} + ${userCodeforces} + ${userCodechef} + ${userName} + ${userEmail}.")
+
         val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
         val myEdit = sharedPreferences.edit()
         myEdit.putString("userName", userName)
@@ -191,6 +199,7 @@ class LoginActivity : AppCompatActivity() {
             val resultCodeforces = async { CodeForcesVerifyApiTask{}.execute(userCodeforces).get() }
             val resultCodeChef = async { CodeChefVerifyApiTask{}.execute(userCodechef).get() }
             val allResults = awaitAll(resultLeetCode, resultCodeforces, resultCodeChef)
+            Log.e("DataAmit", "${allResults}")
             handleAllApiResults(allResults)
             onAllApiResultsAvailable()
         }
@@ -214,6 +223,8 @@ class LoginActivity : AppCompatActivity() {
         myEdit.putString("globalrankingLC",resultLeetCode?.get("globalRanking").toString())
         myEdit.putString("ratingsCF",resultCodeforces?.get("rating").toString())
         myEdit.putString("ratingCC",resultCodeChef?.get("rating").toString())
+
+        Log.e("DataAmit", "${resultLeetCode?.get("rating")} + ${resultLeetCode?.get("topPercentage")} + ${resultLeetCode?.get("attendedContestsCount")} + ${resultLeetCode?.get("globalRanking")} + ${resultCodeforces?.get("rating")} + ${resultCodeChef?.get("rating")}.")
 
         myEdit.apply()
 
