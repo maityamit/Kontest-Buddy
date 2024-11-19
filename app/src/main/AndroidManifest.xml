@@ -16,9 +16,6 @@
         android:theme="@style/Theme.KontestBuddy"
         tools:targetApi="31">
         <activity
-            android:name=".ResourceActivity"
-            android:exported="false" />
-        <activity
             android:name=".SpalshActivity"
             android:exported="true">
             <intent-filter>

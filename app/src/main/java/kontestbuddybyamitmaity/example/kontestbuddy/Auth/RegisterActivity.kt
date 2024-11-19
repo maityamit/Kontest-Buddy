@@ -16,7 +16,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.GFGVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
@@ -32,17 +31,12 @@ class RegisterActivity : AppCompatActivity() {
     private var leetcode_verify = false
     private var codeforces_verify = false
     private var codechef_verify = false
-    private var gfg_verify = false
     private var ratingsLC = ""
     private var toppercentageLC = ""
     private var livecontestLC = ""
     private var globalrankingLC = ""
     private var ratingsCF = ""
     private var ratingCC = ""
-    private var gfg_rating = ""
-    private var gfg_problem_solved = ""
-    private var gfg_monthlyCodingScore = ""
-    private var gfg_articlesPublished = ""
     private lateinit var progressDialog: ProgressDialog
     @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -146,39 +140,6 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<TextView>(R.id.gfg_verify_button).setOnClickListener {
-
-            val user_gfg = findViewById<EditText>(R.id.register_user_gfg).text.toString()
-            if(user_gfg.isBlank()){
-                Toast.makeText(applicationContext,"Enter the UserName",Toast.LENGTH_SHORT).show()
-            }else {
-                progressDialog.show()
-                val apiTask = GFGVerifyApiTask { isValid ->
-
-                    if(isValid?.get("isValid").toString()=="\"true\""){
-                        val txt = findViewById<TextView>(R.id.gfg_verify_button)
-                        txt.text = "Verified"
-                        txt.setTextColor(Color.GREEN)
-                        findViewById<EditText>(R.id.register_user_gfg).isEnabled = false
-                        findViewById<TextView>(R.id.gfg_verify_button).isEnabled = false
-                        gfg_verify = true
-
-                        gfg_rating = isValid?.get("rating").toString()
-                        gfg_problem_solved = isValid?.get("problem_solved").toString()
-                        gfg_monthlyCodingScore = isValid?.get("monthlyCodingScore").toString()
-                        gfg_articlesPublished = isValid?.get("articlesPublished").toString()
-
-                    }else{
-                        Toast.makeText(applicationContext, "This UserName is not valid",Toast.LENGTH_SHORT).show()
-                    }
-                    progressDialog.dismiss()
-
-                }
-                apiTask.execute(user_gfg)
-            }
-        }
-
-
         findViewById<Button>(R.id.register_user_button).setOnClickListener{
 
             val user_name = findViewById<EditText>(R.id.register_user_name).text.toString()
@@ -187,7 +148,6 @@ class RegisterActivity : AppCompatActivity() {
             val user_leetcode = findViewById<EditText>(R.id.register_user_leetcode).text.toString()
             val user_codeforces = findViewById<EditText>(R.id.register_user_codeforces).text.toString()
             val user_codechef= findViewById<EditText>(R.id.register_user_codechef).text.toString()
-            val user_gfg = findViewById<EditText>(R.id.register_user_gfg).text.toString()
 
             if(user_name.isBlank()){
                 Toast.makeText(applicationContext,"Enter Your Name",Toast.LENGTH_SHORT).show()
@@ -201,26 +161,22 @@ class RegisterActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext,"Please verify the CF account",Toast.LENGTH_SHORT).show()
             }else if(user_codechef.isNotBlank() && !codechef_verify){
                 Toast.makeText(applicationContext,"Please verify the CC account",Toast.LENGTH_SHORT).show()
-            }else if(user_gfg.isNotBlank() && !gfg_verify){
-                Toast.makeText(applicationContext,"Please verify the GFG account",Toast.LENGTH_SHORT).show()
             }else{
                 progressDialog.show()
                 var lc = "";
                 var cf = "";
                 var cc = "";
-                var gfg = ""
                 if(user_leetcode.isNotBlank()) lc = user_leetcode;
                 if(user_codeforces.isNotBlank()) cf = user_codeforces;
                 if(user_codechef.isNotBlank()) cc = user_codechef;
-                if(user_gfg.isNotBlank()) gfg = user_gfg
-                createANewUserOnFirebase(user_name,user_password,user_email,lc,cf,cc,gfg)
+                createANewUserOnFirebase(user_name,user_password,user_email,lc,cf,cc)
             }
         }
 
 
     }
 
-    private fun createANewUserOnFirebase(userName: String, userPassword: String, userEmail: String, userLeetcode: String, userCodeforces: String, userCodechef: String,userGfg:String) {
+    private fun createANewUserOnFirebase(userName: String, userPassword: String, userEmail: String, userLeetcode: String, userCodeforces: String, userCodechef: String) {
         val userData = hashMapOf(
             "userName" to userName,
             "userEmail" to userEmail,
@@ -228,8 +184,7 @@ class RegisterActivity : AppCompatActivity() {
             "userCodeforces" to userCodeforces,
             "userCodechef" to userCodechef,
             "LCleader" to "",
-            "CFleader" to "",
-            "userGFG" to userGfg
+            "CFleader" to ""
         )
 
 
@@ -273,10 +228,6 @@ class RegisterActivity : AppCompatActivity() {
         myEdit.putString("globalrankingLC",globalrankingLC)
         myEdit.putString("ratingsCF",ratingsCF)
         myEdit.putString("ratingCC",ratingCC)
-        myEdit.putString("gfg_rating",gfg_rating)
-        myEdit.putString("gfg_problem_solved",gfg_problem_solved)
-        myEdit.putString("gfg_monthlyCodingScore",gfg_monthlyCodingScore)
-        myEdit.putString("gfg_articlesPublished",gfg_articlesPublished)
 
         myEdit.apply()
 

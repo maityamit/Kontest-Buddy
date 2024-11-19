@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import kontestbuddybyamitmaity.example.kontestbuddy.R
 import okhttp3.FormBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit
 class CodeChefVerifyApiTask(private val callback: (JsonObject?) -> Unit) : AsyncTask<String, Void, JsonObject?>() {
 
     override fun doInBackground(vararg params: String): JsonObject? {
-        val baseUrl = "ZZZZZZ"
+        val baseUrl = R.string.API_BASE_URL.toString()
         val endpoint = "isCCExist"
         val username = params[0]
 

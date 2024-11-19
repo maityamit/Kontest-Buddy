@@ -61,12 +61,43 @@
         </RelativeLayout>
 
         <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1H 21M"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:textColor="#FFA116"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Code"
+                android:layout_marginStart="5dp"
+                android:textSize="17sp"
+                android:textColor="#FFFFFF"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_arrow_upward_24"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="25dp"
             android:layout_marginBottom="5dp"
             android:weightSum="2">
 
@@ -391,183 +422,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
-            android:weightSum="2">
-
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_marginEnd="5dp"
-                app:cardCornerRadius="10dp"
-                android:layout_weight="1">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/theme_tiles">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:orientation="horizontal">
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            app:cardCornerRadius="10dp">
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleType="fitXY"
-                                android:src="@drawable/gfg"/>
-                        </androidx.cardview.widget.CardView>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:orientation="vertical">
-
-
-                            <TextView
-                                android:id="@+id/gfgUserNameMainPage"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="#6F6F6F"
-                                android:text="userName"/>
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Ratings: "
-                                    android:textColor="#6F6F6F"
-                                    android:textSize="12sp"/>
-
-                                <TextView
-                                    android:id="@+id/gfgUserRatingsMainPage"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="1000"
-                                    android:textColor="#009039"
-                                    android:textStyle="bold"
-                                    android:textSize="16sp"/>
-
-                            </LinearLayout>
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Problems: "
-                                    android:textColor="#6F6F6F"
-                                    android:textSize="12sp"/>
-
-                                <TextView
-                                    android:id="@+id/gfgProblemSolvedMainPage"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="15.5%"
-                                    android:textColor="#ffffff"
-                                    android:textStyle="bold"
-                                    android:textSize="14sp"/>
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Articles: "
-                                    android:textColor="#6F6F6F"
-                                    android:textSize="12sp"/>
-
-                                <TextView
-                                    android:id="@+id/gfgArticlesPublishedMainPage"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="14"
-                                    android:textColor="#ffffff"
-                                    android:textStyle="bold"
-                                    android:textSize="14sp"/>
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-
-
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/resource_layout_button"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_marginStart="5dp"
-                app:cardCornerRadius="10dp"
-                android:layout_weight="1">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/theme_tiles">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/resources"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:textColor="#6F6F6F"
-                        android:text="Resources"/>
-
-
-                </LinearLayout>
-
-
-
-            </androidx.cardview.widget.CardView>
-
-
-
-        </LinearLayout>
-
-        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -576,17 +430,17 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_leaderboard_24"/>
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/coding_stat"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="5dp"
                 android:textColor="#6F6F6F"
                 android:textSize="17sp"
-                android:text="Leaderboard with friends"/>
+                android:text="Coding Stats (via extension)"/>
 
         </LinearLayout>
 
@@ -612,43 +466,14 @@
                     android:gravity="center"
                     android:orientation="vertical">
 
-                    <LinearLayout
-                        android:id="@+id/LeaderboardButtonLeetCode"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            app:cardCornerRadius="5dp">
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleType="fitXY"
-                                android:src="@drawable/leetcode"/>
-                        </androidx.cardview.widget.CardView>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:text="Daily"/>
 
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="#6F6F6F"
-                                android:textSize="12sp"
-                                android:text="Leaderboard"/>
-
-
-                        </LinearLayout>
-
-                    </LinearLayout>
 
 
                 </LinearLayout>
@@ -670,33 +495,12 @@
                     android:background="@drawable/theme_tiles"
                     android:orientation="horizontal">
 
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        app:cardCornerRadius="5dp">
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="fitXY"
-                            android:src="@drawable/codeforces"/>
-                    </androidx.cardview.widget.CardView>
-
-                    <LinearLayout
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="#6F6F6F"
-                            android:textSize="12sp"
-                            android:text="Leaderboard"/>
-
-
-                    </LinearLayout>
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:text="Weekly"/>
 
 
 
@@ -711,7 +515,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="5dp"
-                android:alpha="0.5"
                 app:cardCornerRadius="10dp"
                 android:layout_weight="1">
 
@@ -722,37 +525,12 @@
                     android:background="@drawable/theme_tiles"
                     android:orientation="horizontal">
 
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        app:cardCornerRadius="5dp">
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="fitXY"
-                            android:src="@drawable/codechef"/>
-                    </androidx.cardview.widget.CardView>
-
-                    <LinearLayout
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-
-
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="#F44336"
-                            android:textSize="14sp"
-                            android:gravity="center"
-                            android:text="Coming\nSoon"/>
-
-
-                    </LinearLayout>
-
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:text="Monthly"/>
 
 
                 </LinearLayout>
@@ -764,78 +542,6 @@
             </androidx.cardview.widget.CardView>
 
 
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:weightSum="3">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/ADDLeaderboardButtonLeetCode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Edit Friends"
-                    android:textSize="12sp"
-                    android:textColor="#2A2A2A"
-                    android:drawableStart="@drawable/baseline_edit_24_small"
-                    android:background="@color/white"
-                    android:padding="3dp"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/ADDLeaderboardButtonCodeForces"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Edit Friends"
-                    android:textSize="12sp"
-                    android:textColor="#2A2A2A"
-                    android:drawableStart="@drawable/baseline_edit_24_small"
-                    android:background="@color/white"
-                    android:padding="3dp"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_compare_arrows_24"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:textColor="#6F6F6F"
-                android:textSize="17sp"
-                android:text="Compare &amp; Compete"/>
 
         </LinearLayout>
 
@@ -853,38 +559,10 @@
                 android:layout_marginEnd="10dp"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        app:cardCornerRadius="5dp">
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="fitXY"
-                            android:src="@drawable/leetcode"/>
-                    </androidx.cardview.widget.CardView>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="LeetCode"
-                        android:layout_marginStart="5dp"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"/>
-
-                </LinearLayout>
-
-
                 <androidx.cardview.widget.CardView
                     android:id="@+id/CompareButtonLeetCode"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="100dp"
                     android:layout_marginTop="10dp"
                     app:cardCornerRadius="10dp">
 
@@ -897,30 +575,21 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            android:gravity="center"
-                            android:orientation="horizontal">
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:src="@drawable/baseline_leaderboard_24"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="User1"
+                                android:layout_marginTop="5dp"
+                                android:text="Leaderboard with friends"
                                 android:textColor="@color/white"
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:layout_marginEnd="10dp"
-                                android:text="v/s"
-                                android:textColor="#6F6F6F" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="User2"
-                                android:textColor="@color/white"
-                                android:textSize="16sp" />
+                                android:textSize="13sp" />
 
                         </LinearLayout>
 
@@ -937,39 +606,11 @@
                 android:layout_weight="1"
                 android:layout_marginStart="10dp"
                 android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        app:cardCornerRadius="5dp">
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="fitXY"
-                            android:src="@drawable/codeforces"/>
-                    </androidx.cardview.widget.CardView>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CodeForces"
-                        android:layout_marginStart="5dp"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"/>
-
-                </LinearLayout>
-
-
+                
                 <androidx.cardview.widget.CardView
                     android:id="@+id/CompareButtonCodeForces"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="100dp"
                     android:layout_marginTop="10dp"
                     app:cardCornerRadius="10dp">
 
@@ -983,29 +624,20 @@
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
                             android:gravity="center"
-                            android:orientation="horizontal">
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:src="@drawable/baseline_compare_arrows_24"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="User1"
+                                android:layout_marginTop="5dp"
+                                android:text="Compare &amp; Compete"
                                 android:textColor="@color/white"
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:layout_marginEnd="10dp"
-                                android:text="v/s"
-                                android:textColor="#6F6F6F" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="User2"
-                                android:textColor="@color/white"
-                                android:textSize="16sp" />
+                                android:textSize="13sp" />
 
                         </LinearLayout>
 

@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
@@ -16,7 +17,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonObject
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.GFGVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
@@ -48,12 +48,17 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(applicationContext, RegisterActivity::class.java)
             startActivity(intent)
         }
+
+
         if (FirebaseAuth.getInstance().currentUser != null) {
             val intent = Intent(applicationContext, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
         }
+
+
+
         findViewById<Button>(R.id.sign_in_button).setOnClickListener {
             val userEmail = findViewById<EditText>(R.id.login_user_email).text.toString()
             val userPassword = findViewById<EditText>(R.id.login_user_pass).text.toString()
@@ -112,9 +117,7 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(userEmail, userPassword)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success
                     retrieveDataFromtheFirebase()
-                    // You can navigate to the next activity or perform other actions here
                 } else {
                     // If sign in fails, display a message to the user.
                     Toast.makeText(this, task.exception.toString(), Toast.LENGTH_SHORT).show()
@@ -139,9 +142,8 @@ class LoginActivity : AppCompatActivity() {
                     val userLeetcode = document.getString("userLeetcode")
                     val userName = document.getString("userName")
                     val userEmail = document.getString("userEmail")
-                    val userGFG = document.getString("userGFG")
 
-                    retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef,userName,userEmail,userGFG)
+                    retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef,userName,userEmail)
 
                 } else {
                     Toast.makeText(applicationContext, "No Such document", Toast.LENGTH_SHORT)
@@ -156,7 +158,11 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?, userName: String?, userEmail: String?, userGFG: String?) {
+    private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?, userName: String?, userEmail: String?) {
+
+
+
+        Log.e("DataAmit", "${userLeetcode} + ${userCodeforces} + ${userCodechef} + ${userName} + ${userEmail}.")
 
         val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
         val myEdit = sharedPreferences.edit()
@@ -165,14 +171,12 @@ class LoginActivity : AppCompatActivity() {
         myEdit.putString("userLeetcode",userLeetcode)
         myEdit.putString("userCodeforces",userCodeforces)
         myEdit.putString("userCodechef",userCodechef)
-        myEdit.putString("userGFG",userGFG)
         myEdit.apply()
 
         callApiTasks(
             userLeetCode = userLeetcode,
             userCodeforces = userCodeforces,
             userCodechef = userCodechef,
-            userGFG = userGFG,
             onAllApiResultsAvailable = {
                 progressDialog.dismiss()
                 val intent: Intent = Intent(applicationContext, MainActivity::class.java)
@@ -187,7 +191,6 @@ class LoginActivity : AppCompatActivity() {
         userLeetCode: String?,
         userCodeforces: String?,
         userCodechef: String?,
-        userGFG: String?,
         onAllApiResultsAvailable: () -> Unit
     ) {
         coroutineScope.launch {
@@ -195,8 +198,8 @@ class LoginActivity : AppCompatActivity() {
             val resultLeetCode = async { LeetCodeVerifyApiTask{}.execute(userLeetCode).get() }
             val resultCodeforces = async { CodeForcesVerifyApiTask{}.execute(userCodeforces).get() }
             val resultCodeChef = async { CodeChefVerifyApiTask{}.execute(userCodechef).get() }
-            val resultGFG = async { GFGVerifyApiTask{}.execute(userGFG).get() }
-            val allResults = awaitAll(resultLeetCode, resultCodeforces, resultCodeChef, resultGFG)
+            val allResults = awaitAll(resultLeetCode, resultCodeforces, resultCodeChef)
+            Log.e("DataAmit", "${allResults}")
             handleAllApiResults(allResults)
             onAllApiResultsAvailable()
         }
@@ -207,7 +210,6 @@ class LoginActivity : AppCompatActivity() {
         val resultLeetCode = results[0]
         val resultCodeforces = results[1]
         val resultCodeChef = results[2]
-        val resultGFG = results[3]
 
         val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
         val myEdit = sharedPreferences.edit()
@@ -221,10 +223,8 @@ class LoginActivity : AppCompatActivity() {
         myEdit.putString("globalrankingLC",resultLeetCode?.get("globalRanking").toString())
         myEdit.putString("ratingsCF",resultCodeforces?.get("rating").toString())
         myEdit.putString("ratingCC",resultCodeChef?.get("rating").toString())
-        myEdit.putString("gfg_rating",resultGFG?.get("rating").toString())
-        myEdit.putString("gfg_problem_solved",resultGFG?.get("problem_solved").toString())
-        myEdit.putString("gfg_monthlyCodingScore",resultGFG?.get("monthlyCodingScore").toString())
-        myEdit.putString("gfg_articlesPublished",resultGFG?.get("articlesPublished").toString())
+
+        Log.e("DataAmit", "${resultLeetCode?.get("rating")} + ${resultLeetCode?.get("topPercentage")} + ${resultLeetCode?.get("attendedContestsCount")} + ${resultLeetCode?.get("globalRanking")} + ${resultCodeforces?.get("rating")} + ${resultCodeChef?.get("rating")}.")
 
         myEdit.apply()
 
