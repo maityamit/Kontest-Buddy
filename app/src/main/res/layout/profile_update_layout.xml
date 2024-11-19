@@ -166,6 +166,56 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:weightSum="12"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:cardCornerRadius="5dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/gfg"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <EditText
+            android:id="@+id/_register_user_gfg"
+            android:layout_width="0dp"
+            android:layout_weight="10"
+            android:layout_height="50dp"
+            android:backgroundTint="#2A2A2A"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textCursorDrawable="@null"
+            android:hint="GFG ID (optional)"
+            android:paddingStart="20dp"
+            android:inputType="textShortMessage"
+            android:textColor="@android:color/white"
+            android:textColorHint="#959595"
+            android:background="@drawable/all_rounded"/>
+
+
+        <TextView
+            android:id="@+id/_gfg_verify_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:text="@string/verify"/>
+
+    </LinearLayout>
+
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/_register_user_button"

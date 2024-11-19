@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 class CodeForcesLeaderApiTask(private val callback: (String?) -> Unit) : AsyncTask<String, Void, String?>() {
 
     override fun doInBackground(vararg params: String): String? {
-        val baseUrl = "ZZZZZZ"
+        val baseUrl = R.string.API_BASE_URL.toString()
         val endpoint = "cfLeader"
         val username = params[0]
 

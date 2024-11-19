@@ -136,10 +136,9 @@ class RegisterActivity : AppCompatActivity() {
                     progressDialog.dismiss()
 
                 }
-                apiTask.execute(user_codechef,"isCCExist")
+                apiTask.execute(user_codechef)
             }
         }
-
 
         findViewById<Button>(R.id.register_user_button).setOnClickListener{
 

@@ -18,7 +18,8 @@ import java.util.concurrent.TimeUnit
 class CodeForcesVerifyApiTask(private val callback: (JsonObject?) -> Unit) : AsyncTask<String, Void, JsonObject?>() {
 
     override fun doInBackground(vararg params: String): JsonObject? {
-        val baseUrl = "ZZZZZZ"
+
+        val baseUrl = R.string.API_BASE_URL.toString()
         val endpoint = "isCFExist"
         val username = params[0]
 
