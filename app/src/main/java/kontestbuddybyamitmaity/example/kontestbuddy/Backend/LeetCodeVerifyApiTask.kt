@@ -17,29 +17,24 @@ class LeetCodeVerifyApiTask(private val callback: (JsonObject?) -> Unit) : Async
 
     override fun doInBackground(vararg params: String): JsonObject? {
 
-        val baseUrl = R.string.API_BASE_URL.toString()
-        val endpoint = "isLCExist"
+
         val username = params[0]
-
-        val requestBody = FormBody.Builder()
-            .add("userName", username)
-            .build()
-
-        // Create OkHttpClient instance
+        val endpoint = "isLCExist"
+        val baseUrl = "https://express-liard-nine.vercel.app"
+        val fullurl = "$baseUrl/$endpoint?userName=$username"
 
         val client = OkHttpClient()
 
+
         // Build the request
         val request = Request.Builder()
-            .url("$baseUrl/$endpoint")
-            .post(requestBody)
+            .url(fullurl)
             .build()
+
 
         try {
             // Execute the request and get the response
             val response = client.newCall(request).execute()
-
-            Log.e("AMITA",response.toString())
 
             // Check if the response is successful
             if (response.isSuccessful) {

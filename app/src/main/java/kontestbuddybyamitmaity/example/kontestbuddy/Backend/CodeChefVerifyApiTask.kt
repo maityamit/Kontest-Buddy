@@ -18,21 +18,19 @@ import java.util.concurrent.TimeUnit
 class CodeChefVerifyApiTask(private val callback: (JsonObject?) -> Unit) : AsyncTask<String, Void, JsonObject?>() {
 
     override fun doInBackground(vararg params: String): JsonObject? {
-        val baseUrl = R.string.API_BASE_URL.toString()
-        val endpoint = "isCCExist"
-        val username = params[0]
 
-        val requestBody = FormBody.Builder()
-            .add("userName", username)
-            .build()
+        val username = params[0]
+        val endpoint = "isCCExist"
+        val baseUrl = "https://express-liard-nine.vercel.app"
+        val fullurl = "$baseUrl/$endpoint?userName=$username"
+
 
         // Create OkHttpClient instance
         val client = OkHttpClient()
 
         // Build the request
         val request = Request.Builder()
-            .url("$baseUrl/$endpoint")
-            .post(requestBody)
+            .url(fullurl)
             .build()
 
         try {

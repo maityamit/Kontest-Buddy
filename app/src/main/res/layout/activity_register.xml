@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1A1A1A"
+    android:background="@drawable/spalsh_background"
     tools:context=".Auth.RegisterActivity">
 
     <LinearLayout
@@ -30,8 +30,9 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="20dp"
-            android:text="Kompettive Koding Helper"
-            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:text="@string/app_name"
+            android:textColor="#FFFFFF"
             android:textSize="20sp" />
 
         <TextView
@@ -51,12 +52,11 @@
             android:layout_height="50dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:backgroundTint="#2A2A2A"
             android:textCursorDrawable="@null"
+            android:textColor="@color/black"
             android:hint="Enter your Name*"
             android:paddingStart="20dp"
             android:inputType="textPersonName"
-            android:textColor="@android:color/white"
             android:textColorHint="#959595"
             android:background="@drawable/all_rounded"/>
 
@@ -68,12 +68,11 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:textCursorDrawable="@null"
-            android:backgroundTint="#2A2A2A"
             android:layout_marginTop="10dp"
             android:hint="Enter your Email*"
             android:paddingStart="20dp"
             android:inputType="textEmailAddress"
-            android:textColor="@android:color/white"
+            android:textColor="@color/black"
             android:textColorHint="#959595"
             android:background="@drawable/all_rounded"/>
 
@@ -83,13 +82,12 @@
             android:layout_height="50dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:backgroundTint="#2A2A2A"
             android:textCursorDrawable="@null"
             android:layout_marginTop="10dp"
             android:hint="Enter your Password*"
             android:paddingStart="20dp"
             android:inputType="textPassword"
-            android:textColor="@android:color/white"
+            android:textColor="@color/black"
             android:textColorHint="#959595"
             android:background="@drawable/all_rounded"/>
 
@@ -120,14 +118,13 @@
                 android:layout_width="0dp"
                 android:layout_weight="10"
                 android:layout_height="50dp"
-                android:backgroundTint="#2A2A2A"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:textCursorDrawable="@null"
                 android:hint="LeetCode ID (optional)"
                 android:paddingStart="20dp"
                 android:inputType="textShortMessage"
-                android:textColor="@android:color/white"
+                android:textColor="@color/black"
                 android:textColorHint="#959595"
                 android:background="@drawable/all_rounded"/>
 
@@ -170,14 +167,13 @@
                 android:layout_width="0dp"
                 android:layout_weight="10"
                 android:layout_height="50dp"
-                android:backgroundTint="#2A2A2A"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:textCursorDrawable="@null"
                 android:hint="CodeForces ID (optional)"
                 android:paddingStart="20dp"
                 android:inputType="textShortMessage"
-                android:textColor="@android:color/white"
+                android:textColor="@color/black"
                 android:textColorHint="#959595"
                 android:background="@drawable/all_rounded"/>
 
@@ -220,14 +216,13 @@
                 android:layout_width="0dp"
                 android:layout_weight="10"
                 android:layout_height="50dp"
-                android:backgroundTint="#2A2A2A"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:textCursorDrawable="@null"
                 android:hint="CodeChef ID (optional)"
                 android:paddingStart="20dp"
                 android:inputType="textShortMessage"
-                android:textColor="@android:color/white"
+                android:textColor="@color/black"
                 android:textColorHint="#959595"
                 android:background="@drawable/all_rounded"/>
 
@@ -249,7 +244,7 @@
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
             android:text="Register"
-            android:backgroundTint="#FFA116"
+            android:backgroundTint="#FF8C42"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@android:color/white"
