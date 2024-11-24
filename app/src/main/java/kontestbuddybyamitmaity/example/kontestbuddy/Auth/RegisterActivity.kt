@@ -34,34 +34,35 @@ class RegisterActivity : AppCompatActivity() {
     private var codeforces_verify = false
     private var codechef_verify = false
 
-    private var ratingsDetails: MutableMap<String, MutableMap<String, String>> = mutableMapOf()
+    private val ratingsDetails = hashMapOf(
+        "leetcode" to hashMapOf(
+            "userName" to "",
+            "attendedContestsCount" to "",
+            "rating" to "",
+            "globalRanking" to "",
+            "totalParticipants" to "",
+            "topPercentage" to ""
+        ),
+        "codeforces" to hashMapOf(
+            "userName" to "",
+            "rating" to "",
+            "maxRating" to "",
+            "rank" to "",
+            "maxRank" to ""
+        ),
+        "codechef" to hashMapOf(
+            "userName" to "",
+            "rating" to ""
+        )
+    )
 
     private lateinit var progressDialog: ProgressDialog
     @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
-        auth = Firebase.auth
-        progressDialog= ProgressDialog(this)
-        progressDialog.setCancelable(false)
-        progressDialog.setCanceledOnTouchOutside(false)
-        progressDialog.setTitle("Sometimes it takes too longer !! \n Please waiiit")
 
-        ratingsDetails["leetcode"]?.set("userName", "")
-        ratingsDetails["leetcode"]?.set("attendedContestsCount", "")
-        ratingsDetails["leetcode"]?.set("rating", "")
-        ratingsDetails["leetcode"]?.set("globalRanking", "")
-        ratingsDetails["leetcode"]?.set("totalParticipants", "")
-        ratingsDetails["leetcode"]?.set("topPercentage", "")
-
-        ratingsDetails["codeforces"]?.set("userName", "")
-        ratingsDetails["codeforces"]?.set("rating", "")
-        ratingsDetails["codeforces"]?.set("maxRating", "")
-        ratingsDetails["codeforces"]?.set("rank", "")
-        ratingsDetails["codeforces"]?.set("maxRank", "")
-
-        ratingsDetails["codechef"]?.set("userName", "")
-        ratingsDetails["codechef"]?.set("rating", "")
+        intitialization()
 
 
         findViewById<TextView>(R.id.already_sign_in).setOnClickListener {
@@ -170,54 +171,71 @@ class RegisterActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.register_user_button).setOnClickListener{
 
-            Log.e("RATING_DETAILS", ratingsDetails.toString())
-            Log.e("RATING_DETAILS", ratingsDetails["leetcode"].toString())
-            Log.e("RATING_DETAILS", ratingsDetails["codeforces"].toString())
-            Toast.makeText(applicationContext, ratingsDetails.toString(),Toast.LENGTH_SHORT).show()
 
-//            val user_name = findViewById<EditText>(R.id.register_user_name).text.toString()
-//            val user_email = findViewById<EditText>(R.id.register_user_email).text.toString()
-//            val user_password = findViewById<EditText>(R.id.register_user_password).text.toString()
-//            val user_leetcode = findViewById<EditText>(R.id.register_user_leetcode).text.toString()
-//            val user_codeforces = findViewById<EditText>(R.id.register_user_codeforces).text.toString()
-//            val user_codechef= findViewById<EditText>(R.id.register_user_codechef).text.toString()
-//
-//            if(user_name.isBlank()){
-//                Toast.makeText(applicationContext,"Enter Your Name",Toast.LENGTH_SHORT).show()
-//            }else if(user_email.isBlank()){
-//                Toast.makeText(applicationContext,"Enter Your Email",Toast.LENGTH_SHORT).show()
-//            }else if(user_password.isBlank()){
-//                Toast.makeText(applicationContext,"Enter Your Password",Toast.LENGTH_SHORT).show()
-//            }else if(user_leetcode.isNotBlank() && !leetcode_verify){
-//                Toast.makeText(applicationContext,"Please verify the LC account",Toast.LENGTH_SHORT).show()
-//            }else if(user_codeforces.isNotBlank() && !codeforces_verify){
-//                Toast.makeText(applicationContext,"Please verify the CF account",Toast.LENGTH_SHORT).show()
-//            }else if(user_codechef.isNotBlank() && !codechef_verify){
-//                Toast.makeText(applicationContext,"Please verify the CC account",Toast.LENGTH_SHORT).show()
-//            }else{
-//                progressDialog.show()
-//                var lc = "";
-//                var cf = "";
-//                var cc = "";
-//                if(user_leetcode.isNotBlank()) lc = user_leetcode;
-//                if(user_codeforces.isNotBlank()) cf = user_codeforces;
-//                if(user_codechef.isNotBlank()) cc = user_codechef;
-//                createANewUserOnFirebase(user_name,user_password,user_email,lc,cf,cc)
-//            }
+
+            val user_name = findViewById<EditText>(R.id.register_user_name).text.toString()
+            val user_email = findViewById<EditText>(R.id.register_user_email).text.toString()
+            val user_password = findViewById<EditText>(R.id.register_user_password).text.toString()
+            val user_leetcode = findViewById<EditText>(R.id.register_user_leetcode).text.toString()
+            val user_codeforces = findViewById<EditText>(R.id.register_user_codeforces).text.toString()
+            val user_codechef= findViewById<EditText>(R.id.register_user_codechef).text.toString()
+
+            if(user_name.isBlank()){
+                Toast.makeText(applicationContext,"Enter Your Name",Toast.LENGTH_SHORT).show()
+            }else if(user_email.isBlank()){
+                Toast.makeText(applicationContext,"Enter Your Email",Toast.LENGTH_SHORT).show()
+            }else if(user_password.isBlank()){
+                Toast.makeText(applicationContext,"Enter Your Password",Toast.LENGTH_SHORT).show()
+            }else if(user_leetcode.isNotBlank() && !leetcode_verify){
+                Toast.makeText(applicationContext,"Please verify the LC account",Toast.LENGTH_SHORT).show()
+            }else if(user_codeforces.isNotBlank() && !codeforces_verify){
+                Toast.makeText(applicationContext,"Please verify the CF account",Toast.LENGTH_SHORT).show()
+            }else if(user_codechef.isNotBlank() && !codechef_verify){
+                Toast.makeText(applicationContext,"Please verify the CC account",Toast.LENGTH_SHORT).show()
+            }else{
+                progressDialog.show()
+                createANewUserOnFirebase(user_name,user_password,user_email)
+            }
         }
 
 
     }
 
-    private fun createANewUserOnFirebase(userName: String, userPassword: String, userEmail: String, userLeetcode: String, userCodeforces: String, userCodechef: String) {
+    private fun intitialization() {
+        auth = Firebase.auth
+        progressDialog= ProgressDialog(this)
+        progressDialog.setCancelable(false)
+        progressDialog.setCanceledOnTouchOutside(false)
+        progressDialog.setTitle("Sometimes it takes too longer !! \n Please waiiit")
+
+
+        ratingsDetails["leetcode"]?.set("userName", "")
+        ratingsDetails["leetcode"]?.set("attendedContestsCount", "")
+        ratingsDetails["leetcode"]?.set("rating", "")
+        ratingsDetails["leetcode"]?.set("globalRanking", "")
+        ratingsDetails["leetcode"]?.set("totalParticipants", "")
+        ratingsDetails["leetcode"]?.set("topPercentage", "")
+
+        ratingsDetails["codeforces"]?.set("userName", "")
+        ratingsDetails["codeforces"]?.set("rating", "")
+        ratingsDetails["codeforces"]?.set("maxRating", "")
+        ratingsDetails["codeforces"]?.set("rank", "")
+        ratingsDetails["codeforces"]?.set("maxRank", "")
+
+        ratingsDetails["codechef"]?.set("userName", "")
+        ratingsDetails["codechef"]?.set("rating", "")
+    }
+
+    private fun createANewUserOnFirebase(userName: String, userPassword: String, userEmail: String) {
         val userData = hashMapOf(
             "userName" to userName,
             "userEmail" to userEmail,
-            "userLeetcode" to userLeetcode,
-            "userCodeforces" to userCodeforces,
-            "userCodechef" to userCodechef,
+            "userLeetcode" to ratingsDetails["leetcode"]?.get("userName").toString(),
+            "userCodeforces" to ratingsDetails["codeforces"]?.get("userName").toString(),
+            "userCodechef" to ratingsDetails["codechef"]?.get("userName").toString(),
             "LCleader" to "",
-            "CFleader" to ""
+            "CFleader" to "",
+            "CCleader" to ""
         )
 
 
@@ -249,18 +267,35 @@ class RegisterActivity : AppCompatActivity() {
     private fun storeDataIntoSharePref(userData: HashMap<String, String>) {
         val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
         val myEdit = sharedPreferences.edit()
-        for(ele in userData){
-            myEdit.putString(ele.key, ele.value)
-        }
         val currentTimestamp: Long = System.currentTimeMillis()
         val dateFormat = SimpleDateFormat("dd/MM/yy - hh:mm a", Locale.getDefault())
         myEdit.putString("lastUpdate",dateFormat.format(Date(currentTimestamp)))
-//        myEdit.putString("ratingsLC",ratingsLC)
-//        myEdit.putString("toppercentageLC",toppercentageLC)
-//        myEdit.putString("livecontestLC",livecontestLC)
-//        myEdit.putString("globalrankingLC",globalrankingLC)
-//        myEdit.putString("ratingsCF",ratingsCF)
-//        myEdit.putString("ratingCC",ratingCC)
+
+
+        myEdit.putString("userName",userData["userName"].toString())
+        myEdit.putString("userEmail",userData["userEmail"].toString())
+
+        myEdit.putString("LCuserName",ratingsDetails["leetcode"]?.get("userName").toString())
+        myEdit.putString("LCattendedContestsCount",ratingsDetails["leetcode"]?.get("attendedContestsCount").toString())
+        myEdit.putString("LCrating",ratingsDetails["leetcode"]?.get("rating").toString())
+        myEdit.putString("LCglobalRanking",ratingsDetails["leetcode"]?.get("globalRanking").toString())
+        myEdit.putString("LCtotalParticipants",ratingsDetails["leetcode"]?.get("totalParticipants").toString())
+        myEdit.putString("LCtopPercentage",ratingsDetails["leetcode"]?.get("topPercentage").toString())
+
+        myEdit.putString("CFuserName",ratingsDetails["codeforces"]?.get("userName").toString())
+        myEdit.putString("CFrating",ratingsDetails["codeforces"]?.get("rating").toString())
+        myEdit.putString("CFmaxRating",ratingsDetails["codeforces"]?.get("maxRating").toString())
+        myEdit.putString("CFrank",ratingsDetails["codeforces"]?.get("rank").toString())
+        myEdit.putString("CFmaxRank",ratingsDetails["codeforces"]?.get("maxRank").toString())
+
+        myEdit.putString("CCuserName",ratingsDetails["codechef"]?.get("userName").toString())
+        myEdit.putString("CCrating",ratingsDetails["codechef"]?.get("rating").toString())
+
+
+//        val allEntries = sharedPreferences.all
+//        for ((key, value) in allEntries) {
+//            Log.d("ALl_DATA", "Key: $key, Value: $value")
+//        }
 
         myEdit.apply()
 

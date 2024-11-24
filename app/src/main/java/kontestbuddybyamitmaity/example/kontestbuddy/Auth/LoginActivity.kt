@@ -39,10 +39,8 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        progressDialog = ProgressDialog(this)
-        progressDialog.setCancelable(false)
-        progressDialog.setCanceledOnTouchOutside(false)
-        progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
+
+        intialization()
 
         findViewById<TextView>(R.id.sign_up_redirect).setOnClickListener {
             val intent = Intent(applicationContext, RegisterActivity::class.java)
@@ -111,6 +109,13 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun intialization() {
+        progressDialog = ProgressDialog(this)
+        progressDialog.setCancelable(false)
+        progressDialog.setCanceledOnTouchOutside(false)
+        progressDialog.setTitle("Sometimes it takes too longer !! \n Please Waiitt ...")
+    }
+
 
     private fun signinWithEmailAndPass(userEmail: String, userPassword: String) {
         auth = FirebaseAuth.getInstance()
@@ -143,7 +148,14 @@ class LoginActivity : AppCompatActivity() {
                     val userName = document.getString("userName")
                     val userEmail = document.getString("userEmail")
 
-                    retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef,userName,userEmail)
+                    val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
+                    val myEdit = sharedPreferences.edit()
+
+                    myEdit.putString("userName",userName)
+                    myEdit.putString("userEmail",userEmail)
+                    myEdit.apply()
+
+                    retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef)
 
                 } else {
                     Toast.makeText(applicationContext, "No Such document", Toast.LENGTH_SHORT)
@@ -158,20 +170,11 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?, userName: String?, userEmail: String?) {
+    private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?) {
 
 
 
-        Log.e("DataAmit", "${userLeetcode} + ${userCodeforces} + ${userCodechef} + ${userName} + ${userEmail}.")
-
-        val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
-        val myEdit = sharedPreferences.edit()
-        myEdit.putString("userName", userName)
-        myEdit.putString("userEmail", userEmail)
-        myEdit.putString("userLeetcode",userLeetcode)
-        myEdit.putString("userCodeforces",userCodeforces)
-        myEdit.putString("userCodechef",userCodechef)
-        myEdit.apply()
+        Log.e("RetriveUserNAME_FROM_FIREBASE", "${userLeetcode} + ${userCodeforces} + ${userCodechef} ")
 
         callApiTasks(
             userLeetCode = userLeetcode,
@@ -217,14 +220,31 @@ class LoginActivity : AppCompatActivity() {
         val currentTimestamp: Long = System.currentTimeMillis()
         val dateFormat = SimpleDateFormat("dd/MM/yy - hh:mm a", Locale.getDefault())
         myEdit.putString("lastUpdate",dateFormat.format(Date(currentTimestamp)))
-        myEdit.putString("ratingsLC",resultLeetCode?.get("rating").toString())
-        myEdit.putString("toppercentageLC",resultLeetCode?.get("topPercentage").toString())
-        myEdit.putString("livecontestLC",resultLeetCode?.get("attendedContestsCount").toString())
-        myEdit.putString("globalrankingLC",resultLeetCode?.get("globalRanking").toString())
-        myEdit.putString("ratingsCF",resultCodeforces?.get("rating").toString())
-        myEdit.putString("ratingCC",resultCodeChef?.get("rating").toString())
 
-        Log.e("DataAmit", "${resultLeetCode?.get("rating")} + ${resultLeetCode?.get("topPercentage")} + ${resultLeetCode?.get("attendedContestsCount")} + ${resultLeetCode?.get("globalRanking")} + ${resultCodeforces?.get("rating")} + ${resultCodeChef?.get("rating")}.")
+
+        myEdit.putString("LCuserName",resultLeetCode?.get("userName").toString())
+        myEdit.putString("LCattendedContestsCount",resultLeetCode?.get("attendedContestsCount").toString())
+        myEdit.putString("LCrating",resultLeetCode?.get("rating").toString())
+        myEdit.putString("LCglobalRanking",resultLeetCode?.get("globalRanking").toString())
+        myEdit.putString("LCtotalParticipants",resultLeetCode?.get("totalParticipants").toString())
+        myEdit.putString("LCtopPercentage",resultLeetCode?.get("topPercentage").toString())
+
+        myEdit.putString("CFuserName",resultCodeforces?.get("userName").toString())
+        myEdit.putString("CFrating",resultCodeforces?.get("rating").toString())
+        myEdit.putString("CFmaxRating",resultCodeforces?.get("maxRating").toString())
+        myEdit.putString("CFrank",resultCodeforces?.get("rank").toString())
+        myEdit.putString("CFmaxRank",resultCodeforces?.get("maxRank").toString())
+
+        myEdit.putString("CCuserName",resultCodeChef?.get("userName").toString())
+        myEdit.putString("CCrating",resultCodeChef?.get("rating").toString())
+
+
+
+//        val allEntries = sharedPreferences.all
+//        for ((key, value) in allEntries) {
+//            Log.d("ALl_DATA", "Key: $key, Value: $value")
+//        }
+
 
         myEdit.apply()
 

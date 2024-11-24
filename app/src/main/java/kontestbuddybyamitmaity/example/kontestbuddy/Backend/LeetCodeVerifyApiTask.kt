@@ -23,6 +23,10 @@ class LeetCodeVerifyApiTask(private val callback: (JsonObject?) -> Unit) : Async
         val baseUrl = "https://express-liard-nine.vercel.app"
         val fullurl = "$baseUrl/$endpoint?userName=$username"
 
+        if(username.isEmpty()){
+            return null
+        }
+
         val client = OkHttpClient()
 
 

@@ -44,18 +44,18 @@ import java.util.Locale
 class HomeFragment : Fragment() {
 
 
-    lateinit var userName:TextView
-    lateinit var ratingsLC:TextView
-    lateinit var toppercentageLC:TextView
-    lateinit var livecontestLC:TextView
-    lateinit var globalrankingLC:TextView
-    lateinit var ratingsCF :TextView
-    lateinit var ratingCC :TextView
-    lateinit var lcUserName :TextView
-    lateinit var cfUserName :TextView
-    lateinit var ccUserName :TextView
-    lateinit var lastUpdateHomeMainPage:TextView
-    lateinit var mainHomePageRatingsRefresh:ImageView
+    lateinit var userName_TextView:TextView
+    lateinit var ratingsLC_TextView:TextView
+    lateinit var toppercentageLC_TextView:TextView
+    lateinit var livecontestLC_TextView:TextView
+    lateinit var globalrankingLC_TextView:TextView
+    lateinit var ratingsCF_TextView:TextView
+    lateinit var ratingCC_TextView:TextView
+    lateinit var lcUserName_TextView:TextView
+    lateinit var cfUserName_TextView:TextView
+    lateinit var ccUserName_TextView:TextView
+    lateinit var lastUpdateHomeMainPage_TextView:TextView
+    lateinit var mainHomePageRatingsRefresh_ImageView:ImageView
     private lateinit var progressDialog: ProgressDialog
 //    lateinit var CompareButtonLeetCode:CardView
 //    lateinit var CompareButtonCodeForces:CardView
@@ -64,6 +64,7 @@ class HomeFragment : Fragment() {
 //    lateinit var LeaderboardButtonCodeForces:TextView
 //    lateinit var leetcode_leaderboard_Button:LinearLayout
 //    lateinit var codeforces_leaderboard_Button:CardView
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -82,7 +83,7 @@ class HomeFragment : Fragment() {
 
         // Update the Refresh Button
         // Retrieve the details from firebase -> Call the API to Fetch Latest Data -> set into Container -> Store Local Storage
-        mainHomePageRatingsRefresh.setOnClickListener{
+        mainHomePageRatingsRefresh_ImageView.setOnClickListener{
             progressDialog.show()
             retrieveDataFromtheFirebase()
         }
@@ -809,24 +810,45 @@ class HomeFragment : Fragment() {
         val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
             AppCompatActivity.MODE_PRIVATE
         )
-        //Retrieve Data From Local Storage and Set Data into The Container
-        val userFullName:String? = sharedPreferences?.getString("userName","")
-        if (userFullName != null) {
-            userName.text = "\uD83D\uDC4B Hello, " + userFullName.split(" ")[0]
-        }else{
-            userName.text = "\uD83D\uDC4B Hello, "
-        }
-        ratingsLC.text = sharedPreferences?.getString("ratingsLC","")
-        toppercentageLC.text = sharedPreferences?.getString("toppercentageLC","")+"%"
-        livecontestLC.text = sharedPreferences?.getString("livecontestLC","")
-        globalrankingLC.text = sharedPreferences?.getString("globalrankingLC","")
-        ratingsCF.text = sharedPreferences?.getString("ratingsCF","")
-        ratingCC.text = sharedPreferences?.getString("ratingCC","")
-        lcUserName.text = sharedPreferences?.getString("userLeetcode","")
-        cfUserName.text = sharedPreferences?.getString("userCodeforces","")
-        ccUserName.text = sharedPreferences?.getString("userCodechef","")
-        lastUpdateHomeMainPage.text = sharedPreferences?.getString("lastUpdate","")
 
+
+
+        val userName = sharedPreferences?.getString("userName","")
+        val userEmail = sharedPreferences?.getString("userEmail","")
+        val LCuserName = sharedPreferences?.getString("LCuserName","")
+        val LCattendedContestsCount = sharedPreferences?.getString("LCattendedContestsCount","")
+        val LCrating = sharedPreferences?.getString("LCrating","")
+        val LCglobalRanking = sharedPreferences?.getString("LCglobalRanking","")
+        val LCtotalParticipants = sharedPreferences?.getString("LCtotalParticipants","")
+        val LCtopPercentage = sharedPreferences?.getString("LCtopPercentage","")
+        val CFuserName = sharedPreferences?.getString("CFuserName","")
+        val CFrating = sharedPreferences?.getString("CFrating","")
+        val CFmaxRating = sharedPreferences?.getString("CFmaxRating","")
+        val CFrank = sharedPreferences?.getString("CFrank","")
+        val CFmaxRank = sharedPreferences?.getString("CFmaxRank","")
+        val CCuserName = sharedPreferences?.getString("CCuserName","")
+        val CCrating = sharedPreferences?.getString("CCrating","")
+        val lastUpdate = sharedPreferences?.getString("lastUpdate","")
+
+
+        //Retrieve Data From Local Storage and Set Data into The Container
+        if (userName != null) {
+            userName_TextView.text = "\uD83D\uDC4B Hello, " + userName.split(" ")[0]
+        }else{
+            userName_TextView.text = "\uD83D\uDC4B Hello, "
+        }
+
+        ratingsLC_TextView.text = LCrating
+        toppercentageLC_TextView.text = LCtopPercentage+"%"
+        livecontestLC_TextView.text = LCattendedContestsCount
+        globalrankingLC_TextView.text = LCglobalRanking
+
+        ratingsCF_TextView.text = CFrating
+        ratingCC_TextView.text = CCrating
+        lcUserName_TextView.text =LCuserName
+        cfUserName_TextView.text = CFuserName
+        ccUserName_TextView.text = CCuserName
+        lastUpdateHomeMainPage_TextView.text = lastUpdate
 
 
     }
@@ -880,7 +902,6 @@ class HomeFragment : Fragment() {
             userLeetCode = userLeetcode,
             userCodeforces = userCodeforces,
             userCodechef = userCodechef,
-            userGFG = userGFG,
             onAllApiResultsAvailable = {
                 progressDialog.dismiss()
                 allDataSettoTheUI()
@@ -893,7 +914,6 @@ class HomeFragment : Fragment() {
         userLeetCode: String?,
         userCodeforces: String?,
         userCodechef: String?,
-        userGFG: String?,
         onAllApiResultsAvailable: () -> Unit
     ) {
         coroutineScope.launch {
@@ -912,7 +932,6 @@ class HomeFragment : Fragment() {
         val resultLeetCode = results[0]
         val resultCodeforces = results[1]
         val resultCodeChef = results[2]
-        val resultGFG = results[3]
 
         val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
             AppCompatActivity.MODE_PRIVATE
@@ -937,18 +956,18 @@ class HomeFragment : Fragment() {
     }
 
     private fun initialization(view: View) {
-        userName = view.findViewById(R.id.userNameinMainPage);
-        ratingsLC = view.findViewById(R.id.lcUserRatingsMainPage);
-        toppercentageLC = view.findViewById(R.id.lcUsertopMainPage);
-        livecontestLC = view.findViewById(R.id.lcUsercontestMainPage);
-        globalrankingLC = view.findViewById(R.id.lcUserglobalMainPage);
-        ratingsCF  = view.findViewById(R.id.cfUserRatingsMainPage);
-        ratingCC  = view.findViewById(R.id.ccUserRatingsMainPage);
-        lcUserName  = view.findViewById(R.id.lcUserNameMainPage);
-        cfUserName  = view.findViewById(R.id.cfUserNameMainPage);
-        ccUserName  = view.findViewById(R.id.ccUserNameMainPage);
-        lastUpdateHomeMainPage = view.findViewById(R.id.lastUpdateHomeMainPage)
-        mainHomePageRatingsRefresh = view.findViewById(R.id.mainHomePageRatingsRefresh)
+        userName_TextView = view.findViewById(R.id.userNameinMainPage);
+        ratingsLC_TextView = view.findViewById(R.id.lcUserRatingsMainPage);
+        toppercentageLC_TextView = view.findViewById(R.id.lcUsertopMainPage);
+        livecontestLC_TextView = view.findViewById(R.id.lcUsercontestMainPage);
+        globalrankingLC_TextView = view.findViewById(R.id.lcUserglobalMainPage);
+        ratingsCF_TextView  = view.findViewById(R.id.cfUserRatingsMainPage);
+        ratingCC_TextView  = view.findViewById(R.id.ccUserRatingsMainPage);
+        lcUserName_TextView  = view.findViewById(R.id.lcUserNameMainPage);
+        cfUserName_TextView  = view.findViewById(R.id.cfUserNameMainPage);
+        ccUserName_TextView  = view.findViewById(R.id.ccUserNameMainPage);
+        lastUpdateHomeMainPage_TextView = view.findViewById(R.id.lastUpdateHomeMainPage)
+        mainHomePageRatingsRefresh_ImageView = view.findViewById(R.id.mainHomePageRatingsRefresh)
 //        CompareButtonLeetCode = view.findViewById(R.id.CompareButtonLeetCode)
 //        CompareButtonCodeForces = view.findViewById(R.id.CompareButtonCodeForces)
 //        LeaderboardButtonLeetCode = view.findViewById(R.id.ADDLeaderboardButtonLeetCode)
