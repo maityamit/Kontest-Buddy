@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1A1A1A"
+    android:background="#f6f9fa"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".Fragment.ProfileFragment">
@@ -15,15 +15,14 @@
         android:background="#2A2A2A"
         android:elevation="20dp"
         app:cardCornerRadius="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="20dp">
+        android:layout_margin="20dp"
+        app:cardElevation="15dp"
+        app:cardMaxElevation="15dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#2A2A2A"
+            android:background="#FFFFFF"
             android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
@@ -57,7 +56,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
                     android:text="User Name"
-                    android:textColor="@android:color/white"
+                    android:textColor="#0370D6"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -74,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20sp"
-                android:textColor="#6F6F6F"
+                android:textColor="#454444"
                 android:layout_marginBottom="10dp"
                 android:textSize="16sp"
                 android:layout_marginTop="5dp"
@@ -116,7 +115,7 @@
                         android:textSize="15sp"
                         android:layout_marginStart="10dp"
                         android:text="NA"
-                        android:textColor="@android:color/white"/>
+                        android:textColor="#FFA116"/>
 
 
 
@@ -150,7 +149,7 @@
                         android:layout_marginStart="10dp"
                         android:text="NA"
                         android:textSize="15sp"
-                        android:textColor="@android:color/white"/>
+                        android:textColor="#FFA116"/>
 
 
                 </LinearLayout>
@@ -182,38 +181,7 @@
                         android:layout_marginStart="10dp"
                         android:text="NA"
                         android:textSize="15sp"
-                        android:textColor="@android:color/white"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="10dp"
-                    android:orientation="horizontal">
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        app:cardCornerRadius="5dp">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="fitXY"
-                            android:src="@drawable/gfg"/>
-
-                    </androidx.cardview.widget.CardView>
-
-                    <TextView
-                        android:id="@+id/profile_frag_userGFG"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:text="NA"
-                        android:textSize="15sp"
-                        android:textColor="@android:color/white"/>
+                        android:textColor="#FFA116"/>
 
                 </LinearLayout>
 

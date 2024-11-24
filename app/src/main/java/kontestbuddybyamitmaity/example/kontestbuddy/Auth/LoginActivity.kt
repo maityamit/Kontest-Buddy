@@ -222,7 +222,7 @@ class LoginActivity : AppCompatActivity() {
         myEdit.putString("lastUpdate",dateFormat.format(Date(currentTimestamp)))
 
 
-        myEdit.putString("LCuserName",resultLeetCode?.get("userName").toString())
+        myEdit.putString("LCuserName", resultLeetCode?.get("userName").toString())
         myEdit.putString("LCattendedContestsCount",resultLeetCode?.get("attendedContestsCount").toString())
         myEdit.putString("LCrating",resultLeetCode?.get("rating").toString())
         myEdit.putString("LCglobalRanking",resultLeetCode?.get("globalRanking").toString())

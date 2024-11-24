@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#1A1A1A"
+    android:background="#838383"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -21,6 +21,9 @@
         android:layout_alignParentBottom="true"
         app:labelVisibilityMode="selected"
         android:layout_height="wrap_content"
-        app:menu="@menu/bottom_navigation_menu" />
+        app:menu="@menu/bottom_navigation_menu"
+        app:backgroundTint="#f6f9fa"
+        app:itemTextColor="@color/bottom_nav_item_color"
+        app:itemIconTint="@color/bottom_nav_item_color"/>
 
 </RelativeLayout>

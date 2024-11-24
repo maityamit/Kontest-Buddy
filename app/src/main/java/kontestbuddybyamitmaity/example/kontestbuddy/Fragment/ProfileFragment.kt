@@ -36,6 +36,7 @@ class ProfileFragment : Fragment() {
     lateinit var progressDialog: ProgressDialog
 
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,7 +47,7 @@ class ProfileFragment : Fragment() {
         progressDialog = ProgressDialog(context)
         progressDialog.setCancelable(false)
         progressDialog.setCanceledOnTouchOutside(false)
-        progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
+        progressDialog.setTitle("Sometimes it takes too longer !! \n Please wait...")
 
 
         auth = FirebaseAuth.getInstance()
@@ -66,13 +67,13 @@ class ProfileFragment : Fragment() {
         return view
     }
 
+
     class CustomDialog(context: Context, private val listener: ProfileFragment) : Dialog(context) {
 
         var progressDialog: ProgressDialog = ProgressDialog(context)
         private var leetcode_verify = false
         private var codeforces_verify = false
         private var codechef_verify = false
-        private var gfg_verify = false
         @SuppressLint("CutPasteId")
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -82,16 +83,13 @@ class ProfileFragment : Fragment() {
             val sharedPreferences = context.getSharedPreferences("userDataStoreLocal",
                 AppCompatActivity.MODE_PRIVATE
             )
-            val lcUserName:String? = sharedPreferences?.getString("userLeetcode","")
-            val cfUserName:String? = sharedPreferences?.getString("userCodeforces","")
-            val ccUserName:String? = sharedPreferences?.getString("userCodechef","")
-            val gfgUserName:String? = sharedPreferences?.getString("userGFG","")
+            val LCuserName = sharedPreferences?.getString("LCuserName","")
+            val CFuserName = sharedPreferences?.getString("CFuserName","")
+            val CCuserName = sharedPreferences?.getString("CCuserName","")
 
-            findViewById<EditText>(R.id._register_user_leetcode).setText(lcUserName)
-            findViewById<EditText>(R.id._register_user_codeforces).setText(cfUserName)
-            findViewById<EditText>(R.id._register_user_codechef).setText(ccUserName)
-            findViewById<EditText>(R.id._register_user_gfg).setText(gfgUserName)
-
+            findViewById<EditText>(R.id._register_user_leetcode).setText(if(LCuserName == "null") {""} else {LCuserName?.substring(1, LCuserName.length - 1) ?: "" })
+            findViewById<EditText>(R.id._register_user_codeforces).setText(if(CFuserName == "null") {""} else {CFuserName?.substring(1, CFuserName.length - 1) ?: "" })
+            findViewById<EditText>(R.id._register_user_codechef).setText(if(CCuserName == "null") {""} else {CCuserName?.substring(1, CCuserName.length - 1) ?: "" })
 
             findViewById<TextView>(R.id._leetcode_verify_button).setOnClickListener {
                 val user_leetcode = findViewById<EditText>(R.id._register_user_leetcode).text.toString()
@@ -205,7 +203,7 @@ class ProfileFragment : Fragment() {
 
                     userInfo.document(userId).update(userData as Map<String, Any>).addOnSuccessListener {
                         progressDialog.dismiss()
-                        Toast.makeText(context,"Data Updated",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context,"Data Updated, Please Sign in Once!",Toast.LENGTH_SHORT).show()
                         val auth:FirebaseAuth = FirebaseAuth.getInstance()
                         auth.signOut()
                         val intent:Intent = Intent(context, LoginActivity::class.java)
@@ -233,11 +231,15 @@ class ProfileFragment : Fragment() {
         val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
             AppCompatActivity.MODE_PRIVATE
         )
+
+        val LCuserName = sharedPreferences?.getString("LCuserName","")
+        val CFuserName = sharedPreferences?.getString("CFuserName","")
+        val CCuserName = sharedPreferences?.getString("CCuserName","")
+
         view.findViewById<TextView>(R.id.profile_frag_userName).text = sharedPreferences?.getString("userName","")
         view.findViewById<TextView>(R.id.profile_frag_userEmail).text = sharedPreferences?.getString("userEmail","")
-        view.findViewById<TextView>(R.id.profile_frag_userLC).text = sharedPreferences?.getString("userLeetcode","")
-        view.findViewById<TextView>(R.id.profile_frag_userCF).text = sharedPreferences?.getString("userCodeforces","")
-        view.findViewById<TextView>(R.id.profile_frag_userCC).text = sharedPreferences?.getString("userCodechef","")
-        view.findViewById<TextView>(R.id.profile_frag_userGFG).text = sharedPreferences?.getString("userGFG","")
+        view.findViewById<TextView>(R.id.profile_frag_userLC).text = if(LCuserName == "null") {"-"} else {LCuserName?.substring(1, LCuserName.length - 1) ?: "" }
+        view.findViewById<TextView>(R.id.profile_frag_userCF).text = if(CFuserName == "null") {"-"} else {CFuserName?.substring(1, CFuserName.length - 1) ?: "" }
+        view.findViewById<TextView>(R.id.profile_frag_userCC).text = if(CCuserName == "null") {"-"} else {CCuserName?.substring(1, CCuserName.length - 1) ?: "" }
     }
 }

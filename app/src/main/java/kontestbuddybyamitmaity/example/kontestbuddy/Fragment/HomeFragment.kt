@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +31,7 @@ import kontestbuddybyamitmaity.example.kontestbuddy.Compare.CFcompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Compare.LCcompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.CurrentFriends.CodeForcesFrndAdapter
 import kontestbuddybyamitmaity.example.kontestbuddy.CurrentFriends.LeetCodeCurrentFrndAdapter
+import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -838,16 +840,18 @@ class HomeFragment : Fragment() {
             userName_TextView.text = "\uD83D\uDC4B Hello, "
         }
 
-        ratingsLC_TextView.text = LCrating
-        toppercentageLC_TextView.text = LCtopPercentage+"%"
-        livecontestLC_TextView.text = LCattendedContestsCount
-        globalrankingLC_TextView.text = LCglobalRanking
+        ratingsLC_TextView.text = if(LCrating =="null") {"-"} else {LCrating?.substring(1, 5) ?: ""}
+        toppercentageLC_TextView.text = if (LCtopPercentage == "null") {"-"} else {(LCtopPercentage?.substring(1, LCtopPercentage.length - 1) + "%") } ?: ""
+        livecontestLC_TextView.text = if(LCattendedContestsCount == "null") {"-"} else {LCattendedContestsCount?.substring(1, LCattendedContestsCount.length - 1) ?: ""}
+        globalrankingLC_TextView.text = if(LCglobalRanking == "null") {"-"} else {LCglobalRanking?.substring(1, LCglobalRanking.length - 1) ?: ""}
 
-        ratingsCF_TextView.text = CFrating
-        ratingCC_TextView.text = CCrating
-        lcUserName_TextView.text =LCuserName
-        cfUserName_TextView.text = CFuserName
-        ccUserName_TextView.text = CCuserName
+        ratingsCF_TextView.text = if(CFrating == "null") {"-"} else {CFrating?.substring(1, CFrating.length - 1) ?: "" }
+        ratingCC_TextView.text = if(CCrating == "null") {"-"} else {CCrating?.substring(1, CCrating.length - 1) ?: "" }
+        lcUserName_TextView.text = if(LCuserName == "null") {"-"} else {LCuserName?.substring(1, LCuserName.length - 1) ?: "" }
+        cfUserName_TextView.text = if(CFuserName == "null") {"-"} else {CFuserName?.substring(1, CFuserName.length - 1) ?: "" }
+
+
+        ccUserName_TextView.text = if(CCuserName == "null") {"-"} else {CCuserName?.substring(1, CCuserName.length - 1) ?: "" }
         lastUpdateHomeMainPage_TextView.text = lastUpdate
 
 
@@ -868,9 +872,9 @@ class HomeFragment : Fragment() {
                     val userCodeforces = document.getString("userCodeforces")
                     val userLeetcode = document.getString("userLeetcode")
                     val userName = document.getString("userName")
-                    val userGFG = document.getString("userGFG")
+                    val userEmail = document.getString("userEmail")
 
-                    retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef,userName,userGFG)
+                    retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef)
 
                 } else {
                     Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
@@ -883,20 +887,9 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?, userName: String?,userGFG: String?) {
+    private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?) {
 
-        val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
-            AppCompatActivity.MODE_PRIVATE
-        )
-        val myEdit = sharedPreferences?.edit()
-        if (myEdit != null) {
-            myEdit.putString("userName", userName)
-            myEdit.putString("userLeetcode",userLeetcode)
-            myEdit.putString("userCodeforces",userCodeforces)
-            myEdit.putString("userCodechef",userCodechef)
-            myEdit.putString("userGFG",userGFG)
-            myEdit.apply()
-        }
+        Log.e("RetriveUserNAME_FROM_FIREBASE", "${userLeetcode} + ${userCodeforces} + ${userCodechef} ")
 
         callApiTasks(
             userLeetCode = userLeetcode,
@@ -910,7 +903,7 @@ class HomeFragment : Fragment() {
 
     }
 
-    fun callApiTasks(
+    private fun callApiTasks(
         userLeetCode: String?,
         userCodeforces: String?,
         userCodechef: String?,
@@ -922,12 +915,13 @@ class HomeFragment : Fragment() {
             val resultCodeforces = async { CodeForcesVerifyApiTask{}.execute(userCodeforces).get() }
             val resultCodeChef = async { CodeChefVerifyApiTask{}.execute(userCodechef).get() }
             val allResults = awaitAll(resultLeetCode, resultCodeforces, resultCodeChef)
+            Log.e("DataAmit", "${allResults}")
             handleAllApiResults(allResults)
             onAllApiResultsAvailable()
         }
     }
 
-    fun handleAllApiResults(results: List<JsonObject?>) {
+    private fun handleAllApiResults(results: List<JsonObject?>) {
         // Handle individual API results here
         val resultLeetCode = results[0]
         val resultCodeforces = results[1]
@@ -940,17 +934,37 @@ class HomeFragment : Fragment() {
 
         val currentTimestamp: Long = System.currentTimeMillis()
         val dateFormat = SimpleDateFormat("dd/MM/yy - hh:mm a", Locale.getDefault())
-        if (myEdit != null) {
+
+        if(myEdit!=null){
             myEdit.putString("lastUpdate",dateFormat.format(Date(currentTimestamp)))
-            myEdit.putString("ratingsLC",resultLeetCode?.get("rating").toString())
-            myEdit.putString("toppercentageLC",resultLeetCode?.get("topPercentage").toString())
-            myEdit.putString("livecontestLC",resultLeetCode?.get("attendedContestsCount").toString())
-            myEdit.putString("globalrankingLC",resultLeetCode?.get("globalRanking").toString())
-            myEdit.putString("ratingsCF",resultCodeforces?.get("rating").toString())
-            myEdit.putString("ratingCC",resultCodeChef?.get("rating").toString())
+
+
+            myEdit.putString("LCuserName", resultLeetCode?.get("userName").toString())
+            myEdit.putString("LCattendedContestsCount",resultLeetCode?.get("attendedContestsCount").toString())
+            myEdit.putString("LCrating",resultLeetCode?.get("rating").toString())
+            myEdit.putString("LCglobalRanking",resultLeetCode?.get("globalRanking").toString())
+            myEdit.putString("LCtotalParticipants",resultLeetCode?.get("totalParticipants").toString())
+            myEdit.putString("LCtopPercentage",resultLeetCode?.get("topPercentage").toString())
+
+            myEdit.putString("CFuserName",resultCodeforces?.get("userName").toString())
+            myEdit.putString("CFrating",resultCodeforces?.get("rating").toString())
+            myEdit.putString("CFmaxRating",resultCodeforces?.get("maxRating").toString())
+            myEdit.putString("CFrank",resultCodeforces?.get("rank").toString())
+            myEdit.putString("CFmaxRank",resultCodeforces?.get("maxRank").toString())
+
+            myEdit.putString("CCuserName",resultCodeChef?.get("userName").toString())
+            myEdit.putString("CCrating",resultCodeChef?.get("rating").toString())
 
             myEdit.apply()
         }
+
+        Toast.makeText(context, "Data refreshed !! at ${dateFormat.format(Date(currentTimestamp))}", Toast.LENGTH_SHORT).show()
+
+//        val allEntries = sharedPreferences.all
+//        for ((key, value) in allEntries) {
+//            Log.d("ALl_DATA", "Key: $key, Value: $value")
+//        }
+
 
 
     }
