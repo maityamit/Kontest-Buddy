@@ -16,21 +16,19 @@ import java.util.concurrent.TimeUnit
 class LeetCodeCompareApiTask(private val callback: (String?) -> Unit) : AsyncTask<String, Void, String?>() {
 
     override fun doInBackground(vararg params: String): String? {
-        val baseUrl = R.string.API_BASE_URL.toString()
-        val endpoint = "lcCompare"
-        val username = params[0]
 
-        val requestBody = FormBody.Builder()
-            .add("userNames", username)
-            .build()
+        val username = params[0]
+        val endpoint = "lcCompare"
+        val baseUrl = "https://express-liard-nine.vercel.app"
+        val fullurl = "$baseUrl/$endpoint?userName=$username"
+
 
         // Create OkHttpClient instance
         val client = OkHttpClient()
 
         // Build the request
         val request = Request.Builder()
-            .url("$baseUrl/$endpoint")
-            .post(requestBody)
+            .url(fullurl)
             .build()
 
         try {

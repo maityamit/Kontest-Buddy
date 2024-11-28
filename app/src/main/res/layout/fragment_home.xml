@@ -72,9 +72,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1H 21M"
+                android:visibility="gone"
                 android:textSize="25sp"
                 android:textStyle="bold"
                 android:textColor="#FFA116"/>
+
+            <ProgressBar
+                android:id="@+id/coding_time_stat_progress_bar"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:indeterminate="true"
+                android:indeterminateTint="#FFA116"
+                android:indeterminateTintMode="src_atop" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -458,6 +467,7 @@
                 android:text="Coding Stats (via extension)"/>
 
             <TextView
+                android:id="@+id/know_more_button_for_extension"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -639,6 +649,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/compareButton_Homepage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

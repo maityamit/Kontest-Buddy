@@ -5,6 +5,7 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,13 +17,20 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonObject
@@ -30,6 +38,7 @@ import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTas
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Compare.CFcompareActivity
+import kontestbuddybyamitmaity.example.kontestbuddy.Compare.CompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Compare.LCcompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.CurrentFriends.CodeForcesFrndAdapter
 import kontestbuddybyamitmaity.example.kontestbuddy.CurrentFriends.LeetCodeCurrentFrndAdapter
@@ -63,6 +72,9 @@ class HomeFragment : Fragment() {
     lateinit var mainHomePageRatingsRefresh_ImageView:ImageView
     private lateinit var progressDialog: ProgressDialog
     lateinit var LeaderBoardButton_Homepage:LinearLayout
+    lateinit var compareButton_Homepage:LinearLayout
+    lateinit var coding_time_stat_progress_bar:ProgressBar
+    lateinit var know_more_button_for_extension:TextView
 //    lateinit var CompareButtonLeetCode:CardView
 //    lateinit var CompareButtonCodeForces:CardView
     val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -70,6 +82,8 @@ class HomeFragment : Fragment() {
 //    lateinit var LeaderboardButtonCodeForces:TextView
 //    lateinit var leetcode_leaderboard_Button:LinearLayout
 //    lateinit var codeforces_leaderboard_Button:CardView
+
+
 
 
     override fun onCreateView(
@@ -86,6 +100,7 @@ class HomeFragment : Fragment() {
         // Initialization
         initialization(view)
         allDataSettoTheUI()
+        load_ratings_time_state_from_extesion()
 
         // Update the Refresh Button
         // Retrieve the details from firebase -> Call the API to Fetch Latest Data -> set into Container -> Store Local Storage
@@ -98,186 +113,19 @@ class HomeFragment : Fragment() {
             val intent:Intent = Intent(context,LeaderboardActivity::class.java)
             startActivity(intent)
         }
-//
-//        CompareButtonCodeForces.setOnClickListener{
-//            context?.let { it1 -> CustomDialog2(it1, this) }?.show()
-//        }
-//
+        compareButton_Homepage.setOnClickListener{
+            val intent:Intent = Intent(context,CompareActivity::class.java)
+            startActivity(intent)
+        }
 
-
-
+        know_more_button_for_extension.setOnClickListener {
+            // Open the extension link
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = android.net.Uri.parse("https://chromewebstore.google.com/detail/kontest-buddy/chdigpjiicmbbgkdkcfjgjlpejnfahkl")
+            startActivity(intent)
+        }
 
         return view
-    }
-
-    class CustomDialog(context: Context, private val listener: HomeFragment) : Dialog(context) {
-
-        var progressDialog: ProgressDialog = ProgressDialog(context)
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(R.layout.leetcode_compare_two_users_layout)
-
-            val editText1 = findViewById<EditText>(R.id.leetcode_compare_inputUser1)
-            val editText2 = findViewById<EditText>(R.id.leetcode_compare_inputUser2)
-
-            val verify1 = findViewById<TextView>(R.id.leetcode_compare_inputUser1_Verify)
-            val verify2 = findViewById<TextView>(R.id.leetcode_compare_inputUser2_verify)
-            val okButton = findViewById<Button>(R.id.leetcode_compare_Button)
-
-            var leetCodeUserName1:String = ""
-            var leetCodeUserName2:String = ""
-            var lcUser1verify = false
-            var lcUser2verify = false
-
-            verify1.setOnClickListener {
-                val user_leetcode = editText1.text.toString()
-                if(user_leetcode.isBlank()){
-                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
-                }else {
-                    progressDialog.show()
-                    val apiTask = LeetCodeVerifyApiTask { isValid ->
-                        if(isValid?.get("isValid").toString()=="\"true\""){
-                            verify1.text = "Verified"
-                            verify1.setTextColor(Color.GREEN)
-                            verify1.isEnabled = false
-                            editText1.isEnabled = false
-                            lcUser1verify = true
-                            leetCodeUserName1 = editText1.text.toString()
-
-                        }else{
-                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
-                        }
-                        progressDialog.dismiss()
-                    }
-                    apiTask.execute(user_leetcode)
-                }
-            }
-
-            verify2.setOnClickListener {
-                val user_leetcode = editText2.text.toString()
-                if(user_leetcode.isBlank()){
-                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
-                }else {
-                    progressDialog.show()
-                    val apiTask = LeetCodeVerifyApiTask { isValid ->
-                        if(isValid?.get("isValid").toString()=="\"true\""){
-                            verify2.text = "Verified"
-                            verify2.setTextColor(Color.GREEN)
-                            verify2.isEnabled = false
-                            editText2.isEnabled = false
-                            lcUser2verify = true
-                            leetCodeUserName2 = editText2.text.toString()
-
-                        }else{
-                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
-                        }
-                        progressDialog.dismiss()
-                    }
-                    apiTask.execute(user_leetcode)
-                }
-            }
-            okButton.setOnClickListener {
-                if(lcUser1verify && lcUser2verify){
-                    val intent:Intent = Intent(context,LCcompareActivity::class.java)
-                    intent.putExtra("userName1",leetCodeUserName1)
-                    intent.putExtra("userName2",leetCodeUserName2)
-                    context.startActivity(intent)
-                }
-            }
-        }
-
-        interface DialogListener {
-            fun onDialogOkButtonClicked(inputText: String)
-        }
-    }
-
-    class CustomDialog2(context: Context, private val listener: HomeFragment) : Dialog(context) {
-
-        var progressDialog: ProgressDialog = ProgressDialog(context)
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(R.layout.codeforces_compare_two_users_layout)
-
-            val editText1 = findViewById<EditText>(R.id.codeforces_compare_inputUser1)
-            val editText2 = findViewById<EditText>(R.id.codeforces_compare_inputUser2)
-
-            val verify1 = findViewById<TextView>(R.id.codeforces_compare_inputUser1_Verify)
-            val verify2 = findViewById<TextView>(R.id.codeforces_compare_inputUser2_verify)
-            val okButton = findViewById<Button>(R.id.codeforces_compare_Button)
-
-            var codeforcesUserName1:String = ""
-            var codeforcesUserName2:String = ""
-            var cfUser1verify = false
-            var cfUser2verify = false
-
-            verify1.setOnClickListener {
-                val user_codeforces = editText1.text.toString()
-                if(user_codeforces.isBlank()){
-                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
-                }else {
-                    progressDialog.show()
-                    val apiTask = CodeForcesVerifyApiTask { isValid ->
-                        if(isValid?.get("isValid").toString()=="\"true\""){
-                            verify1.text = "Verified"
-                            verify1.setTextColor(Color.GREEN)
-                            verify1.isEnabled = false
-                            editText1.isEnabled = false
-                            cfUser1verify = true
-                            codeforcesUserName1 = editText1.text.toString()
-
-                        }else{
-                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
-                        }
-                        progressDialog.dismiss()
-                    }
-                    apiTask.execute(user_codeforces)
-                }
-            }
-
-            verify2.setOnClickListener {
-                val user_codeforces = editText2.text.toString()
-                if(user_codeforces.isBlank()){
-                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
-                }else {
-                    progressDialog.show()
-                    val apiTask = CodeForcesVerifyApiTask { isValid ->
-                        if(isValid?.get("isValid").toString()=="\"true\""){
-                            verify2.text = "Verified"
-                            verify2.setTextColor(Color.GREEN)
-                            verify2.isEnabled = false
-                            editText2.isEnabled = false
-                            cfUser2verify = true
-                            codeforcesUserName2 = editText2.text.toString()
-
-                        }else{
-                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
-                        }
-                        progressDialog.dismiss()
-                    }
-                    apiTask.execute(user_codeforces)
-                }
-            }
-            okButton.setOnClickListener {
-                if(cfUser1verify && cfUser2verify){
-                    val intent:Intent = Intent(context, CFcompareActivity::class.java)
-                    intent.putExtra("userName1",codeforcesUserName1)
-                    intent.putExtra("userName2",codeforcesUserName2)
-                    context.startActivity(intent)
-                }
-            }
-
-//            okButton.setOnClickListener {
-//                val inputText = editText.text.toString()
-//                listener.onDialogOkButtonClicked(inputText)
-//                dismiss()
-//            }
-        }
-
-        interface DialogListener {
-            fun onDialogOkButtonClicked(inputText: String)
-        }
     }
 
 
@@ -456,12 +304,160 @@ class HomeFragment : Fragment() {
         lastUpdateHomeMainPage_TextView = view.findViewById(R.id.lastUpdateHomeMainPage)
         mainHomePageRatingsRefresh_ImageView = view.findViewById(R.id.mainHomePageRatingsRefresh)
         LeaderBoardButton_Homepage = view.findViewById(R.id.leaderBoardButton_Homepage)
+        compareButton_Homepage = view.findViewById(R.id.compareButton_Homepage)
+        know_more_button_for_extension = view.findViewById(R.id.know_more_button_for_extension)
+        coding_time_stat_progress_bar = view.findViewById(R.id.coding_time_stat_progress_bar)
 //        CompareButtonCodeForces = view.findViewById(R.id.CompareButtonCodeForces)
 //        LeaderboardButtonLeetCode = view.findViewById(R.id.ADDLeaderboardButtonLeetCode)
 //        LeaderboardButtonCodeForces = view.findViewById(R.id.ADDLeaderboardButtonCodeForces)
 //        codeforces_leaderboard_Button = view.findViewById(R.id.LeaderboardButtonCodeForces)
 //        leetcode_leaderboard_Button = view.findViewById(R.id.LeaderboardButtonLeetCode)
 //        resource_layout_button = view.findViewById(R.id.resource_layout_button)
+    }
+
+
+    private fun load_ratings_time_state_from_extesion(){
+
+
+        // Date -> url-> time
+        val nestedMap: MutableMap<String, MutableMap<String, Long>> = mutableMapOf()
+        val allowedDomains = listOf(
+            "leetcode.com",
+            "github.com",
+            "codeforces.com",
+            "codechef.com",
+            "geeksforgeeks.org"
+        )
+
+        val auth  = FirebaseAuth.getInstance()
+        val database: DatabaseReference = FirebaseDatabase.getInstance().reference
+        val userID = auth.currentUser?.uid.toString()
+        val userRef = database.child("users").child(userID)
+
+        // the data is in realtime database within users->userID folder so to retrive write code for that
+
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    // Iterate through all random IDs under the user
+                    for (randomIdSnapshot in snapshot.children) {
+                        val randomIdKey = randomIdSnapshot.key // Get the random ID
+                        println("Processing data for Random ID: $randomIdKey")
+
+                        // Access data inside the random ID
+                        for (dataSnapshot in randomIdSnapshot.children) {
+                            val dataMap = dataSnapshot.value as? Map<String, Any>
+                            val url = dataMap?.get("URL") as? String
+                            val startTime = dataMap?.get("startTime") as? Long
+                            val totalTime = dataMap?.get("totalTime").toString().toLong()
+
+                            Log.e("ExtesionData = ${randomIdKey}", "${url} + ${startTime} + ${totalTime} ")
+
+                            val timestamp = startTime?.toLong()
+                            val date = timestamp?.let { Date(it) }
+                            val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                            val formattedDate = formatter.format(date).toString()
+
+                            val matchingDomain = allowedDomains.find { domain -> url?.contains(domain)
+                                ?: false }
+
+                            if (matchingDomain != null) {
+
+                                val timeSpent = (nestedMap[formattedDate]?.get(matchingDomain) ?: 0).toLong()
+                                // Initialize the nested map for the date if it's null
+                                val domainMap = nestedMap[formattedDate] ?: mutableMapOf()
+                                domainMap[matchingDomain] = (timeSpent + (totalTime ?: 0)).toLong()
+                                nestedMap[formattedDate] = domainMap
+                            }
+
+                            // Process the data
+                        }
+                    }
+
+                    process_data_and_analysis(nestedMap)
+
+                } else {
+                    println("No data found for user: $userID")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                println("Error fetching data: ${error.message}")
+            }
+        })
+
+        Toast.makeText(context, "Data refreshed !! at ${nestedMap.toString()}", Toast.LENGTH_SHORT).show()
+
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun process_data_and_analysis(nestedMap: MutableMap<String, MutableMap<String, Long>>) {
+
+//        check nestedMap is empty or not
+
+        // check the data is empty or not
+        if (nestedMap.isEmpty()) {
+            return
+        }else{
+
+            // Convert date strings to LocalDate for easier manipulation
+            val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val dateMap = nestedMap.mapKeys { java.time.LocalDate.parse(it.key, dateFormatter) }
+
+            // Sort dates in ascending order
+            val sortedDates = dateMap.keys.sorted()
+
+            // For daily data: Each date and its site->time map
+            val dailyData = sortedDates.map { date ->
+                mapOf(date.format(dateFormatter) to dateMap[date]!!)
+            }
+
+            // For weekly data: Group data into chunks of 7 days
+            val weeklyData = mutableListOf<Map<String, Map<String, Long>>>()
+            var currentWeekStartIndex = 0
+            while (currentWeekStartIndex < sortedDates.size) {
+                val currentWeekDates = sortedDates.subList(
+                    currentWeekStartIndex,
+                    (currentWeekStartIndex + 7).coerceAtMost(sortedDates.size)
+                )
+                val weeklyMap = mutableMapOf<String, MutableMap<String, Long>>()
+                for (date in currentWeekDates) {
+                    val formattedDate = date.format(dateFormatter)
+                    dateMap[date]?.forEach { (site, time) ->
+                        weeklyMap[formattedDate] = weeklyMap[formattedDate]?.toMutableMap() ?: mutableMapOf()
+                        weeklyMap[formattedDate]!![site] = (weeklyMap[formattedDate]?.get(site) ?: 0) + time
+                    }
+                }
+                weeklyData.add(weeklyMap)
+                currentWeekStartIndex += 7
+            }
+
+            // For monthly data: Group data into chunks of 30 days
+            val monthlyData = mutableListOf<Map<String, Map<String, Long>>>()
+            var currentMonthStartIndex = 0
+            while (currentMonthStartIndex < sortedDates.size) {
+                val currentMonthDates = sortedDates.subList(
+                    currentMonthStartIndex,
+                    (currentMonthStartIndex + 30).coerceAtMost(sortedDates.size)
+                )
+                val monthlyMap = mutableMapOf<String, MutableMap<String, Long>>()
+                for (date in currentMonthDates) {
+                    val formattedDate = date.format(dateFormatter)
+                    dateMap[date]?.forEach { (site, time) ->
+                        monthlyMap[formattedDate] = monthlyMap[formattedDate]?.toMutableMap() ?: mutableMapOf()
+                        monthlyMap[formattedDate]!![site] = (monthlyMap[formattedDate]?.get(site) ?: 0) + time
+                    }
+                }
+                monthlyData.add(monthlyMap)
+                currentMonthStartIndex += 30
+            }
+
+
+            Log.e("DATE_EXTENSION", "${dailyData} + ${weeklyData} + ${monthlyData} ")
+
+        }
+
     }
 
 }
