@@ -16,6 +16,9 @@
         android:theme="@style/Theme.KontestBuddy"
         tools:targetApi="31">
         <activity
+            android:name=".Ranking.LeaderboardActivity"
+            android:exported="false" />
+        <activity
             android:name=".SpalshActivity"
             android:exported="true">
             <intent-filter>
@@ -26,7 +29,7 @@
         </activity>
         <activity
             android:name=".Auth.LoginActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".Auth.RegisterActivity"
             android:exported="false" />
@@ -45,6 +48,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+
 
         <meta-data
             android:name="preloaded_fonts"

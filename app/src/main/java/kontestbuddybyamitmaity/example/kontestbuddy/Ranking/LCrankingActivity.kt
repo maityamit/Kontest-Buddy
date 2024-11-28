@@ -22,7 +22,7 @@ class LCrankingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_lcranking)
         progressDialog= ProgressDialog(this)
         progressDialog.setCancelable(false)
-        progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
+        progressDialog.setTitle("Sometimes it takes too longer !! \n Please wait")
 
         initialization()
         val extras = intent.extras
@@ -39,9 +39,9 @@ class LCrankingActivity : AppCompatActivity() {
             val jsonArray = parser.parse(isValid).asJsonArray
 
             for(element in jsonArray){
-                val tempName:String = element.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("Name").toString()
+                val tempName:String = element.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("username").toString()
                 val tempRat:String = element.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("rating").toString().split(".")[0]
-                val tempRank:String = element.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("rank").toString()
+                val tempRank:String = element.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("globalRanking").toString()
                 userList.add(CustomData(tempName,tempRat.toInt(),tempRank.toFloat()))
             }
 

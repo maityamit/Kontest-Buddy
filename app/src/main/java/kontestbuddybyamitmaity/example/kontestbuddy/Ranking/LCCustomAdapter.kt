@@ -32,10 +32,10 @@ class LCCustomAdapter(private val dataList: List<LCrankingActivity.CustomData>) 
         private val LCrank_userPosition:TextView = itemView.findViewById(R.id.LCrank_userPosition)
 
         fun bind(data: LCrankingActivity.CustomData,position:Int) {
-            userName.text = data.name
+            userName.text = data.name.substring(1,data.name.length-1)
             LCrank_codeFrank.text = (position+1).toString()
             LCrank_userRatings.text = data.rating.toString()
-            LCrank_userPosition.text = data.rank.toString()+"%"
+            LCrank_userPosition.text = data.rank.toString()
         }
     }
 }

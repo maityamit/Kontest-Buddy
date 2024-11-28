@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/spalsh_background"
+    android:background="#f6f9fa"
     tools:context=".SpalshActivity">
 
     <LinearLayout
@@ -20,8 +20,10 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         app:cardCornerRadius="10dp"
-        android:elevation="10dp"
-        app:cardElevation="10dp">
+        android:layout_margin="15dp"
+        android:elevation="15dp"
+        app:cardMaxElevation="15dp"
+        app:cardElevation="15dp">
 
         <ImageView
             android:layout_width="match_parent"
@@ -34,10 +36,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:textSize="20sp"
+        android:fontFamily="@font/amaranth"
         android:textStyle="bold"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:text="Kontest Buddy"/>
 
     </LinearLayout>

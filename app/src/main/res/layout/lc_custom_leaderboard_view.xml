@@ -80,7 +80,7 @@
                     android:layout_marginStart="20dp"
                     android:textColor="#6F6F6F"
                     android:textSize="13sp"
-                    android:text="Rank:"/>
+                    android:text="Global rank:"/>
                 <TextView
                     android:id="@+id/LCrank_userPosition"
                     android:layout_width="wrap_content"

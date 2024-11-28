@@ -40,7 +40,7 @@ class CFrankingActivity : AppCompatActivity() {
 
             if (jsonArray != null) {
                 for(element in jsonArray){
-                    val tempName:String = element.asJsonObject?.get("Name").toString()
+                    val tempName:String = element.asJsonObject?.get("username").toString()
                     val tempRat:String = element.asJsonObject.get("rating").toString()
                     val tempRank:String = element.asJsonObject.get("rank").toString()
                     userList.add(CustomData(tempName,tempRat.toInt(),tempRank))
