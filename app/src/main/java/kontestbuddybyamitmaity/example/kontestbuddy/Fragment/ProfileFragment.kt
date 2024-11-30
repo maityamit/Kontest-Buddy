@@ -87,9 +87,9 @@ class ProfileFragment : Fragment() {
             val CFuserName = sharedPreferences?.getString("CFuserName","")
             val CCuserName = sharedPreferences?.getString("CCuserName","")
 
-            findViewById<EditText>(R.id._register_user_leetcode).setText(if(LCuserName == "null") {""} else {LCuserName?.substring(1, LCuserName.length - 1) ?: "" })
-            findViewById<EditText>(R.id._register_user_codeforces).setText(if(CFuserName == "null") {""} else {CFuserName?.substring(1, CFuserName.length - 1) ?: "" })
-            findViewById<EditText>(R.id._register_user_codechef).setText(if(CCuserName == "null") {""} else {CCuserName?.substring(1, CCuserName.length - 1) ?: "" })
+            findViewById<EditText>(R.id._register_user_leetcode).setText(if(LCuserName == "null" || LCuserName=="") {""} else {LCuserName?.substring(1, LCuserName.length - 1) ?: "" })
+            findViewById<EditText>(R.id._register_user_codeforces).setText(if(CFuserName == "null" || CFuserName=="") {""} else {CFuserName?.substring(1, CFuserName.length - 1) ?: "" })
+            findViewById<EditText>(R.id._register_user_codechef).setText(if(CCuserName == "null" || CCuserName=="") {""} else {CCuserName?.substring(1, CCuserName.length - 1) ?: "" })
 
             findViewById<TextView>(R.id._leetcode_verify_button).setOnClickListener {
                 val user_leetcode = findViewById<EditText>(R.id._register_user_leetcode).text.toString()
@@ -238,8 +238,8 @@ class ProfileFragment : Fragment() {
 
         view.findViewById<TextView>(R.id.profile_frag_userName).text = sharedPreferences?.getString("userName","")
         view.findViewById<TextView>(R.id.profile_frag_userEmail).text = sharedPreferences?.getString("userEmail","")
-        view.findViewById<TextView>(R.id.profile_frag_userLC).text = if(LCuserName == "null") {"-"} else {LCuserName?.substring(1, LCuserName.length - 1) ?: "" }
-        view.findViewById<TextView>(R.id.profile_frag_userCF).text = if(CFuserName == "null") {"-"} else {CFuserName?.substring(1, CFuserName.length - 1) ?: "" }
-        view.findViewById<TextView>(R.id.profile_frag_userCC).text = if(CCuserName == "null") {"-"} else {CCuserName?.substring(1, CCuserName.length - 1) ?: "" }
+        view.findViewById<TextView>(R.id.profile_frag_userLC).text = if(LCuserName == "null" || LCuserName=="") {"-"} else {LCuserName?.substring(1, LCuserName.length - 1) ?: "" }
+        view.findViewById<TextView>(R.id.profile_frag_userCF).text = if(CFuserName == "null" || CFuserName=="") {"-"} else {CFuserName?.substring(1, CFuserName.length - 1) ?: "" }
+        view.findViewById<TextView>(R.id.profile_frag_userCC).text = if(CCuserName == "null" || CCuserName=="") {"-"} else {CCuserName?.substring(1, CCuserName.length - 1) ?: "" }
     }
 }

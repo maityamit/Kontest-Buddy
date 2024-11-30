@@ -32,7 +32,7 @@
             android:layout_marginEnd="20dp"
             android:textStyle="bold"
             android:text="@string/app_name"
-            android:textColor="#FFFFFF"
+            android:textColor="#0370D6"
             android:textSize="20sp" />
 
         <TextView
@@ -43,7 +43,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="30dp"
             android:text="Your ultimate coding buddy..."
-            android:textColor="@android:color/white"
+            android:textColor="#FFA116"
             android:textSize="15sp" />
 
         <EditText
@@ -134,7 +134,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textColor="#F44336"
                 android:textSize="13sp"
                 android:text="@string/verify"/>
 
@@ -183,7 +184,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/white"
+                android:textColor="#F44336"
+                android:textStyle="bold"
                 android:textSize="13sp"
                 android:text="@string/verify"/>
 
@@ -232,7 +234,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/white"
+                android:textColor="#F44336"
+                android:textStyle="bold"
                 android:textSize="13sp"
                 android:text="@string/verify"/>
 
@@ -265,7 +268,7 @@
                 android:layout_height="wrap_content"
                 android:text="Already Sign-up"
                 android:textSize="18sp"
-                android:textColor="@android:color/white"/>
+                android:textColor="@color/black"/>
 
             <TextView
                 android:id="@+id/already_sign_in"
@@ -273,7 +276,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:textSize="18sp"
-                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:fontFamily="@font/amaranth"
+                android:textColor="@color/black"
                 android:text="@string/sign_in"/>
 
         </LinearLayout>

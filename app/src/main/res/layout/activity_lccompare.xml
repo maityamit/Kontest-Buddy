@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#1A1A1A"
+    android:background="#f6f9fa"
     android:layout_height="match_parent"
     tools:context=".Compare.LCcompareActivity">
 
@@ -24,7 +24,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#2A2A2A"
+                android:background="#FFFFFF"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:background="#2A2A2A">
+                android:background="#FFFFFF">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="100dp"
@@ -110,7 +110,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#2A2A2A"
+                android:background="#FFFFFF"
                 android:orientation="vertical">
 
 
@@ -206,7 +206,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:background="#2A2A2A">
+                android:background="#FFFFFF">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="100dp"
@@ -250,7 +250,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:background="#2A2A2A">
+                android:background="#FFFFFF">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="150dp"

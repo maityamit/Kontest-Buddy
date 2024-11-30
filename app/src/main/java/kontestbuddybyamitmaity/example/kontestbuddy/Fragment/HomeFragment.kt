@@ -23,6 +23,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -34,6 +35,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonObject
+import kontestbuddybyamitmaity.example.kontestbuddy.Agents.DailystatshowActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
@@ -51,6 +53,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -75,6 +79,13 @@ class HomeFragment : Fragment() {
     lateinit var compareButton_Homepage:LinearLayout
     lateinit var coding_time_stat_progress_bar:ProgressBar
     lateinit var know_more_button_for_extension:TextView
+    lateinit var coding_time_progress_show_text:TextView
+    lateinit var daily_coding_stats_via_extension:CardView
+
+    val day_wise_list: MutableList<Any> = mutableListOf()
+    val week_wise_list: MutableList<Any> = mutableListOf()
+    val month_wise_list: MutableList<Any> = mutableListOf()
+
 //    lateinit var CompareButtonLeetCode:CardView
 //    lateinit var CompareButtonCodeForces:CardView
     val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -125,6 +136,13 @@ class HomeFragment : Fragment() {
             startActivity(intent)
         }
 
+        daily_coding_stats_via_extension.setOnClickListener {
+            val intent = Intent(context, DailystatshowActivity::class.java)
+            val arrayList = ArrayList(day_wise_list)
+            intent.putExtra("day_wise_list", arrayList)
+            startActivity(intent)
+        }
+
         return view
     }
 
@@ -161,18 +179,18 @@ class HomeFragment : Fragment() {
             userName_TextView.text = "\uD83D\uDC4B Hello, "
         }
 
-        ratingsLC_TextView.text = if(LCrating =="null") {"-"} else {LCrating?.substring(1, 5) ?: ""}
-        toppercentageLC_TextView.text = if (LCtopPercentage == "null") {"-"} else {(LCtopPercentage?.substring(1, LCtopPercentage.length - 1) + "%") } ?: ""
-        livecontestLC_TextView.text = if(LCattendedContestsCount == "null") {"-"} else {LCattendedContestsCount?.substring(1, LCattendedContestsCount.length - 1) ?: ""}
-        globalrankingLC_TextView.text = if(LCglobalRanking == "null") {"-"} else {LCglobalRanking?.substring(1, LCglobalRanking.length - 1) ?: ""}
+        ratingsLC_TextView.text = if(LCrating =="null" || LCrating=="") {"-"} else {LCrating?.substring(1, 5) ?: ""}
+        toppercentageLC_TextView.text = if (LCtopPercentage == "null" || LCtopPercentage=="") {"-"} else {(LCtopPercentage?.substring(1, LCtopPercentage.length - 1) + "%") } ?: ""
+        livecontestLC_TextView.text = if(LCattendedContestsCount == "null" || LCattendedContestsCount=="") {"-"} else {LCattendedContestsCount?.substring(1, LCattendedContestsCount.length - 1) ?: ""}
+        globalrankingLC_TextView.text = if(LCglobalRanking == "null" || LCglobalRanking=="") {"-"} else {LCglobalRanking?.substring(1, LCglobalRanking.length - 1) ?: ""}
 
-        ratingsCF_TextView.text = if(CFrating == "null") {"-"} else {CFrating?.substring(1, CFrating.length - 1) ?: "" }
-        ratingCC_TextView.text = if(CCrating == "null") {"-"} else {CCrating?.substring(1, CCrating.length - 1) ?: "" }
-        lcUserName_TextView.text = if(LCuserName == "null") {"-"} else {LCuserName?.substring(1, LCuserName.length - 1) ?: "" }
-        cfUserName_TextView.text = if(CFuserName == "null") {"-"} else {CFuserName?.substring(1, CFuserName.length - 1) ?: "" }
+        ratingsCF_TextView.text = if(CFrating == "null" || CFrating=="") {"-"} else {CFrating?.substring(1, CFrating.length - 1) ?: "" }
+        ratingCC_TextView.text = if(CCrating == "null" || CCrating=="") {"-"} else {CCrating?.substring(1, CCrating.length - 1) ?: "" }
+        lcUserName_TextView.text = if(LCuserName == "null" || LCuserName=="") {"-"} else {LCuserName?.substring(1, LCuserName.length - 1) ?: "" }
+        cfUserName_TextView.text = if(CFuserName == "null" || CFuserName=="") {"-"} else {CFuserName?.substring(1, CFuserName.length - 1) ?: "" }
 
 
-        ccUserName_TextView.text = if(CCuserName == "null") {"-"} else {CCuserName?.substring(1, CCuserName.length - 1) ?: "" }
+        ccUserName_TextView.text = if(CCuserName == "null" || CCuserName=="") {"-"} else {CCuserName?.substring(1, CCuserName.length - 1) ?: "" }
         lastUpdateHomeMainPage_TextView.text = lastUpdate
 
 
@@ -307,6 +325,8 @@ class HomeFragment : Fragment() {
         compareButton_Homepage = view.findViewById(R.id.compareButton_Homepage)
         know_more_button_for_extension = view.findViewById(R.id.know_more_button_for_extension)
         coding_time_stat_progress_bar = view.findViewById(R.id.coding_time_stat_progress_bar)
+        coding_time_progress_show_text = view.findViewById(R.id.coding_time_progress_show_text)
+        daily_coding_stats_via_extension = view.findViewById(R.id.daily_coding_stats_via_extension)
 //        CompareButtonCodeForces = view.findViewById(R.id.CompareButtonCodeForces)
 //        LeaderboardButtonLeetCode = view.findViewById(R.id.ADDLeaderboardButtonLeetCode)
 //        LeaderboardButtonCodeForces = view.findViewById(R.id.ADDLeaderboardButtonCodeForces)
@@ -337,6 +357,7 @@ class HomeFragment : Fragment() {
         // the data is in realtime database within users->userID folder so to retrive write code for that
 
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     // Iterate through all random IDs under the user
@@ -378,15 +399,19 @@ class HomeFragment : Fragment() {
 
                 } else {
                     println("No data found for user: $userID")
+                    coding_time_progress_show_text.text = "0h 0m"
+                    coding_time_progress_show_text.visibility = View.VISIBLE
+                    coding_time_stat_progress_bar.visibility = View.GONE
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
                 println("Error fetching data: ${error.message}")
+                coding_time_progress_show_text.text = "0h 0m"
+                coding_time_progress_show_text.visibility = View.VISIBLE
+                coding_time_stat_progress_bar.visibility = View.GONE
             }
         })
-
-        Toast.makeText(context, "Data refreshed !! at ${nestedMap.toString()}", Toast.LENGTH_SHORT).show()
 
 
     }
@@ -398,66 +423,119 @@ class HomeFragment : Fragment() {
 
         // check the data is empty or not
         if (nestedMap.isEmpty()) {
+            coding_time_progress_show_text.text = "0h 0m"
+            coding_time_progress_show_text.visibility = View.VISIBLE
+            coding_time_stat_progress_bar.visibility = View.GONE
             return
         }else{
+
+
+            var totalTime_calculated = 0L
+
+
 
             // Convert date strings to LocalDate for easier manipulation
             val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")
             val dateMap = nestedMap.mapKeys { java.time.LocalDate.parse(it.key, dateFormatter) }
 
-            // Sort dates in ascending order
-            val sortedDates = dateMap.keys.sorted()
+
+            for((date, siteMap) in dateMap){
+
+                val today = LocalDate.now()
+                val formattedDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
+                if(date.toString()==formattedDate){
+                    for((site, time) in siteMap){
+                        totalTime_calculated += time
+                    }
+                }
+            }
+
+            // Sort dates in desc order
+            val sortedDates = dateMap.keys.sortedDescending()
 
             // For daily data: Each date and its site->time map
             val dailyData = sortedDates.map { date ->
                 mapOf(date.format(dateFormatter) to dateMap[date]!!)
             }
 
-            // For weekly data: Group data into chunks of 7 days
-            val weeklyData = mutableListOf<Map<String, Map<String, Long>>>()
-            var currentWeekStartIndex = 0
-            while (currentWeekStartIndex < sortedDates.size) {
-                val currentWeekDates = sortedDates.subList(
-                    currentWeekStartIndex,
-                    (currentWeekStartIndex + 7).coerceAtMost(sortedDates.size)
-                )
-                val weeklyMap = mutableMapOf<String, MutableMap<String, Long>>()
-                for (date in currentWeekDates) {
-                    val formattedDate = date.format(dateFormatter)
-                    dateMap[date]?.forEach { (site, time) ->
-                        weeklyMap[formattedDate] = weeklyMap[formattedDate]?.toMutableMap() ?: mutableMapOf()
-                        weeklyMap[formattedDate]!![site] = (weeklyMap[formattedDate]?.get(site) ?: 0) + time
-                    }
-                }
-                weeklyData.add(weeklyMap)
-                currentWeekStartIndex += 7
+            for(data in dailyData){
+                day_wise_list.add(data)
             }
 
-            // For monthly data: Group data into chunks of 30 days
-            val monthlyData = mutableListOf<Map<String, Map<String, Long>>>()
-            var currentMonthStartIndex = 0
-            while (currentMonthStartIndex < sortedDates.size) {
-                val currentMonthDates = sortedDates.subList(
-                    currentMonthStartIndex,
-                    (currentMonthStartIndex + 30).coerceAtMost(sortedDates.size)
-                )
-                val monthlyMap = mutableMapOf<String, MutableMap<String, Long>>()
-                for (date in currentMonthDates) {
-                    val formattedDate = date.format(dateFormatter)
-                    dateMap[date]?.forEach { (site, time) ->
-                        monthlyMap[formattedDate] = monthlyMap[formattedDate]?.toMutableMap() ?: mutableMapOf()
-                        monthlyMap[formattedDate]!![site] = (monthlyMap[formattedDate]?.get(site) ?: 0) + time
+            // Weekly data: Each week and its site->time map
+            var curentStartDate = sortedDates.first()
+            var currentEndDate = curentStartDate.minusDays(7)
+            val tempMap: MutableMap<String, Long> = mutableMapOf()
+            for(date in sortedDates){
+                if(date.isAfter(currentEndDate)){
+                    for((site, time) in dateMap[date]!!){
+                        tempMap[site] = (tempMap[site] ?: 0) + time
+                    }
+                }else{
+                    tempMap["startDate"] = curentStartDate.minusDays(6).toEpochDay()
+                    tempMap["endDate"] = curentStartDate.toEpochDay()
+                    week_wise_list.add(tempMap.toMutableMap())
+
+                    tempMap.clear()
+                    curentStartDate = date
+                    currentEndDate = date.minusDays(7)
+                    for((site, time) in dateMap[date]!!){
+                        tempMap[site] = (tempMap[site] ?: 0) + time
                     }
                 }
-                monthlyData.add(monthlyMap)
-                currentMonthStartIndex += 30
+            }
+            if (tempMap.isNotEmpty()) {
+                tempMap["startDate"] = curentStartDate.minusDays(6).toEpochDay()
+                tempMap["endDate"] = curentStartDate.toEpochDay()
+                week_wise_list.add(tempMap.toMutableMap())
             }
 
 
-            Log.e("DATE_EXTENSION", "${dailyData} + ${weeklyData} + ${monthlyData} ")
+            curentStartDate = sortedDates.first()
+            currentEndDate = curentStartDate.minusDays(30)
+            tempMap.clear()
+            for(date in sortedDates){
+                if(date.isAfter(currentEndDate)){
+                    for((site, time) in dateMap[date]!!){
+                        tempMap[site] = (tempMap[site] ?: 0) + time
+                    }
+                }else{
+                    tempMap["startDate"] = curentStartDate.minusDays(29).toEpochDay()
+                    tempMap["endDate"] = curentStartDate.toEpochDay()
+                    month_wise_list.add(tempMap.toMutableMap())
+
+                    tempMap.clear()
+                    curentStartDate = date
+                    currentEndDate = date.minusDays(30)
+                    for((site, time) in dateMap[date]!!){
+                        tempMap[site] = (tempMap[site] ?: 0) + time
+                    }
+                }
+            }
+            if (tempMap.isNotEmpty()) {
+                tempMap["startDate"] = curentStartDate.minusDays(29).toEpochDay()
+                tempMap["endDate"] = curentStartDate.toEpochDay()
+                month_wise_list.add(tempMap.toMutableMap())
+            }
+
+
+
+            val (hours, minutes) = convertMillisToTime(totalTime_calculated)
+
+            coding_time_progress_show_text.text = "${hours}h ${minutes}m"
+            coding_time_progress_show_text.visibility = View.VISIBLE
+            coding_time_stat_progress_bar.visibility = View.GONE
 
         }
 
+    }
+
+    fun convertMillisToTime(ms: Long): Pair<Int, Int> {
+        val totalSeconds = ms / 1000  // Convert milliseconds to seconds
+        val hours = (totalSeconds / 3600).toInt()  // Calculate hours
+        val minutes = ((totalSeconds % 3600) / 60).toInt()  // Calculate remaining minutes
+        return Pair(hours, minutes)
     }
 
 }
