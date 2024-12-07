@@ -16,6 +16,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -63,6 +64,16 @@ class ProfileFragment : Fragment() {
         view.findViewById<ImageView>(R.id.profile_frag_user_edit).setOnClickListener{
             context?.let { it1 -> CustomDialog(it1, this) }?.show()
         }
+
+//        val switchButton = view.findViewById<Switch>(R.id.is_profile_public_switch_button)
+
+//        switchButton.setOnCheckedChangeListener { _, isChecked ->
+//            if (isChecked) {
+//                Toast.makeText(context, "Switch is ON", Toast.LENGTH_SHORT).show()
+//            } else {
+//                Toast.makeText(context, "Switch is OFF", Toast.LENGTH_SHORT).show()
+//            }
+//        }
 
         return view
     }

@@ -227,12 +227,17 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun createANewUserOnFirebase(userName: String, userPassword: String, userEmail: String) {
+
+        val lc_user_name = ratingsDetails["leetcode"]?.get("userName")?.toString()?.removeSurrounding("\"")
+        val cf_user_name = ratingsDetails["codeforces"]?.get("userName")?.toString()?.removeSurrounding("\"")
+        val cc_user_name = ratingsDetails["codechef"]?.get("userName")?.toString()?.removeSurrounding("\"")
+
         val userData = hashMapOf(
             "userName" to userName,
             "userEmail" to userEmail,
-            "userLeetcode" to ratingsDetails["leetcode"]?.get("userName").toString(),
-            "userCodeforces" to ratingsDetails["codeforces"]?.get("userName").toString(),
-            "userCodechef" to ratingsDetails["codechef"]?.get("userName").toString(),
+            "userLeetcode" to lc_user_name,
+            "userCodeforces" to cf_user_name,
+            "userCodechef" to cc_user_name,
             "LCleader" to "",
             "CFleader" to "",
             "CCleader" to ""
@@ -264,7 +269,7 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
-    private fun storeDataIntoSharePref(userData: HashMap<String, String>) {
+    private fun storeDataIntoSharePref(userData: HashMap<String, String?>) {
         val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
         val myEdit = sharedPreferences.edit()
         val currentTimestamp: Long = System.currentTimeMillis()

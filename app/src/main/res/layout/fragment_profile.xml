@@ -79,6 +79,31 @@
                 android:layout_marginTop="5dp"
                 android:text="user_email@gmail.com"/>
 
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="20dp"-->
+<!--                android:orientation="horizontal"-->
+<!--                tools:ignore="UseSwitchCompatOrMaterialXml">-->
+
+
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:text="Public Profile: (in testing)"/>-->
+
+<!--                <Switch-->
+<!--                    android:id="@+id/is_profile_public_switch_button"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="" />-->
+
+
+<!--            </LinearLayout>-->
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

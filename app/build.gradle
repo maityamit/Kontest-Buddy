@@ -13,8 +13,8 @@ android {
         applicationId "kontestbuddybyamitmaity.example.kontestbuddy"
         minSdk 24
         targetSdk 34
-        versionCode 9
-        versionName "2.0.000_V2"
+        versionCode 10
+        versionName "2.0.000_V2_R"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
