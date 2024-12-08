@@ -16,6 +16,9 @@
         android:theme="@style/Theme.KontestBuddy"
         tools:targetApi="31">
         <activity
+            android:name=".Friends.FriendsActivity"
+            android:exported="false" />
+        <activity
             android:name=".Agents.DailystatshowActivity"
             android:exported="false" />
         <activity

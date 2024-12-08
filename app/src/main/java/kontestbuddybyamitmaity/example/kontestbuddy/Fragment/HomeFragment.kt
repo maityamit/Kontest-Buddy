@@ -1,10 +1,7 @@
 package kontestbuddybyamitmaity.example.kontestbuddy.Fragment
 
-import android.app.Dialog
 import android.app.ProgressDialog
-import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,9 +9,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -23,9 +17,6 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -39,12 +30,8 @@ import kontestbuddybyamitmaity.example.kontestbuddy.Agents.DailystatshowActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Compare.CFcompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Compare.CompareActivity
-import kontestbuddybyamitmaity.example.kontestbuddy.Compare.LCcompareActivity
-import kontestbuddybyamitmaity.example.kontestbuddy.CurrentFriends.CodeForcesFrndAdapter
-import kontestbuddybyamitmaity.example.kontestbuddy.CurrentFriends.LeetCodeCurrentFrndAdapter
-import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
+import kontestbuddybyamitmaity.example.kontestbuddy.Friends.FriendsActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.LeaderboardActivity
 import kotlinx.coroutines.CoroutineScope
@@ -81,6 +68,7 @@ class HomeFragment : Fragment() {
     lateinit var know_more_button_for_extension:TextView
     lateinit var coding_time_progress_show_text:TextView
     lateinit var daily_coding_stats_via_extension:CardView
+    lateinit var find_koding_buddy_button:CardView
 
     val day_wise_list: MutableList<Any> = mutableListOf()
     val week_wise_list: MutableList<Any> = mutableListOf()
@@ -129,6 +117,20 @@ class HomeFragment : Fragment() {
             startActivity(intent)
         }
 
+
+        find_koding_buddy_button.setOnClickListener {
+            val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
+                AppCompatActivity.MODE_PRIVATE
+            )
+            val _is_public = sharedPreferences?.getString("is_public","false")
+            if(_is_public=="true"){
+                val intent:Intent = Intent(context, FriendsActivity::class.java)
+                startActivity(intent)
+            }else{
+                Toast.makeText(context, "Please make your profile public to use this feature, for this go to Profile Page", Toast.LENGTH_LONG).show()
+            }
+        }
+
         know_more_button_for_extension.setOnClickListener {
             // Open the extension link
             val intent = Intent(Intent.ACTION_VIEW)
@@ -170,6 +172,7 @@ class HomeFragment : Fragment() {
         val CCuserName = sharedPreferences?.getString("CCuserName","")
         val CCrating = sharedPreferences?.getString("CCrating","")
         val lastUpdate = sharedPreferences?.getString("lastUpdate","")
+
 
 
         //Retrieve Data From Local Storage and Set Data into The Container
@@ -327,6 +330,7 @@ class HomeFragment : Fragment() {
         coding_time_stat_progress_bar = view.findViewById(R.id.coding_time_stat_progress_bar)
         coding_time_progress_show_text = view.findViewById(R.id.coding_time_progress_show_text)
         daily_coding_stats_via_extension = view.findViewById(R.id.daily_coding_stats_via_extension)
+        find_koding_buddy_button = view.findViewById<CardView>(R.id.find_koding_buddy_button)
 //        CompareButtonCodeForces = view.findViewById(R.id.CompareButtonCodeForces)
 //        LeaderboardButtonLeetCode = view.findViewById(R.id.ADDLeaderboardButtonLeetCode)
 //        LeaderboardButtonCodeForces = view.findViewById(R.id.ADDLeaderboardButtonCodeForces)

@@ -168,10 +168,7 @@ class RegisterActivity : AppCompatActivity() {
                 apiTask.execute(user_codechef)
             }
         }
-
         findViewById<Button>(R.id.register_user_button).setOnClickListener{
-
-
 
             val user_name = findViewById<EditText>(R.id.register_user_name).text.toString()
             val user_email = findViewById<EditText>(R.id.register_user_email).text.toString()
@@ -179,7 +176,7 @@ class RegisterActivity : AppCompatActivity() {
             val user_leetcode = findViewById<EditText>(R.id.register_user_leetcode).text.toString()
             val user_codeforces = findViewById<EditText>(R.id.register_user_codeforces).text.toString()
             val user_codechef= findViewById<EditText>(R.id.register_user_codechef).text.toString()
-            var linkedin_profile = findViewById<EditText>(R.id.register_user_linkedin).toString()
+            var linkedin_profile = findViewById<EditText>(R.id.register_user_linkedin).text.toString()
 
             if(user_name.isBlank()){
                 Toast.makeText(applicationContext,"Enter Your Name",Toast.LENGTH_SHORT).show()
@@ -198,14 +195,12 @@ class RegisterActivity : AppCompatActivity() {
                 if(linkedin_profile.isNotBlank()){
                     val result = extractLinkedInUsername(linkedin_profile)
                     linkedin_profile = result ?: linkedin_profile
-                }
 
+                }
                 progressDialog.show()
                 createANewUserOnFirebase(user_name,user_password,user_email,linkedin_profile)
             }
         }
-
-
     }
 
     private fun intitialization() {
@@ -307,11 +302,6 @@ class RegisterActivity : AppCompatActivity() {
         myEdit.putString("linkedin_profile",userData["linkedin_profile"].toString())
         myEdit.putString("is_public",userData["is_public"].toString())
 
-
-//        val allEntries = sharedPreferences.all
-//        for ((key, value) in allEntries) {
-//            Log.d("ALl_DATA", "Key: $key, Value: $value")
-//        }
 
         myEdit.apply()
 
