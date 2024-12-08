@@ -38,6 +38,7 @@ class ProfileFragment : Fragment() {
 
 
 
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,15 +66,69 @@ class ProfileFragment : Fragment() {
             context?.let { it1 -> CustomDialog(it1, this) }?.show()
         }
 
-//        val switchButton = view.findViewById<Switch>(R.id.is_profile_public_switch_button)
+        val switchButton = view.findViewById<Switch>(R.id.is_profile_public_switch_button)
+        val is_public_profile_textview = view.findViewById<TextView>(R.id.is_public_profile_textview)
 
-//        switchButton.setOnCheckedChangeListener { _, isChecked ->
-//            if (isChecked) {
-//                Toast.makeText(context, "Switch is ON", Toast.LENGTH_SHORT).show()
-//            } else {
-//                Toast.makeText(context, "Switch is OFF", Toast.LENGTH_SHORT).show()
-//            }
-//        }
+        switchButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                progressDialog.show()
+                val userData = hashMapOf(
+                    "is_public" to "true"
+                )
+                val db = Firebase.firestore
+                val user = FirebaseAuth.getInstance().currentUser
+                val userId = user?.uid.toString()
+                val userInfo = db.collection("users")
+
+                userInfo.document(userId).update(userData as Map<String, Any>).addOnSuccessListener {
+                    progressDialog.dismiss()
+                    Toast.makeText(context,"Preference Updated...",Toast.LENGTH_SHORT).show()
+                    is_public_profile_textview.text = "Public Profile: (on)"
+                    progressDialog.dismiss()
+
+                    val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
+                        AppCompatActivity.MODE_PRIVATE
+                    )
+                    val myEdit = sharedPreferences?.edit()
+                    if(myEdit != null) {
+                        myEdit.putString("is_public",userData["is_public"].toString())
+                        myEdit.apply()
+                    }
+
+                }.addOnFailureListener{
+                    progressDialog.dismiss()
+                    Toast.makeText(context,it.message.toString(),Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                progressDialog.show()
+                val userData = hashMapOf(
+                    "is_public" to "false"
+                )
+                val db = Firebase.firestore
+                val user = FirebaseAuth.getInstance().currentUser
+                val userId = user?.uid.toString()
+                val userInfo = db.collection("users")
+
+                userInfo.document(userId).update(userData as Map<String, Any>).addOnSuccessListener {
+                    progressDialog.dismiss()
+                    Toast.makeText(context,"Preference Updated...",Toast.LENGTH_SHORT).show()
+                    is_public_profile_textview.text = "Public Profile: (off)"
+                    progressDialog.dismiss()
+
+                    val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
+                        AppCompatActivity.MODE_PRIVATE
+                    )
+                    val myEdit = sharedPreferences?.edit()
+                    if(myEdit != null) {
+                        myEdit.putString("is_public",userData["is_public"].toString())
+                        myEdit.apply()
+                    }
+                }.addOnFailureListener{
+                    progressDialog.dismiss()
+                    Toast.makeText(context,it.message.toString(),Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         return view
     }
@@ -186,6 +241,7 @@ class ProfileFragment : Fragment() {
                 val user_leetcode = findViewById<EditText>(R.id._register_user_leetcode).text.toString()
                 val user_codeforces = findViewById<EditText>(R.id._register_user_codeforces).text.toString()
                 val user_codechef= findViewById<EditText>(R.id._register_user_codechef).text.toString()
+                var user_linkedin = findViewById<EditText>(R.id._register_user_linkedin_account).text.toString()
 
                 if(user_leetcode.isNotBlank() && !leetcode_verify){
                     Toast.makeText(context,"Please verify the LC account",Toast.LENGTH_SHORT).show()
@@ -194,18 +250,24 @@ class ProfileFragment : Fragment() {
                 }else if(user_codechef.isNotBlank() && !codechef_verify){
                     Toast.makeText(context,"Please verify the CC account",Toast.LENGTH_SHORT).show()
                 }else{
+
+                    if(user_linkedin.isNotBlank()){
+                        val result = extractLinkedInUsername(user_linkedin)
+                        user_linkedin = result ?: user_linkedin
+                    }
+
                     progressDialog.show()
                     var lc = "";
                     var cf = "";
                     var cc = "";
-                    var gfg = ""
                     if(user_leetcode.isNotBlank()) lc = user_leetcode;
                     if(user_codeforces.isNotBlank()) cf = user_codeforces;
                     if(user_codechef.isNotBlank()) cc = user_codechef;
                     val userData = hashMapOf(
                         "userLeetcode" to lc,
                         "userCodeforces" to cf,
-                        "userCodechef" to cc
+                        "userCodechef" to cc,
+                        "linkedin_profile" to user_linkedin
                     )
                     val db = Firebase.firestore
                     val user = FirebaseAuth.getInstance().currentUser
@@ -230,6 +292,12 @@ class ProfileFragment : Fragment() {
 
 
         }
+
+        private fun extractLinkedInUsername(userLinkedin: String): String? {
+            val regex = Regex("""(?:https?://)?(?:www\.)?linkedin\.com/in/([a-zA-Z0-9-_.]+)""")
+            val matchResult = regex.find(userLinkedin)
+            return matchResult?.groups?.get(1)?.value
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -246,11 +314,26 @@ class ProfileFragment : Fragment() {
         val LCuserName = sharedPreferences?.getString("LCuserName","")
         val CFuserName = sharedPreferences?.getString("CFuserName","")
         val CCuserName = sharedPreferences?.getString("CCuserName","")
+        val linkedin_profile = sharedPreferences?.getString("linkedin_profile","")
+        val is_public_from_store = sharedPreferences?.getString("is_public","false")
 
         view.findViewById<TextView>(R.id.profile_frag_userName).text = sharedPreferences?.getString("userName","")
         view.findViewById<TextView>(R.id.profile_frag_userEmail).text = sharedPreferences?.getString("userEmail","")
         view.findViewById<TextView>(R.id.profile_frag_userLC).text = if(LCuserName == "null" || LCuserName=="") {"-"} else {LCuserName?.substring(1, LCuserName.length - 1) ?: "" }
         view.findViewById<TextView>(R.id.profile_frag_userCF).text = if(CFuserName == "null" || CFuserName=="") {"-"} else {CFuserName?.substring(1, CFuserName.length - 1) ?: "" }
         view.findViewById<TextView>(R.id.profile_frag_userCC).text = if(CCuserName == "null" || CCuserName=="") {"-"} else {CCuserName?.substring(1, CCuserName.length - 1) ?: "" }
+        view.findViewById<TextView>(R.id.profile_frag_userLinkedin).text = if(linkedin_profile== "null" || linkedin_profile=="") {"-"} else linkedin_profile
+
+        if(is_public_from_store=="false") {
+            view.findViewById<TextView>(R.id.is_public_profile_textview).text =
+                "Public Profile: (off)"
+            view.findViewById<Switch>(R.id.is_profile_public_switch_button).isChecked = false
+        }else{
+            view.findViewById<TextView>(R.id.is_public_profile_textview).text =
+                "Public Profile: (on)"
+            view.findViewById<Switch>(R.id.is_profile_public_switch_button).isChecked = true
+        }
+
     }
+
 }

@@ -147,12 +147,20 @@ class LoginActivity : AppCompatActivity() {
                     val userLeetcode = document.getString("userLeetcode")
                     val userName = document.getString("userName")
                     val userEmail = document.getString("userEmail")
+                    val linkedin_profile = document.getString("linkedin_profile")
+                    var is_public = document.getString("is_public")
+
+                    if(is_public==null){
+                        is_public = "false"
+                    }
 
                     val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
                     val myEdit = sharedPreferences.edit()
 
                     myEdit.putString("userName",userName)
                     myEdit.putString("userEmail",userEmail)
+                    myEdit.putString("linkedin_profile",linkedin_profile.toString())
+                    myEdit.putString("is_public",is_public.toString())
                     myEdit.apply()
 
                     retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef)

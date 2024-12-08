@@ -179,6 +179,7 @@ class RegisterActivity : AppCompatActivity() {
             val user_leetcode = findViewById<EditText>(R.id.register_user_leetcode).text.toString()
             val user_codeforces = findViewById<EditText>(R.id.register_user_codeforces).text.toString()
             val user_codechef= findViewById<EditText>(R.id.register_user_codechef).text.toString()
+            var linkedin_profile = findViewById<EditText>(R.id.register_user_linkedin).toString()
 
             if(user_name.isBlank()){
                 Toast.makeText(applicationContext,"Enter Your Name",Toast.LENGTH_SHORT).show()
@@ -193,8 +194,14 @@ class RegisterActivity : AppCompatActivity() {
             }else if(user_codechef.isNotBlank() && !codechef_verify){
                 Toast.makeText(applicationContext,"Please verify the CC account",Toast.LENGTH_SHORT).show()
             }else{
+
+                if(linkedin_profile.isNotBlank()){
+                    val result = extractLinkedInUsername(linkedin_profile)
+                    linkedin_profile = result ?: linkedin_profile
+                }
+
                 progressDialog.show()
-                createANewUserOnFirebase(user_name,user_password,user_email)
+                createANewUserOnFirebase(user_name,user_password,user_email,linkedin_profile)
             }
         }
 
@@ -226,7 +233,7 @@ class RegisterActivity : AppCompatActivity() {
         ratingsDetails["codechef"]?.set("rating", "")
     }
 
-    private fun createANewUserOnFirebase(userName: String, userPassword: String, userEmail: String) {
+    private fun createANewUserOnFirebase(userName: String, userPassword: String, userEmail: String, linkedin_profile: String) {
 
         val lc_user_name = ratingsDetails["leetcode"]?.get("userName")?.toString()?.removeSurrounding("\"")
         val cf_user_name = ratingsDetails["codeforces"]?.get("userName")?.toString()?.removeSurrounding("\"")
@@ -240,7 +247,9 @@ class RegisterActivity : AppCompatActivity() {
             "userCodechef" to cc_user_name,
             "LCleader" to "",
             "CFleader" to "",
-            "CCleader" to ""
+            "CCleader" to "",
+            "linkedin_profile" to linkedin_profile,
+            "is_public" to "false"
         )
 
 
@@ -295,6 +304,8 @@ class RegisterActivity : AppCompatActivity() {
 
         myEdit.putString("CCuserName",ratingsDetails["codechef"]?.get("userName").toString())
         myEdit.putString("CCrating",ratingsDetails["codechef"]?.get("rating").toString())
+        myEdit.putString("linkedin_profile",userData["linkedin_profile"].toString())
+        myEdit.putString("is_public",userData["is_public"].toString())
 
 
 //        val allEntries = sharedPreferences.all
@@ -309,4 +320,12 @@ class RegisterActivity : AppCompatActivity() {
         finish()
 
     }
+
+
+    fun extractLinkedInUsername(input: String): String? {
+        val regex = Regex("""(?:https?://)?(?:www\.)?linkedin\.com/in/([a-zA-Z0-9-_.]+)""")
+        val matchResult = regex.find(input)
+        return matchResult?.groups?.get(1)?.value
+    }
 }
+
