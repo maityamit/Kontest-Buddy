@@ -35,6 +35,7 @@
         android:id="@+id/friends_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="15dp"
         tools:listitem="@layout/friends_show_layout"
         android:scrollbars="vertical" >
 

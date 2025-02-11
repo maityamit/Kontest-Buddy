@@ -316,6 +316,14 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textStyle="italic"
+                    android:text="Will live after 500+ downloads"/>
+
 
 
             </LinearLayout>

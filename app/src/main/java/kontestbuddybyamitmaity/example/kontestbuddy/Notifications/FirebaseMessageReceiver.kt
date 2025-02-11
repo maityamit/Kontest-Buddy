@@ -19,33 +19,14 @@ import kontestbuddybyamitmaity.example.kontestbuddy.R
 
 class FirebaseMessageReceiver : FirebaseMessagingService() {
 
-    // Override onNewToken to get new token
     override fun onNewToken(token: String) {
         super.onNewToken(token)
     }
 
-    // Override onMessageReceived() method to extract the
-    // title and
-    // body from the message passed in FCM
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // First case when notifications are received via
-        // data event
-        // Here, 'title' and 'message' are the assumed names
-        // of JSON
-        // attributes. Since here we do not have any data
-        // payload, This section is commented out. It is
-        // here only for reference purposes.
-        /*if(remoteMessage.getData().size()>0){
-            showNotification(remoteMessage.getData().get("title"),
-                          remoteMessage.getData().get("message"));
-        }*/
 
-        // Second case when notification payload is
-        // received.
         if (remoteMessage.getNotification() != null) {
-            // Since the notification is received directly from
-            // FCM, the title and the body can be fetched
-            // directly as below.
+
             remoteMessage.getNotification()!!.getTitle()?.let {
                 remoteMessage.getNotification()!!.getBody()?.let { it1 ->
                     showNotification(
@@ -55,26 +36,6 @@ class FirebaseMessageReceiver : FirebaseMessagingService() {
                 }
             }
         }
-    }
-
-    // Method to get the custom Design for the display of
-    // notification.
-    @SuppressLint("RemoteViewLayout")
-    private fun getCustomDesign(
-        title: String,
-        message: String
-    ): RemoteViews {
-        val remoteViews = RemoteViews(
-            ApplicationProvider.getApplicationContext<Context>().getPackageName(),
-            R.layout.notification
-        )
-        remoteViews.setTextViewText(R.id.title, title)
-        remoteViews.setTextViewText(R.id.message, message)
-        remoteViews.setImageViewResource(
-            R.id.icon,
-            R.drawable.kogo
-        )
-        return remoteViews
     }
 
     // Method to display the notifications
@@ -114,12 +75,7 @@ class FirebaseMessageReceiver : FirebaseMessagingService() {
             .setOnlyAlertOnce(true)
             .setContentIntent(pendingIntent)
 
-        // A customized design for the notification can be
-        // set only for Android versions 4.1 and above. Thus
-        // condition for the same is checked here.
-        builder = builder.setContent(
-            getCustomDesign(title, message)
-        )
+
         // Create an object of NotificationManager class to
         // notify the
         // user of events that happen in the background.

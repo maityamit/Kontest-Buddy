@@ -35,6 +35,10 @@ class FriendsAdapter(val withdrawList: List<FreindsModel>) : RecyclerView.Adapte
         holder.friends_codeforces_name.text = withdraw.userCodeforces
         holder.friends_codechef_name.text = withdraw.userCodechef
 
+        if(withdraw.userLeetcode.isEmpty()) holder.friends_leetcode_name.text = "-"
+        if(withdraw.userCodeforces.isEmpty()) holder.friends_codeforces_name.text = "-"
+        if(withdraw.userCodechef.isEmpty()) holder.friends_codechef_name.text = "-"
+
 
         holder.friends_linkedin_name.setOnClickListener {
             if(withdraw.linkedin_profile.isNotBlank()){

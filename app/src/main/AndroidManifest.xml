@@ -19,9 +19,6 @@
             android:name=".Friends.FriendsActivity"
             android:exported="false" />
         <activity
-            android:name=".Agents.DailystatshowActivity"
-            android:exported="false" />
-        <activity
             android:name=".Compare.CompareActivity"
             android:exported="false" />
         <activity

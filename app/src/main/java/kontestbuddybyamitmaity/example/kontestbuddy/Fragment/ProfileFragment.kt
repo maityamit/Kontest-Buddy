@@ -1,6 +1,7 @@
 package kontestbuddybyamitmaity.example.kontestbuddy.Fragment
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Context
@@ -56,10 +57,19 @@ class ProfileFragment : Fragment() {
         retrieveData(view)
 
         view.findViewById<RelativeLayout>(R.id.profile_logout_button).setOnClickListener{
-            auth.signOut()
-            val intent: Intent = Intent(context,LoginActivity::class.java)
-            startActivity(intent)
-            activity?.finish()
+
+            // Create an Alert Dialog that you want to confirm the logout
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Logout")
+            builder.setMessage("Are you sure you want to logout?")
+            builder.setPositiveButton("Yes") { _, _ ->
+                auth.signOut()
+                val intent: Intent = Intent(context,LoginActivity::class.java)
+                startActivity(intent)
+                activity?.finish()
+            }
+            builder.setNegativeButton("No") { _, _ -> }
+            builder.show()
         }
 
         view.findViewById<ImageView>(R.id.profile_frag_user_edit).setOnClickListener{

@@ -14,19 +14,12 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonObject
-import kontestbuddybyamitmaity.example.kontestbuddy.Agents.DailystatshowActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
@@ -64,10 +57,6 @@ class HomeFragment : Fragment() {
     private lateinit var progressDialog: ProgressDialog
     lateinit var LeaderBoardButton_Homepage:LinearLayout
     lateinit var compareButton_Homepage:LinearLayout
-    lateinit var coding_time_stat_progress_bar:ProgressBar
-    lateinit var know_more_button_for_extension:TextView
-    lateinit var coding_time_progress_show_text:TextView
-    lateinit var daily_coding_stats_via_extension:CardView
     lateinit var find_koding_buddy_button:CardView
 
     val day_wise_list: MutableList<Any> = mutableListOf()
@@ -99,7 +88,6 @@ class HomeFragment : Fragment() {
         // Initialization
         initialization(view)
         allDataSettoTheUI()
-        load_ratings_time_state_from_extesion()
 
         // Update the Refresh Button
         // Retrieve the details from firebase -> Call the API to Fetch Latest Data -> set into Container -> Store Local Storage
@@ -131,19 +119,6 @@ class HomeFragment : Fragment() {
             }
         }
 
-        know_more_button_for_extension.setOnClickListener {
-            // Open the extension link
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = android.net.Uri.parse("https://chromewebstore.google.com/detail/kontest-buddy/chdigpjiicmbbgkdkcfjgjlpejnfahkl")
-            startActivity(intent)
-        }
-
-        daily_coding_stats_via_extension.setOnClickListener {
-            val intent = Intent(context, DailystatshowActivity::class.java)
-            val arrayList = ArrayList(day_wise_list)
-            intent.putExtra("day_wise_list", arrayList)
-            startActivity(intent)
-        }
 
         return view
     }
@@ -326,220 +301,8 @@ class HomeFragment : Fragment() {
         mainHomePageRatingsRefresh_ImageView = view.findViewById(R.id.mainHomePageRatingsRefresh)
         LeaderBoardButton_Homepage = view.findViewById(R.id.leaderBoardButton_Homepage)
         compareButton_Homepage = view.findViewById(R.id.compareButton_Homepage)
-        know_more_button_for_extension = view.findViewById(R.id.know_more_button_for_extension)
-        coding_time_stat_progress_bar = view.findViewById(R.id.coding_time_stat_progress_bar)
-        coding_time_progress_show_text = view.findViewById(R.id.coding_time_progress_show_text)
-        daily_coding_stats_via_extension = view.findViewById(R.id.daily_coding_stats_via_extension)
         find_koding_buddy_button = view.findViewById<CardView>(R.id.find_koding_buddy_button)
-//        CompareButtonCodeForces = view.findViewById(R.id.CompareButtonCodeForces)
-//        LeaderboardButtonLeetCode = view.findViewById(R.id.ADDLeaderboardButtonLeetCode)
-//        LeaderboardButtonCodeForces = view.findViewById(R.id.ADDLeaderboardButtonCodeForces)
-//        codeforces_leaderboard_Button = view.findViewById(R.id.LeaderboardButtonCodeForces)
-//        leetcode_leaderboard_Button = view.findViewById(R.id.LeaderboardButtonLeetCode)
-//        resource_layout_button = view.findViewById(R.id.resource_layout_button)
     }
 
-
-    private fun load_ratings_time_state_from_extesion(){
-
-
-        // Date -> url-> time
-        val nestedMap: MutableMap<String, MutableMap<String, Long>> = mutableMapOf()
-        val allowedDomains = listOf(
-            "leetcode.com",
-            "github.com",
-            "codeforces.com",
-            "codechef.com",
-            "geeksforgeeks.org"
-        )
-
-        val auth  = FirebaseAuth.getInstance()
-        val database: DatabaseReference = FirebaseDatabase.getInstance().reference
-        val userID = auth.currentUser?.uid.toString()
-        val userRef = database.child("users").child(userID)
-
-        // the data is in realtime database within users->userID folder so to retrive write code for that
-
-        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    // Iterate through all random IDs under the user
-                    for (randomIdSnapshot in snapshot.children) {
-                        val randomIdKey = randomIdSnapshot.key // Get the random ID
-                        println("Processing data for Random ID: $randomIdKey")
-
-                        // Access data inside the random ID
-                        for (dataSnapshot in randomIdSnapshot.children) {
-                            val dataMap = dataSnapshot.value as? Map<String, Any>
-                            val url = dataMap?.get("URL") as? String
-                            val startTime = dataMap?.get("startTime") as? Long
-                            val totalTime = dataMap?.get("totalTime").toString().toLong()
-
-                            Log.e("ExtesionData = ${randomIdKey}", "${url} + ${startTime} + ${totalTime} ")
-
-                            val timestamp = startTime?.toLong()
-                            val date = timestamp?.let { Date(it) }
-                            val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                            val formattedDate = formatter.format(date).toString()
-
-                            val matchingDomain = allowedDomains.find { domain -> url?.contains(domain)
-                                ?: false }
-
-                            if (matchingDomain != null) {
-
-                                val timeSpent = (nestedMap[formattedDate]?.get(matchingDomain) ?: 0).toLong()
-                                // Initialize the nested map for the date if it's null
-                                val domainMap = nestedMap[formattedDate] ?: mutableMapOf()
-                                domainMap[matchingDomain] = (timeSpent + (totalTime ?: 0)).toLong()
-                                nestedMap[formattedDate] = domainMap
-                            }
-
-                            // Process the data
-                        }
-                    }
-
-                    process_data_and_analysis(nestedMap)
-
-                } else {
-                    println("No data found for user: $userID")
-                    coding_time_progress_show_text.text = "0h 0m"
-                    coding_time_progress_show_text.visibility = View.VISIBLE
-                    coding_time_stat_progress_bar.visibility = View.GONE
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                println("Error fetching data: ${error.message}")
-                coding_time_progress_show_text.text = "0h 0m"
-                coding_time_progress_show_text.visibility = View.VISIBLE
-                coding_time_stat_progress_bar.visibility = View.GONE
-            }
-        })
-
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun process_data_and_analysis(nestedMap: MutableMap<String, MutableMap<String, Long>>) {
-
-//        check nestedMap is empty or not
-
-        // check the data is empty or not
-        if (nestedMap.isEmpty()) {
-            coding_time_progress_show_text.text = "0h 0m"
-            coding_time_progress_show_text.visibility = View.VISIBLE
-            coding_time_stat_progress_bar.visibility = View.GONE
-            return
-        }else{
-
-
-            var totalTime_calculated = 0L
-
-
-
-            // Convert date strings to LocalDate for easier manipulation
-            val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")
-            val dateMap = nestedMap.mapKeys { java.time.LocalDate.parse(it.key, dateFormatter) }
-
-
-            for((date, siteMap) in dateMap){
-
-                val today = LocalDate.now()
-                val formattedDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
-                if(date.toString()==formattedDate){
-                    for((site, time) in siteMap){
-                        totalTime_calculated += time
-                    }
-                }
-            }
-
-            // Sort dates in desc order
-            val sortedDates = dateMap.keys.sortedDescending()
-
-            // For daily data: Each date and its site->time map
-            val dailyData = sortedDates.map { date ->
-                mapOf(date.format(dateFormatter) to dateMap[date]!!)
-            }
-
-            for(data in dailyData){
-                day_wise_list.add(data)
-            }
-
-            // Weekly data: Each week and its site->time map
-            var curentStartDate = sortedDates.first()
-            var currentEndDate = curentStartDate.minusDays(7)
-            val tempMap: MutableMap<String, Long> = mutableMapOf()
-            for(date in sortedDates){
-                if(date.isAfter(currentEndDate)){
-                    for((site, time) in dateMap[date]!!){
-                        tempMap[site] = (tempMap[site] ?: 0) + time
-                    }
-                }else{
-                    tempMap["startDate"] = curentStartDate.minusDays(6).toEpochDay()
-                    tempMap["endDate"] = curentStartDate.toEpochDay()
-                    week_wise_list.add(tempMap.toMutableMap())
-
-                    tempMap.clear()
-                    curentStartDate = date
-                    currentEndDate = date.minusDays(7)
-                    for((site, time) in dateMap[date]!!){
-                        tempMap[site] = (tempMap[site] ?: 0) + time
-                    }
-                }
-            }
-            if (tempMap.isNotEmpty()) {
-                tempMap["startDate"] = curentStartDate.minusDays(6).toEpochDay()
-                tempMap["endDate"] = curentStartDate.toEpochDay()
-                week_wise_list.add(tempMap.toMutableMap())
-            }
-
-
-            curentStartDate = sortedDates.first()
-            currentEndDate = curentStartDate.minusDays(30)
-            tempMap.clear()
-            for(date in sortedDates){
-                if(date.isAfter(currentEndDate)){
-                    for((site, time) in dateMap[date]!!){
-                        tempMap[site] = (tempMap[site] ?: 0) + time
-                    }
-                }else{
-                    tempMap["startDate"] = curentStartDate.minusDays(29).toEpochDay()
-                    tempMap["endDate"] = curentStartDate.toEpochDay()
-                    month_wise_list.add(tempMap.toMutableMap())
-
-                    tempMap.clear()
-                    curentStartDate = date
-                    currentEndDate = date.minusDays(30)
-                    for((site, time) in dateMap[date]!!){
-                        tempMap[site] = (tempMap[site] ?: 0) + time
-                    }
-                }
-            }
-            if (tempMap.isNotEmpty()) {
-                tempMap["startDate"] = curentStartDate.minusDays(29).toEpochDay()
-                tempMap["endDate"] = curentStartDate.toEpochDay()
-                month_wise_list.add(tempMap.toMutableMap())
-            }
-
-
-
-            val (hours, minutes) = convertMillisToTime(totalTime_calculated)
-
-            coding_time_progress_show_text.text = "${hours}h ${minutes}m"
-            coding_time_progress_show_text.visibility = View.VISIBLE
-            coding_time_stat_progress_bar.visibility = View.GONE
-
-        }
-
-    }
-
-    fun convertMillisToTime(ms: Long): Pair<Int, Int> {
-        val totalSeconds = ms / 1000  // Convert milliseconds to seconds
-        val hours = (totalSeconds / 3600).toInt()  // Calculate hours
-        val minutes = ((totalSeconds % 3600) / 60).toInt()  // Calculate remaining minutes
-        return Pair(hours, minutes)
-    }
 
 }
