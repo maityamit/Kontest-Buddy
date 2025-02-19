@@ -27,6 +27,7 @@ import kontestbuddybyamitmaity.example.kontestbuddy.Compare.CompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Friends.FriendsActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.LeaderboardActivity
+import kontestbuddybyamitmaity.example.kontestbuddy.questions_stats.QuestionsStatsActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -58,6 +59,9 @@ class HomeFragment : Fragment() {
     lateinit var LeaderBoardButton_Homepage:LinearLayout
     lateinit var compareButton_Homepage:LinearLayout
     lateinit var find_koding_buddy_button:CardView
+    lateinit var daily_coding_stats_via_extension:CardView
+    lateinit var monthly_coding_stats_via_extension:CardView
+    lateinit var yearly_coding_stats_via_extension:CardView
 
     val day_wise_list: MutableList<Any> = mutableListOf()
     val week_wise_list: MutableList<Any> = mutableListOf()
@@ -102,6 +106,24 @@ class HomeFragment : Fragment() {
         }
         compareButton_Homepage.setOnClickListener{
             val intent:Intent = Intent(context,CompareActivity::class.java)
+            startActivity(intent)
+        }
+
+        daily_coding_stats_via_extension.setOnClickListener {
+            val intent:Intent = Intent(context, QuestionsStatsActivity::class.java)
+            intent.putExtra("type","Daily")
+            startActivity(intent)
+        }
+
+        monthly_coding_stats_via_extension.setOnClickListener {
+            val intent:Intent = Intent(context, QuestionsStatsActivity::class.java)
+            intent.putExtra("type","Monthly")
+            startActivity(intent)
+        }
+
+        yearly_coding_stats_via_extension.setOnClickListener {
+            val intent:Intent = Intent(context, QuestionsStatsActivity::class.java)
+            intent.putExtra("type","Yearly")
             startActivity(intent)
         }
 
@@ -277,11 +299,6 @@ class HomeFragment : Fragment() {
 
         Toast.makeText(context, "Data refreshed !! at ${dateFormat.format(Date(currentTimestamp))}", Toast.LENGTH_SHORT).show()
 
-//        val allEntries = sharedPreferences.all
-//        for ((key, value) in allEntries) {
-//            Log.d("ALl_DATA", "Key: $key, Value: $value")
-//        }
-
 
 
     }
@@ -302,6 +319,9 @@ class HomeFragment : Fragment() {
         LeaderBoardButton_Homepage = view.findViewById(R.id.leaderBoardButton_Homepage)
         compareButton_Homepage = view.findViewById(R.id.compareButton_Homepage)
         find_koding_buddy_button = view.findViewById<CardView>(R.id.find_koding_buddy_button)
+        daily_coding_stats_via_extension = view.findViewById<CardView>(R.id.daily_coding_stats_via_extension)
+        monthly_coding_stats_via_extension = view.findViewById<CardView>(R.id.monthly_coding_stats_via_extension)
+        yearly_coding_stats_via_extension = view.findViewById<CardView>(R.id.yearly_coding_stats_via_extension)
     }
 
 

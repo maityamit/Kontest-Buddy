@@ -16,6 +16,9 @@
         android:theme="@style/Theme.KontestBuddy"
         tools:targetApi="31">
         <activity
+            android:name=".questions_stats.QuestionsStatsActivity"
+            android:exported="false" />
+        <activity
             android:name=".Ranking.CCrankingActivity"
             android:exported="false" />
         <activity
