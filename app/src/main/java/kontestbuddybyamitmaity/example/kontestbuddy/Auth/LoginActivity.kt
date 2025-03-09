@@ -15,11 +15,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonObject
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
+import kontestbuddybyamitmaity.example.kontestbuddy.Services.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -35,19 +34,17 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var progressDialog: ProgressDialog
     private lateinit var auth: FirebaseAuth
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private lateinit var login_user_email: EditText
+    private lateinit var login_user_pass: EditText
+    private lateinit var forgetPassWordTextView: TextView
+    private lateinit var sign_in_button: Button
+    private lateinit var sign_up_redirect: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        intialization()
-
-        findViewById<TextView>(R.id.sign_up_redirect).setOnClickListener {
-            val intent = Intent(applicationContext, RegisterActivity::class.java)
-            startActivity(intent)
-        }
-
-
+        // If Firebase Auth is already logged in, redirect to MainActivity
         if (FirebaseAuth.getInstance().currentUser != null) {
             val intent = Intent(applicationContext, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -55,24 +52,35 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
 
+        // Initialize all the necessary variables
+        initialization()
 
+        // Perform all the actions
+        actions()
 
-        findViewById<Button>(R.id.sign_in_button).setOnClickListener {
-            val userEmail = findViewById<EditText>(R.id.login_user_email).text.toString()
-            val userPassword = findViewById<EditText>(R.id.login_user_pass).text.toString()
+    }
+
+    private fun actions() {
+
+        sign_up_redirect.setOnClickListener {
+            val intent = Intent(applicationContext, RegisterActivity::class.java)
+            startActivity(intent)
+        }
+
+        sign_in_button.setOnClickListener {
+            val userEmail = login_user_email.text.toString()
+            val userPassword = login_user_pass.text.toString()
 
             if (userEmail.isBlank()) {
                 Toast.makeText(applicationContext, "Enter Your Email", Toast.LENGTH_SHORT).show()
             } else if (userPassword.isBlank()) {
                 Toast.makeText(applicationContext, "Enter Your Password", Toast.LENGTH_SHORT).show()
             } else {
-                progressDialog.show()
                 signinWithEmailAndPass(userEmail, userPassword)
             }
         }
 
-        findViewById<TextView>(R.id.forgetPassWordTextView).setOnClickListener {
-
+        forgetPassWordTextView.setOnClickListener {
 
             val messageBoxView = LayoutInflater.from(this).inflate(R.layout.forget_password, null)
             val emailID = messageBoxView.findViewById<EditText>(R.id.forget_user_email)
@@ -107,17 +115,27 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+
     }
 
-    private fun intialization() {
+    private fun initialization() {
+
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
         progressDialog.setCanceledOnTouchOutside(false)
         progressDialog.setTitle("Sometimes it takes too longer !! \n Please Waiitt ...")
+
+        login_user_email = findViewById(R.id.login_user_email)
+        login_user_pass = findViewById(R.id.login_user_pass)
+        forgetPassWordTextView = findViewById(R.id.forgetPassWordTextView)
+        sign_in_button = findViewById(R.id.sign_in_button)
+        sign_up_redirect = findViewById(R.id.sign_up_redirect)
+
     }
 
 
     private fun signinWithEmailAndPass(userEmail: String, userPassword: String) {
+        progressDialog.show()
         auth = FirebaseAuth.getInstance()
         auth.signInWithEmailAndPassword(userEmail, userPassword)
             .addOnCompleteListener(this) { task ->
@@ -180,10 +198,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?) {
 
-
-
-        Log.e("RetriveUserNAME_FROM_FIREBASE", "${userLeetcode} + ${userCodeforces} + ${userCodechef} ")
-
+        
         callApiTasks(
             userLeetCode = userLeetcode,
             userCodeforces = userCodeforces,
@@ -206,9 +221,9 @@ class LoginActivity : AppCompatActivity() {
     ) {
         coroutineScope.launch {
 
-            val resultLeetCode = async { LeetCodeVerifyApiTask{}.execute(userLeetCode).get() }
-            val resultCodeforces = async { CodeForcesVerifyApiTask{}.execute(userCodeforces).get() }
-            val resultCodeChef = async { CodeChefVerifyApiTask{}.execute(userCodechef).get() }
+            val resultLeetCode = async { APIServices{}.execute(userLeetCode, "isLCExist").get() }
+            val resultCodeforces = async { APIServices{}.execute(userCodeforces, "isCFExist").get() }
+            val resultCodeChef = async { APIServices{}.execute(userCodechef, "isCCExist").get() }
             val allResults = awaitAll(resultLeetCode, resultCodeforces, resultCodeChef)
             Log.e("DataAmit", "${allResults}")
             handleAllApiResults(allResults)
@@ -245,13 +260,6 @@ class LoginActivity : AppCompatActivity() {
 
         myEdit.putString("CCuserName",resultCodeChef?.get("userName").toString())
         myEdit.putString("CCrating",resultCodeChef?.get("rating").toString())
-
-
-
-//        val allEntries = sharedPreferences.all
-//        for ((key, value) in allEntries) {
-//            Log.d("ALl_DATA", "Key: $key, Value: $value")
-//        }
 
 
         myEdit.apply()

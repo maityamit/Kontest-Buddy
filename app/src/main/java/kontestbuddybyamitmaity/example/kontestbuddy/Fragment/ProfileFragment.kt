@@ -25,9 +25,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kontestbuddybyamitmaity.example.kontestbuddy.Auth.LoginActivity
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 
 
@@ -173,7 +171,7 @@ class ProfileFragment : Fragment() {
                     Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
                 }else {
                     progressDialog.show()
-                    val apiTask = LeetCodeVerifyApiTask { isValid ->
+                    val apiTask = APIServices { isValid ->
                         if(isValid?.get("isValid").toString()=="\"true\""){
                             val txt = findViewById<TextView>(R.id._leetcode_verify_button)
                             txt.text = "Verified"
@@ -197,7 +195,7 @@ class ProfileFragment : Fragment() {
                     Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
                 }else {
                     progressDialog.show()
-                    val apiTask = CodeForcesVerifyApiTask { isValid ->
+                    val apiTask = APIServices { isValid ->
 
                         if(isValid?.get("isValid").toString()=="\"true\""){
                             val txt = findViewById<TextView>(R.id._codeforces_verify_button)
@@ -225,7 +223,7 @@ class ProfileFragment : Fragment() {
                     Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
                 }else {
                     progressDialog.show()
-                    val apiTask = CodeChefVerifyApiTask { isValid ->
+                    val apiTask = APIServices { isValid ->
                         if(isValid?.get("isValid").toString()=="\"true\""){
                             val txt = findViewById<TextView>(R.id._codechef_verify_button)
                             txt.text = "Verified"

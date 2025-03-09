@@ -7,18 +7,11 @@ import android.os.Bundle
 import android.widget.TextView
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.HorizontalBarChart
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import com.google.gson.JsonParser
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesCompareApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeCompareApiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 
 class CFcompareActivity : AppCompatActivity() {
@@ -50,7 +43,7 @@ class CFcompareActivity : AppCompatActivity() {
     private fun callTheAPI(userName1: String?, userName2: String?) {
         progressDialog.show()
         val str:String = userName1+";"+userName2
-        val apiTask = CodeForcesCompareApiTask { isValid ->
+        val apiTask = APIServices { isValid ->
 
             codeforcesCmp_userName_user1.text = userName1
             codeforcesCmp_userName_user2.text = userName2
@@ -58,16 +51,16 @@ class CFcompareActivity : AppCompatActivity() {
             codeforcesCmp_userName_user22.text = userName2
 
 
-            val user1Rating:String = isValid?.let { JsonParser().parse(it).asJsonObject }?.get("result")?.asJsonArray?.get(0)?.asJsonObject?.get("maxRating").toString()
-            val user2Rating:String = isValid?.let { JsonParser().parse(it).asJsonObject }?.get("result")?.asJsonArray?.get(1)?.asJsonObject?.get("maxRating").toString()
+            val user1Rating:String = isValid?.get("result")?.asJsonArray?.get(0)?.asJsonObject?.get("maxRating").toString()
+            val user2Rating:String = isValid?.get("result")?.asJsonArray?.get(1)?.asJsonObject?.get("maxRating").toString()
             secondBarChart(user1Rating.toFloat(),user2Rating.toFloat())
 
-            val user1Contest:String = isValid?.let { JsonParser().parse(it).asJsonObject }?.get("result")?.asJsonArray?.get(0)?.asJsonObject?.get("rating").toString()
-            val user2Contest:String = isValid?.let { JsonParser().parse(it).asJsonObject }?.get("result")?.asJsonArray?.get(1)?.asJsonObject?.get("rating").toString()
+            val user1Contest:String = isValid?.get("result")?.asJsonArray?.get(0)?.asJsonObject?.get("rating").toString()
+            val user2Contest:String = isValid?.get("result")?.asJsonArray?.get(1)?.asJsonObject?.get("rating").toString()
             firstBarChart(user1Contest.toFloat(),user2Contest.toFloat())
 
-            val user1Global:String = isValid?.let { JsonParser().parse(it).asJsonObject }?.get("result")?.asJsonArray?.get(0)?.asJsonObject?.get("rank").toString()
-            val user2Global:String = isValid?.let { JsonParser().parse(it).asJsonObject }?.get("result")?.asJsonArray?.get(1)?.asJsonObject?.get("rank").toString()
+            val user1Global:String = isValid?.get("result")?.asJsonArray?.get(0)?.asJsonObject?.get("rank").toString()
+            val user2Global:String = isValid?.get("result")?.asJsonArray?.get(1)?.asJsonObject?.get("rank").toString()
             codeforcesCmp_globalRank_user1.text = user1Global
             codeforcesCmp_globalRank_user2.text = user2Global
 

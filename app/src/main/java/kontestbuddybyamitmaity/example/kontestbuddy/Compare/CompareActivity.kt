@@ -13,11 +13,8 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Fragment.HomeFragment
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.R
-import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.LeaderboardActivity
 
 class CompareActivity : AppCompatActivity() {
     private lateinit var enter_codeforces_compare_button:CardView
@@ -63,7 +60,7 @@ class CompareActivity : AppCompatActivity() {
                     Toast.makeText(context,"Enter the UserName", Toast.LENGTH_SHORT).show()
                 }else {
                     progressDialog.show()
-                    val apiTask = LeetCodeVerifyApiTask { isValid ->
+                    val apiTask = APIServices { isValid ->
                         if(isValid?.get("isValid").toString()=="\"true\""){
                             verify1.text = "Verified"
                             verify1.setTextColor(Color.GREEN)
@@ -87,7 +84,7 @@ class CompareActivity : AppCompatActivity() {
                     Toast.makeText(context,"Enter the UserName", Toast.LENGTH_SHORT).show()
                 }else {
                     progressDialog.show()
-                    val apiTask = LeetCodeVerifyApiTask { isValid ->
+                    val apiTask = APIServices { isValid ->
                         if(isValid?.get("isValid").toString()=="\"true\""){
                             verify2.text = "Verified"
                             verify2.setTextColor(Color.GREEN)
@@ -145,7 +142,7 @@ class CompareActivity : AppCompatActivity() {
                     Toast.makeText(context,"Enter the UserName", Toast.LENGTH_SHORT).show()
                 }else {
                     progressDialog.show()
-                    val apiTask = CodeForcesVerifyApiTask { isValid ->
+                    val apiTask = APIServices { isValid ->
                         if(isValid?.get("isValid").toString()=="\"true\""){
                             verify1.text = "Verified"
                             verify1.setTextColor(Color.GREEN)
@@ -169,7 +166,7 @@ class CompareActivity : AppCompatActivity() {
                     Toast.makeText(context,"Enter the UserName", Toast.LENGTH_SHORT).show()
                 }else {
                     progressDialog.show()
-                    val apiTask = CodeForcesVerifyApiTask { isValid ->
+                    val apiTask = APIServices { isValid ->
                         if(isValid?.get("isValid").toString()=="\"true\""){
                             verify2.text = "Verified"
                             verify2.setTextColor(Color.GREEN)

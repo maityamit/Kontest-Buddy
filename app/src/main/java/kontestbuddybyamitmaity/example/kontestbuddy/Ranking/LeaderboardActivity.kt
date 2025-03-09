@@ -4,11 +4,9 @@ import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Window
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -18,13 +16,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Compare.LCcompareActivity
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.CurrentFriends.CodeForcesFrndAdapter
 import kontestbuddybyamitmaity.example.kontestbuddy.CurrentFriends.LeetCodeCurrentFrndAdapter
-import kontestbuddybyamitmaity.example.kontestbuddy.Fragment.HomeFragment
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 
 class LeaderboardActivity : AppCompatActivity() {
@@ -246,47 +240,47 @@ class LeaderboardActivity : AppCompatActivity() {
                     Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
                 }else{
                     progressDialog.show()
-                    val apiTask = LeetCodeVerifyApiTask { isValid ->
+                    val apiTask = APIServices { isValid ->
                         if(isValid?.get("isValid").toString()=="\"true\""){
 
-                            val db = Firebase.firestore
-                            val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-                            val userID = auth.currentUser?.uid.toString()
-                            val docRef = db.collection("users").document(userID)
-                            docRef.get().addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    val document = task.result
-                                    if (document != null) {
-
-                                        var LCleader = document.getString("LCleader")
-                                        if(LCleader?.isBlank() == true){
-                                            LCleader = strUser+";"
-                                        }else if(LCleader?.contains(strUser) == false){
-                                            LCleader = LCleader+strUser+";"
-                                        }
-
-                                        docRef.update("LCleader",LCleader).addOnSuccessListener {
-                                            leetcode_leaderboard_inputUser1.text.clear()
-                                            progressDialog.dismiss()
-                                            Toast.makeText(context, "User Added Done !", Toast.LENGTH_SHORT)
-                                                .show()
-                                        }.addOnFailureListener{
-                                            progressDialog.dismiss()
-                                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                                .show()
-                                        }
-
-
-                                    } else {
-                                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                            .show()
-                                    }
-                                } else {
-                                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                                        .show()
-                                }
-                            }
+//                            val db = Firebase.firestore
+//                            val auth: FirebaseAuth = FirebaseAuth.getInstance()
+//
+//                            val userID = auth.currentUser?.uid.toString()
+//                            val docRef = db.collection("users").document(userID)
+//                            docRef.get().addOnCompleteListener { task ->
+//                                if (task.isSuccessful) {
+//                                    val document = task.result
+//                                    if (document != null) {
+//
+//                                        var LCleader = document.getString("LCleader")
+//                                        if(LCleader?.isBlank() == true){
+//                                            LCleader = strUser+";"
+//                                        }else if(LCleader?.contains(strUser) == false){
+//                                            LCleader = LCleader+strUser+";"
+//                                        }
+//
+//                                        docRef.update("LCleader",LCleader).addOnSuccessListener {
+//                                            leetcode_leaderboard_inputUser1.text.clear()
+//                                            progressDialog.dismiss()
+//                                            Toast.makeText(context, "User Added Done !", Toast.LENGTH_SHORT)
+//                                                .show()
+//                                        }.addOnFailureListener{
+//                                            progressDialog.dismiss()
+//                                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                                                .show()
+//                                        }
+//
+//
+//                                    } else {
+//                                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                                            .show()
+//                                    }
+//                                } else {
+//                                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+//                                        .show()
+//                                }
+//                            }
 
                         }else{
                             progressDialog.dismiss()
@@ -476,7 +470,7 @@ class LeaderboardActivity : AppCompatActivity() {
                     Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
                 }else{
                     progressDialog.show()
-                    val apiTask = CodeForcesVerifyApiTask { isValid ->
+                    val apiTask = APIServices { isValid ->
                         if(isValid?.get("isValid").toString()=="\"true\""){
 
                             val db = Firebase.firestore
@@ -702,7 +696,7 @@ class LeaderboardActivity : AppCompatActivity() {
                     Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
                 }else{
                     progressDialog.show()
-                    val apiTask = CodeChefVerifyApiTask { isValid ->
+                    val apiTask = APIServices { isValid ->
                         if(isValid?.get("isValid").toString()=="\"true\""){
 
                             val db = Firebase.firestore

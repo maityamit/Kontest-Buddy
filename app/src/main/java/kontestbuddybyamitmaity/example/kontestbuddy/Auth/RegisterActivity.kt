@@ -16,45 +16,63 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.gotrue.GoTrue
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.postgrest
+import io.ktor.client.plugins.HttpRequestRetry
+import io.ktor.client.plugins.HttpTimeout
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import kontestbuddybyamitmaity.example.kontestbuddy.Services.Constants
+import kontestbuddybyamitmaity.example.kontestbuddy.Services.SharedPrefServices
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-    private val db = Firebase.firestore
     private var leetcode_verify = false
     private var codeforces_verify = false
     private var codechef_verify = false
+    private var leetcode_user_name = ""
+    private var leetcode_attended_contests_count = ""
+    private var leetcode_rating = ""
+    private var leetcode_global_ranking = ""
+    private var leetcode_total_participants = ""
+    private var leetcode_top_percentage = ""
 
-    private val ratingsDetails = hashMapOf(
-        "leetcode" to hashMapOf(
-            "userName" to "",
-            "attendedContestsCount" to "",
-            "rating" to "",
-            "globalRanking" to "",
-            "totalParticipants" to "",
-            "topPercentage" to ""
-        ),
-        "codeforces" to hashMapOf(
-            "userName" to "",
-            "rating" to "",
-            "maxRating" to "",
-            "rank" to "",
-            "maxRank" to ""
-        ),
-        "codechef" to hashMapOf(
-            "userName" to "",
-            "rating" to ""
-        )
-    )
+    private var codeforces_user_name = ""
+    private var codeforces_rating = ""
+    private var codeforces_max_rating = ""
+    private var codeforces_rank = ""
+    private var codeforces_max_rank = ""
+
+    private var codechef_user_name = ""
+    private var codechef_rating = ""
+
+
+    // Define all the Input Fields
+    private lateinit var user_name:EditText
+    private lateinit var user_email:EditText
+    private lateinit var user_mobile:EditText
+    private lateinit var user_password:EditText
+    private lateinit var user_leetcode:EditText
+    private lateinit var user_codeforces:EditText
+    private lateinit var user_codechef:EditText
+    private lateinit var user_linkedin:EditText
+    private lateinit var user_register_button:Button
+    private lateinit var already_sign_in:TextView
+    private lateinit var leetcode_verify_button:TextView
+    private lateinit var codeforces_verify_button:TextView
+    private lateinit var codechef_verify_button:TextView
+
+    private lateinit var superbase: SupabaseClient
+
 
     private lateinit var progressDialog: ProgressDialog
     @SuppressLint("CutPasteId")
@@ -62,102 +80,44 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        // Initialize all the Input Fields
         intitialization()
 
+        // Perform all the Actions
+        actions()
 
-        findViewById<TextView>(R.id.already_sign_in).setOnClickListener {
-            val intent = Intent(applicationContext,LoginActivity::class.java)
-            startActivity(intent)
-        }
+    }
 
-        findViewById<TextView>(R.id.leetcode_verify_button).setOnClickListener {
-            val user_leetcode = findViewById<EditText>(R.id.register_user_leetcode).text.toString()
-            if(user_leetcode.isBlank()){
-                Toast.makeText(applicationContext,"Enter the UserName",Toast.LENGTH_SHORT).show()
+    @SuppressLint("CutPasteId", "SetTextI18n")
+    private fun actions() {
+
+        already_sign_in_actions()
+        register_button_actions()
+        leetcode_verify_button_actions()
+        codeforces_verify_button_actions()
+        codechef_verify_button_actions()
+
+    }
+
+    private fun codechef_verify_button_actions() {
+
+        codechef_verify_button.setOnClickListener {
+            if(user_codechef.text.toString().trim().isBlank()){
+                user_codechef.error = "Enter Your Codechef UserName"
             }else {
                 progressDialog.show()
-                Log.e("API_RESPONSE","ENTRYY")
-                val apiTask = LeetCodeVerifyApiTask { isValid ->
-                    if(isValid?.get("isValid").toString()=="\"true\""){
-                        val txt = findViewById<TextView>(R.id.leetcode_verify_button)
-                        txt.text = "Verified"
-                        txt.setTypeface(null, Typeface.BOLD)
-                        txt.setTextColor(Color.parseColor("#FF115E14"))
-                        findViewById<EditText>(R.id.register_user_leetcode).isEnabled = false
-                        findViewById<TextView>(R.id.leetcode_verify_button).isEnabled = false
-                        leetcode_verify = true
-                        ratingsDetails["leetcode"]?.set("userName", isValid?.get("userName").toString())
-                        ratingsDetails["leetcode"]?.set("attendedContestsCount", isValid?.get("attendedContestsCount").toString())
-                        ratingsDetails["leetcode"]?.set("rating", isValid?.get("rating").toString())
-                        ratingsDetails["leetcode"]?.set("globalRanking", isValid?.get("globalRanking").toString())
-                        ratingsDetails["leetcode"]?.set("totalParticipants", isValid?.get("totalParticipants").toString())
-                        ratingsDetails["leetcode"]?.set("topPercentage", isValid?.get("topPercentage").toString())
-                    }else{
-                        Toast.makeText(applicationContext, "This UserName is not valid",Toast.LENGTH_SHORT).show()
-                    }
+                val apiTask = APIServices { isValid ->
+                    if(isValid?.get("isValid")?.asString.toString()=="true"){
+                        codechef_verify_button.text = "Verified"
+                        codechef_verify_button.setTypeface(null, Typeface.BOLD)
+                        codechef_verify_button.setTextColor(Color.parseColor("#FF115E14"))
 
-                    progressDialog.dismiss()
-
-                }
-                apiTask.execute(user_leetcode)
-            }
-        }
-
-        findViewById<TextView>(R.id.codeforces_verify_button).setOnClickListener {
-
-            val user_codeforces = findViewById<EditText>(R.id.register_user_codeforces).text.toString()
-            if(user_codeforces.isBlank()){
-                Toast.makeText(applicationContext,"Enter the UserName",Toast.LENGTH_SHORT).show()
-            }else {
-                progressDialog.show()
-                val apiTask = CodeForcesVerifyApiTask { isValid ->
-
-                    if(isValid?.get("isValid").toString()=="\"true\""){
-                        val txt = findViewById<TextView>(R.id.codeforces_verify_button)
-                        txt.text = "Verified"
-                        txt.setTypeface(null, Typeface.BOLD)
-                        txt.setTextColor(Color.parseColor("#FF115E14"))
-                        findViewById<EditText>(R.id.register_user_codeforces).isEnabled = false
-                        findViewById<TextView>(R.id.codeforces_verify_button).isEnabled = false
-                        codeforces_verify = true
-                        ratingsDetails["codeforces"]?.set("userName", isValid?.get("userName").toString())
-                        ratingsDetails["codeforces"]?.set("rating", isValid?.get("rating").toString())
-                        ratingsDetails["codeforces"]?.set("maxRating", isValid?.get("maxRating").toString())
-                        ratingsDetails["codeforces"]?.set("rank", isValid?.get("rank").toString())
-                        ratingsDetails["codeforces"]?.set("maxRank", isValid?.get("maxRank").toString())
-
-
-                    }else{
-                        Toast.makeText(applicationContext, "This UserName is not valid",Toast.LENGTH_SHORT).show()
-                    }
-
-                    progressDialog.dismiss()
-
-                }
-                apiTask.execute(user_codeforces)
-            }
-        }
-
-        findViewById<TextView>(R.id.codechef_verify_button).setOnClickListener {
-
-            val user_codechef = findViewById<EditText>(R.id.register_user_codechef).text.toString()
-            if(user_codechef.isBlank()){
-                Toast.makeText(applicationContext,"Enter the UserName",Toast.LENGTH_SHORT).show()
-            }else {
-                progressDialog.show()
-                val apiTask = CodeChefVerifyApiTask { isValid ->
-
-                    if(isValid?.get("isValid").toString()=="\"true\""){
-                        val txt = findViewById<TextView>(R.id.codechef_verify_button)
-                        txt.text = "Verified"
-                        txt.setTypeface(null, Typeface.BOLD)
-                        txt.setTextColor(Color.parseColor("#FF115E14"))
-                        findViewById<EditText>(R.id.register_user_codechef).isEnabled = false
-                        findViewById<TextView>(R.id.codechef_verify_button).isEnabled = false
+                        user_codechef.isEnabled = false
+                        codechef_verify_button.isEnabled = false
                         codechef_verify = true
 
-                        ratingsDetails["codechef"]?.set("userName", isValid?.get("userName").toString())
-                        ratingsDetails["codechef"]?.set("rating", isValid?.get("rating").toString())
+                        codechef_user_name = isValid?.get("userName")?.asString.toString()
+                        codechef_rating = isValid?.get("rating")?.asString.toString()
 
                     }else{
                         Toast.makeText(applicationContext, "This UserName is not valid",Toast.LENGTH_SHORT).show()
@@ -165,84 +125,175 @@ class RegisterActivity : AppCompatActivity() {
                     progressDialog.dismiss()
 
                 }
-                apiTask.execute(user_codechef)
+                apiTask.execute(user_codechef.text.toString(), "isCCExist")
             }
         }
-        findViewById<Button>(R.id.register_user_button).setOnClickListener{
+    }
 
-            val user_name = findViewById<EditText>(R.id.register_user_name).text.toString()
-            val user_email = findViewById<EditText>(R.id.register_user_email).text.toString()
-            val user_password = findViewById<EditText>(R.id.register_user_password).text.toString()
-            val user_leetcode = findViewById<EditText>(R.id.register_user_leetcode).text.toString()
-            val user_codeforces = findViewById<EditText>(R.id.register_user_codeforces).text.toString()
-            val user_codechef= findViewById<EditText>(R.id.register_user_codechef).text.toString()
-            var linkedin_profile = findViewById<EditText>(R.id.register_user_linkedin).text.toString()
+    private fun codeforces_verify_button_actions() {
 
-            if(user_name.isBlank()){
-                Toast.makeText(applicationContext,"Enter Your Name",Toast.LENGTH_SHORT).show()
-            }else if(user_email.isBlank()){
-                Toast.makeText(applicationContext,"Enter Your Email",Toast.LENGTH_SHORT).show()
-            }else if(user_password.isBlank()){
-                Toast.makeText(applicationContext,"Enter Your Password",Toast.LENGTH_SHORT).show()
-            }else if(user_leetcode.isNotBlank() && !leetcode_verify){
-                Toast.makeText(applicationContext,"Please verify the LC account",Toast.LENGTH_SHORT).show()
-            }else if(user_codeforces.isNotBlank() && !codeforces_verify){
-                Toast.makeText(applicationContext,"Please verify the CF account",Toast.LENGTH_SHORT).show()
-            }else if(user_codechef.isNotBlank() && !codechef_verify){
-                Toast.makeText(applicationContext,"Please verify the CC account",Toast.LENGTH_SHORT).show()
-            }else{
+        codeforces_verify_button.setOnClickListener {
+            if(user_codeforces.text.toString().trim().isBlank()){
+                user_codeforces.error = "Enter Your Codeforces UserName"
+            }else {
+                progressDialog.show()
+                val apiTask = APIServices { isValid ->
+                    if(isValid?.get("isValid")?.asString.toString()=="true"){
+                        codeforces_verify_button.text = "Verified"
+                        codeforces_verify_button.setTypeface(null, Typeface.BOLD)
+                        codeforces_verify_button.setTextColor(Color.parseColor("#FF115E14"))
 
-                if(linkedin_profile.isNotBlank()){
-                    val result = extractLinkedInUsername(linkedin_profile)
-                    linkedin_profile = result ?: linkedin_profile
+                        user_codeforces.isEnabled = false
+                        codeforces_verify_button.isEnabled = false
+
+                        codeforces_verify = true
+                        codeforces_user_name = isValid?.get("userName")?.asString.toString()
+                        codechef_rating = isValid?.get("rating")?.asString.toString()
+                        codeforces_max_rating = isValid?.get("maxRating")?.asString.toString()
+                        codeforces_rank = isValid?.get("rank")?.asString.toString()
+                        codeforces_max_rank = isValid?.get("maxRank")?.asString.toString()
+
+
+                    }else{
+                        Toast.makeText(applicationContext, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                    }
+
+                    progressDialog.dismiss()
 
                 }
+                apiTask.execute(user_codeforces.text.toString(), "isCFExist")
+            }
+        }
+
+    }
+
+    private fun leetcode_verify_button_actions() {
+
+        leetcode_verify_button.setOnClickListener {
+            if(user_leetcode.text.toString().trim().isEmpty()){
+                user_leetcode.error = "Enter Your LeetCode UserName"
+            }else {
                 progressDialog.show()
-                createANewUserOnFirebase(user_name,user_password,user_email,linkedin_profile)
+                val apiTask = APIServices { isValid ->
+
+                    if(isValid?.get("isValid")?.asString.toString()=="true"){
+
+                        leetcode_verify_button.text = "Verified"
+                        leetcode_verify_button.setTypeface(null, Typeface.BOLD)
+                        leetcode_verify_button.setTextColor(Color.parseColor("#FF115E14"))
+
+                        user_leetcode.isEnabled = false
+                        leetcode_verify_button.isEnabled = false
+
+                        leetcode_verify = true
+
+                        leetcode_user_name = isValid?.get("userName")?.asString.toString()
+                        leetcode_attended_contests_count = isValid?.get("attendedContestsCount")?.asString.toString()
+                        leetcode_rating = isValid?.get("rating")?.asString.toString()
+                        leetcode_global_ranking = isValid?.get("globalRanking")?.asString.toString()
+                        leetcode_global_ranking = isValid?.get("totalParticipants")?.asString.toString()
+                        leetcode_top_percentage = isValid?.get("topPercentage")?.asString.toString()
+
+                    }else{
+
+                        Toast.makeText(applicationContext, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                    }
+
+                    progressDialog.dismiss()
+                }
+                apiTask.execute(user_leetcode.text.toString(), "isLCExist")
+            }
+        }
+    }
+
+    private fun register_button_actions() {
+
+
+        user_register_button.setOnClickListener{
+            if(user_name.text.toString().trim().isEmpty()){
+                user_name.error = "Enter Your Name"
+            }else if(user_email.text.toString().trim().isEmpty()){
+                user_email.error = "Enter Your Email"
+            }else if(user_password.text.toString().trim().isEmpty()){
+                user_password.error = "Enter Your Password Number"
+            }else if(user_leetcode.text.toString().trim().isNotEmpty() && !leetcode_verify){
+                user_leetcode.error = "Please verify the LC account"
+            }else if(user_codeforces.text.toString().trim().isNotEmpty() && !codeforces_verify){
+                user_codeforces.error = "Please verify the CF account"
+            }else if(user_codechef.text.toString().trim().isNotEmpty() && !codechef_verify){
+                user_codechef.error = "Please verify the CC account"
+            }else{
+
+                var linkedin_profile = ""
+                if(user_linkedin.text.toString().trim().isNotEmpty()){
+                    val result = extractLinkedInUsername(user_linkedin.text.toString())
+                    linkedin_profile = result ?: linkedin_profile
+                }
+
+                createANewUserOnFirebase(
+                    user_name.text.toString(),
+                    user_password.text.toString(),
+                    user_email.text.toString(),
+                    user_mobile.text.toString(),
+                    linkedin_profile
+                )
             }
         }
     }
 
     private fun intitialization() {
+
         auth = Firebase.auth
-        progressDialog= ProgressDialog(this)
+
+        superbase = createSupabaseClient(
+            supabaseUrl = Constants.SUPERBASE_URL,
+            supabaseKey = Constants.SUPERBASE_KEY
+        ) {
+            install(Postgrest)
+        }
+
+        progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
         progressDialog.setCanceledOnTouchOutside(false)
-        progressDialog.setTitle("Sometimes it takes too longer !! \n Please waiiit")
+        progressDialog.setTitle("Waittt !! \n Please waiiit")
 
+        user_name = findViewById(R.id.register_user_name)
+        user_email = findViewById(R.id.register_user_email)
+        user_mobile = findViewById(R.id.register_user_mobile)
+        user_password = findViewById(R.id.register_user_password)
+        user_leetcode = findViewById(R.id.register_user_leetcode)
+        user_codeforces = findViewById(R.id.register_user_codeforces)
+        user_codechef = findViewById(R.id.register_user_codechef)
+        user_linkedin = findViewById(R.id.register_user_linkedin)
+        user_register_button = findViewById(R.id.register_user_button)
+        already_sign_in = findViewById(R.id.already_sign_in)
+        leetcode_verify_button = findViewById(R.id.leetcode_verify_button)
+        codeforces_verify_button = findViewById(R.id.codeforces_verify_button)
+        codechef_verify_button = findViewById(R.id.codechef_verify_button)
 
-        ratingsDetails["leetcode"]?.set("userName", "")
-        ratingsDetails["leetcode"]?.set("attendedContestsCount", "")
-        ratingsDetails["leetcode"]?.set("rating", "")
-        ratingsDetails["leetcode"]?.set("globalRanking", "")
-        ratingsDetails["leetcode"]?.set("totalParticipants", "")
-        ratingsDetails["leetcode"]?.set("topPercentage", "")
-
-        ratingsDetails["codeforces"]?.set("userName", "")
-        ratingsDetails["codeforces"]?.set("rating", "")
-        ratingsDetails["codeforces"]?.set("maxRating", "")
-        ratingsDetails["codeforces"]?.set("rank", "")
-        ratingsDetails["codeforces"]?.set("maxRank", "")
-
-        ratingsDetails["codechef"]?.set("userName", "")
-        ratingsDetails["codechef"]?.set("rating", "")
     }
 
-    private fun createANewUserOnFirebase(userName: String, userPassword: String, userEmail: String, linkedin_profile: String) {
+    private fun already_sign_in_actions() {
+        already_sign_in.setOnClickListener {
+            val intent = Intent(applicationContext,LoginActivity::class.java)
+            startActivity(intent)
+        }
+    }
 
-        val lc_user_name = ratingsDetails["leetcode"]?.get("userName")?.toString()?.removeSurrounding("\"")
-        val cf_user_name = ratingsDetails["codeforces"]?.get("userName")?.toString()?.removeSurrounding("\"")
-        val cc_user_name = ratingsDetails["codechef"]?.get("userName")?.toString()?.removeSurrounding("\"")
+    private fun createANewUserOnFirebase(userName: String, userPassword: String, userEmail: String, userMobile: String, linkedin_profile: String) {
+
+        progressDialog.show()
 
         val userData = hashMapOf(
-            "userName" to userName,
-            "userEmail" to userEmail,
-            "userLeetcode" to lc_user_name,
-            "userCodeforces" to cf_user_name,
-            "userCodechef" to cc_user_name,
-            "LCleader" to "",
-            "CFleader" to "",
-            "CCleader" to "",
+            "user_name" to userName,
+            "user_email" to userEmail,
+            "user_mobile" to userMobile,
+            "user_leetcode" to leetcode_user_name,
+            "user_codeforces" to codeforces_user_name,
+            "user_codechef" to codechef_user_name,
+            "lc_leader" to "",
+            "cf_leader" to "",
+            "cc_leader" to "",
             "linkedin_profile" to linkedin_profile,
             "is_public" to "false"
         )
@@ -254,10 +305,35 @@ class RegisterActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     val user = FirebaseAuth.getInstance().currentUser
                     if(user!=null){
-                        val userId = user?.uid.toString()
-                        val userInfo = db.collection("users")
-                        userInfo.document(userId).set(userData)
-                        storeDataIntoSharePref(userData)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            try {
+                                val response = superbase.postgrest.from("users").insert(
+                                    userData
+                                )
+                                userData["leetcode_user_name"] = leetcode_user_name;
+                                userData["leetcode_attended_contests_count"] = leetcode_attended_contests_count;
+                                userData["leetcode_rating"] = leetcode_rating;
+                                userData["leetcode_global_ranking"] = leetcode_global_ranking;
+                                userData["leetcode_total_participants"] = leetcode_total_participants;
+                                userData["leetcode_top_percentage"] = leetcode_top_percentage;
+
+                                userData["codeforces_user_name"] = codeforces_user_name;
+                                userData["codeforces_rating"] = codeforces_rating;
+                                userData["codeforces_max_rating"] = codeforces_max_rating;
+                                userData["codeforces_rank"] = codeforces_rank;
+                                userData["codeforces_max_rank"] = codeforces_max_rank;
+
+                                userData["codechef_user_name"] = codechef_user_name;
+                                userData["codechef_rating"] = codechef_rating;
+
+                                val sharedPrefServices = SharedPrefServices(applicationContext)
+                                sharedPrefServices.store_data_in_shared_pref(userData)
+                                open_main_dashboard()
+                                println("User added successfully: $response")
+                            } catch (e: Exception) {
+                                println("Error inserting user: ${e.message}")
+                            }
+                        }
                     }else {
                         Toast.makeText(
                             baseContext,
@@ -271,51 +347,20 @@ class RegisterActivity : AppCompatActivity() {
                 }
                 progressDialog.dismiss()
             }
-    }
-
-    private fun storeDataIntoSharePref(userData: HashMap<String, String?>) {
-        val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
-        val myEdit = sharedPreferences.edit()
-        val currentTimestamp: Long = System.currentTimeMillis()
-        val dateFormat = SimpleDateFormat("dd/MM/yy - hh:mm a", Locale.getDefault())
-        myEdit.putString("lastUpdate",dateFormat.format(Date(currentTimestamp)))
-
-
-        myEdit.putString("userName",userData["userName"].toString())
-        myEdit.putString("userEmail",userData["userEmail"].toString())
-
-        myEdit.putString("LCuserName",ratingsDetails["leetcode"]?.get("userName").toString())
-        myEdit.putString("LCattendedContestsCount",ratingsDetails["leetcode"]?.get("attendedContestsCount").toString())
-        myEdit.putString("LCrating",ratingsDetails["leetcode"]?.get("rating").toString())
-        myEdit.putString("LCglobalRanking",ratingsDetails["leetcode"]?.get("globalRanking").toString())
-        myEdit.putString("LCtotalParticipants",ratingsDetails["leetcode"]?.get("totalParticipants").toString())
-        myEdit.putString("LCtopPercentage",ratingsDetails["leetcode"]?.get("topPercentage").toString())
-
-        myEdit.putString("CFuserName",ratingsDetails["codeforces"]?.get("userName").toString())
-        myEdit.putString("CFrating",ratingsDetails["codeforces"]?.get("rating").toString())
-        myEdit.putString("CFmaxRating",ratingsDetails["codeforces"]?.get("maxRating").toString())
-        myEdit.putString("CFrank",ratingsDetails["codeforces"]?.get("rank").toString())
-        myEdit.putString("CFmaxRank",ratingsDetails["codeforces"]?.get("maxRank").toString())
-
-        myEdit.putString("CCuserName",ratingsDetails["codechef"]?.get("userName").toString())
-        myEdit.putString("CCrating",ratingsDetails["codechef"]?.get("rating").toString())
-        myEdit.putString("linkedin_profile",userData["linkedin_profile"].toString())
-        myEdit.putString("is_public",userData["is_public"].toString())
-
-
-        myEdit.apply()
-
-        val intent:Intent = Intent(applicationContext, MainActivity::class.java)
-        startActivity(intent)
-        finish()
 
     }
-
 
     fun extractLinkedInUsername(input: String): String? {
         val regex = Regex("""(?:https?://)?(?:www\.)?linkedin\.com/in/([a-zA-Z0-9-_.]+)""")
         val matchResult = regex.find(input)
         return matchResult?.groups?.get(1)?.value
     }
+
+    private fun open_main_dashboard() {
+        val intent:Intent = Intent(applicationContext, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
 }
 

@@ -1,24 +1,17 @@
 package kontestbuddybyamitmaity.example.kontestbuddy.questions_stats
 
-import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.JsonParser
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodechefLeaderApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetcodeStatsAPiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
-import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.CCrankingActivity.CustomData
-import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.CCustomAdapter
 
 class QuestionsStatsActivity : AppCompatActivity() {
 
@@ -63,27 +56,27 @@ class QuestionsStatsActivity : AppCompatActivity() {
 
     private fun callTheAPI(LCuserName: String, statType: String) {
         progressDialog.show()
-        val apiTask = LeetcodeStatsAPiTask { isValid ->
+        val apiTask = APIServices { isValid ->
 
-            val parser = JsonParser()
-            val jsonObj = parser.parse(isValid).asJsonObject
-            val daily_json_obj = jsonObj.get("dailySolved").asJsonObject
-            val monthly_json_obj = jsonObj.get("monthlySolved").asJsonObject
-            val yearly_json_obj = jsonObj.get("yearlySolved").asJsonObject
-
-            if (statType == "Daily") {
-                for (element in daily_json_obj.entrySet()) {
-                    userList.add(CustomData(element.key, element.value.asInt))
-                }
-            }else if (statType == "Monthly") {
-                for (element in monthly_json_obj.entrySet()) {
-                    userList.add(CustomData(element.key, element.value.asInt))
-                }
-            }else if (statType == "Yearly") {
-                for (element in yearly_json_obj.entrySet()) {
-                    userList.add(CustomData(element.key, element.value.asInt))
-                }
-            }
+//            val parser = JsonParser()
+//            val jsonObj = parser.parse(isValid).asJsonObject
+//            val daily_json_obj = jsonObj.get("dailySolved").asJsonObject
+//            val monthly_json_obj = jsonObj.get("monthlySolved").asJsonObject
+//            val yearly_json_obj = jsonObj.get("yearlySolved").asJsonObject
+//
+//            if (statType == "Daily") {
+//                for (element in daily_json_obj.entrySet()) {
+//                    userList.add(CustomData(element.key, element.value.asInt))
+//                }
+//            }else if (statType == "Monthly") {
+//                for (element in monthly_json_obj.entrySet()) {
+//                    userList.add(CustomData(element.key, element.value.asInt))
+//                }
+//            }else if (statType == "Yearly") {
+//                for (element in yearly_json_obj.entrySet()) {
+//                    userList.add(CustomData(element.key, element.value.asInt))
+//                }
+//            }
 
             userList.reverse()
             val recyclerView: RecyclerView = findViewById(R.id.questions_stats_recycler_view)

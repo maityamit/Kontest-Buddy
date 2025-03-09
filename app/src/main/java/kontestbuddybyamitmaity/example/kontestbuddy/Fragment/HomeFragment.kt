@@ -2,7 +2,6 @@ package kontestbuddybyamitmaity.example.kontestbuddy.Fragment
 
 import android.app.ProgressDialog
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,9 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonObject
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeChefVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.CodeForcesVerifyApiTask
-import kontestbuddybyamitmaity.example.kontestbuddy.Backend.LeetCodeVerifyApiTask
+import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.Compare.CompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Friends.FriendsActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
@@ -34,8 +30,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -89,6 +83,12 @@ class HomeFragment : Fragment() {
         progressDialog.setCanceledOnTouchOutside(false)
         progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
 
+        val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
+            AppCompatActivity.MODE_PRIVATE
+        )
+
+        Log.e("AllDataKoding", sharedPreferences?.all.toString())
+
         // Initialization
         initialization(view)
         allDataSettoTheUI()
@@ -132,6 +132,9 @@ class HomeFragment : Fragment() {
             val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
                 AppCompatActivity.MODE_PRIVATE
             )
+
+            Log.e("AllData", sharedPreferences?.all.toString())
+
             val _is_public = sharedPreferences?.getString("is_public","false")
             if(_is_public=="true"){
                 val intent:Intent = Intent(context, FriendsActivity::class.java)
@@ -250,9 +253,9 @@ class HomeFragment : Fragment() {
     ) {
         coroutineScope.launch {
 
-            val resultLeetCode = async { LeetCodeVerifyApiTask{}.execute(userLeetCode).get() }
-            val resultCodeforces = async { CodeForcesVerifyApiTask{}.execute(userCodeforces).get() }
-            val resultCodeChef = async { CodeChefVerifyApiTask{}.execute(userCodechef).get() }
+            val resultLeetCode = async { APIServices{}.execute(userLeetCode).get() }
+            val resultCodeforces = async { APIServices{}.execute(userCodeforces).get() }
+            val resultCodeChef = async { APIServices{}.execute(userCodechef).get() }
             val allResults = awaitAll(resultLeetCode, resultCodeforces, resultCodeChef)
             Log.e("DataAmit", "${allResults}")
             handleAllApiResults(allResults)

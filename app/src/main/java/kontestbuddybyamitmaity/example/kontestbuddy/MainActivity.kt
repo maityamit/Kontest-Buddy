@@ -8,6 +8,7 @@ import com.google.android.material.navigation.NavigationBarView
 import kontestbuddybyamitmaity.example.kontestbuddy.Fragment.HomeFragment
 import kontestbuddybyamitmaity.example.kontestbuddy.Fragment.ProfileFragment
 import kontestbuddybyamitmaity.example.kontestbuddy.Fragment.SettingsFragment
+
 class MainActivity : AppCompatActivity() {
 
     lateinit var linearLayout:LinearLayout
@@ -24,15 +25,12 @@ class MainActivity : AppCompatActivity() {
         navigationBarView.setOnItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.home_menu -> {
-                    // Respond to navigation item 1 click
                     loadFragment(HomeFragment())
                 }
                 R.id.profile_menu -> {
-                    // Respond to navigation item 2 click
                     loadFragment(ProfileFragment())
                 }
                 R.id.about_menu -> {
-                    // Respond to navigation item 2 click
                     loadFragment(SettingsFragment())
                 }
             }
