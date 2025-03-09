@@ -1,5 +1,6 @@
 package kontestbuddybyamitmaity.example.kontestbuddy.Fragment
 
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
@@ -78,16 +79,6 @@ class HomeFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         val view:View  = inflater.inflate(R.layout.fragment_home, container, false)
-        progressDialog = ProgressDialog(context)
-        progressDialog.setCancelable(false)
-        progressDialog.setCanceledOnTouchOutside(false)
-        progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
-
-        val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
-            AppCompatActivity.MODE_PRIVATE
-        )
-
-        Log.e("AllDataKoding", sharedPreferences?.all.toString())
 
         // Initialization
         initialization(view)
@@ -149,53 +140,49 @@ class HomeFragment : Fragment() {
     }
 
 
+    @SuppressLint("SetTextI18n")
     private fun allDataSettoTheUI() {
         val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
             AppCompatActivity.MODE_PRIVATE
         )
 
+        var userName = sharedPreferences?.getString("user_name", null)
+        var LCuserName = sharedPreferences?.getString("leetcode_user_name",null)
+        var LCattendedContestsCount = sharedPreferences?.getString("leetcode_attended_contests_count",null)
+        var LCrating = sharedPreferences?.getString("leetcode_rating",null)
+        var LCglobalRanking = sharedPreferences?.getString("leetcode_global_ranking",null)
+        var LCtopPercentage = sharedPreferences?.getString("leetcode_top_percentage",null)
+        var CFuserName = sharedPreferences?.getString("codeforces_user_name",null)
+        var CFrating = sharedPreferences?.getString("codeforces_rating",null)
+        var CCuserName = sharedPreferences?.getString("codechef_user_name",null)
+        var CCrating = sharedPreferences?.getString("codechef_rating",null)
+        var lastUpdate = sharedPreferences?.getString("lastUpdate",null)
+
+        if(userName!=null && userName=="") userName = null
+        if(LCuserName!=null && LCuserName=="") LCuserName = null
+        if(LCattendedContestsCount!=null && LCattendedContestsCount=="") LCattendedContestsCount = null
+        if(LCrating!=null && LCrating=="") LCrating = null
+        if(LCglobalRanking!=null && LCglobalRanking=="") LCglobalRanking = null
+        if(LCtopPercentage!=null && LCtopPercentage=="") LCtopPercentage = null
+        if(CFuserName!=null && CFuserName=="") CFuserName = null
+        if(CFrating!=null && CFrating=="") CFrating = null
+        if(CCuserName!=null && CCuserName=="") CCuserName = null
+        if(CCrating!=null && CCrating=="") CCrating = null
+        if(lastUpdate!=null && lastUpdate=="") lastUpdate = null
 
 
-        val userName = sharedPreferences?.getString("userName","")
-        val userEmail = sharedPreferences?.getString("userEmail","")
-        val LCuserName = sharedPreferences?.getString("LCuserName","")
-        val LCattendedContestsCount = sharedPreferences?.getString("LCattendedContestsCount","")
-        val LCrating = sharedPreferences?.getString("LCrating","")
-        val LCglobalRanking = sharedPreferences?.getString("LCglobalRanking","")
-        val LCtotalParticipants = sharedPreferences?.getString("LCtotalParticipants","")
-        val LCtopPercentage = sharedPreferences?.getString("LCtopPercentage","")
-        val CFuserName = sharedPreferences?.getString("CFuserName","")
-        val CFrating = sharedPreferences?.getString("CFrating","")
-        val CFmaxRating = sharedPreferences?.getString("CFmaxRating","")
-        val CFrank = sharedPreferences?.getString("CFrank","")
-        val CFmaxRank = sharedPreferences?.getString("CFmaxRank","")
-        val CCuserName = sharedPreferences?.getString("CCuserName","")
-        val CCrating = sharedPreferences?.getString("CCrating","")
-        val lastUpdate = sharedPreferences?.getString("lastUpdate","")
+        userName_TextView.text = "\uD83D\uDC4B Hello, " + if(userName==null)  "" else userName.split(" ")[0]
 
-
-
-        //Retrieve Data From Local Storage and Set Data into The Container
-        if (userName != null) {
-            userName_TextView.text = "\uD83D\uDC4B Hello, " + userName.split(" ")[0]
-        }else{
-            userName_TextView.text = "\uD83D\uDC4B Hello, "
-        }
-
-        ratingsLC_TextView.text = if(LCrating =="null" || LCrating=="") {"-"} else {LCrating?.substring(1, 5) ?: ""}
-        toppercentageLC_TextView.text = if (LCtopPercentage == "null" || LCtopPercentage=="") {"-"} else {(LCtopPercentage?.substring(1, LCtopPercentage.length - 1) + "%") } ?: ""
-        livecontestLC_TextView.text = if(LCattendedContestsCount == "null" || LCattendedContestsCount=="") {"-"} else {LCattendedContestsCount?.substring(1, LCattendedContestsCount.length - 1) ?: ""}
-        globalrankingLC_TextView.text = if(LCglobalRanking == "null" || LCglobalRanking=="") {"-"} else {LCglobalRanking?.substring(1, LCglobalRanking.length - 1) ?: ""}
-
-        ratingsCF_TextView.text = if(CFrating == "null" || CFrating=="") {"-"} else {CFrating?.substring(1, CFrating.length - 1) ?: "" }
-        ratingCC_TextView.text = if(CCrating == "null" || CCrating=="") {"-"} else {CCrating?.substring(1, CCrating.length - 1) ?: "" }
-        lcUserName_TextView.text = if(LCuserName == "null" || LCuserName=="") {"-"} else {LCuserName?.substring(1, LCuserName.length - 1) ?: "" }
-        cfUserName_TextView.text = if(CFuserName == "null" || CFuserName=="") {"-"} else {CFuserName?.substring(1, CFuserName.length - 1) ?: "" }
-
-
-        ccUserName_TextView.text = if(CCuserName == "null" || CCuserName=="") {"-"} else {CCuserName?.substring(1, CCuserName.length - 1) ?: "" }
+        lcUserName_TextView.text = LCuserName?: "-"
+        ratingsLC_TextView.text = if(LCrating!=null) LCrating.split(".")[0] else "-"
+        toppercentageLC_TextView.text = if(LCtopPercentage!=null) "$LCtopPercentage%" else "-"
+        livecontestLC_TextView.text = LCattendedContestsCount?:"-"
+        globalrankingLC_TextView.text = LCglobalRanking?.substring(1, LCglobalRanking.length - 1) ?: "-"
+        ratingsCF_TextView.text = CFrating?: "-"
+        ratingCC_TextView.text = CCrating?: "-"
+        cfUserName_TextView.text = CFuserName?: "-"
+        ccUserName_TextView.text = CCuserName?: "-"
         lastUpdateHomeMainPage_TextView.text = lastUpdate
-
 
     }
 
@@ -307,6 +294,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun initialization(view: View) {
+
+        progressDialog = ProgressDialog(context)
+        progressDialog.setCancelable(false)
+        progressDialog.setCanceledOnTouchOutside(false)
+        progressDialog.setTitle("Sometimes it takes too longer !! \n Please wait")
+
         userName_TextView = view.findViewById(R.id.userNameinMainPage);
         ratingsLC_TextView = view.findViewById(R.id.lcUserRatingsMainPage);
         toppercentageLC_TextView = view.findViewById(R.id.lcUsertopMainPage);

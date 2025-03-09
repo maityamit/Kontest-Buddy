@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -14,15 +13,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.gotrue.GoTrue
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
-import io.ktor.client.plugins.HttpRequestRetry
-import io.ktor.client.plugins.HttpTimeout
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R

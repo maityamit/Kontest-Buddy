@@ -12,18 +12,25 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonObject
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.postgrest
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
-import kontestbuddybyamitmaity.example.kontestbuddy.Services.Utils
+import kontestbuddybyamitmaity.example.kontestbuddy.Services.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializer
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -39,6 +46,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var forgetPassWordTextView: TextView
     private lateinit var sign_in_button: Button
     private lateinit var sign_up_redirect: TextView
+    private lateinit var superbase: SupabaseClient
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,57 +77,65 @@ class LoginActivity : AppCompatActivity() {
         }
 
         sign_in_button.setOnClickListener {
-            val userEmail = login_user_email.text.toString()
-            val userPassword = login_user_pass.text.toString()
 
-            if (userEmail.isBlank()) {
-                Toast.makeText(applicationContext, "Enter Your Email", Toast.LENGTH_SHORT).show()
-            } else if (userPassword.isBlank()) {
-                Toast.makeText(applicationContext, "Enter Your Password", Toast.LENGTH_SHORT).show()
+            if (login_user_email.text.trim().toString().isBlank()) {
+                login_user_email.error = "Enter Your Email"
+            } else if (login_user_pass.text.trim().toString().isBlank()) {
+                login_user_pass.error = "Enter Your Password"
             } else {
-                signinWithEmailAndPass(userEmail, userPassword)
+                signinWithEmailAndPass(login_user_email.text.toString(), login_user_pass.text.toString())
             }
         }
 
         forgetPassWordTextView.setOnClickListener {
-
-            val messageBoxView = LayoutInflater.from(this).inflate(R.layout.forget_password, null)
-            val emailID = messageBoxView.findViewById<EditText>(R.id.forget_user_email)
-            val messageBoxBuilder = AlertDialog.Builder(this).setView(messageBoxView)
-            val  messageBoxInstance = messageBoxBuilder.show()
-            val editTextBox = messageBoxInstance.findViewById<EditText>(R.id.forget_user_email)
-            messageBoxInstance.findViewById<Button>(R.id.forgetpasswordButton_button).setOnClickListener {
-                val emailIDString: String = editTextBox.text.toString()
-
-                if (emailIDString.isBlank()) {
-                    Toast.makeText(this, "Please Enter Your Email ID !!", Toast.LENGTH_SHORT).show()
-                } else {
-                    progressDialog.show()
-                    FirebaseAuth.getInstance().sendPasswordResetEmail(emailIDString)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                emailID.text = null
-                                progressDialog.dismiss()
-                                messageBoxInstance.dismiss()
-                                Toast.makeText(
-                                    this,
-                                    "Password Reset Email Sent.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
-                        }
-                }
-            }
+            forget_password_actions()
         }
 
     }
 
+    private fun forget_password_actions() {
+        val messageBoxView = LayoutInflater.from(this).inflate(R.layout.forget_password, null)
+        val emailID = messageBoxView.findViewById<EditText>(R.id.forget_user_email)
+        val messageBoxBuilder = AlertDialog.Builder(this).setView(messageBoxView)
+        val  messageBoxInstance = messageBoxBuilder.show()
+        val editTextBox = messageBoxInstance.findViewById<EditText>(R.id.forget_user_email)
+        messageBoxInstance.findViewById<Button>(R.id.forgetpasswordButton_button).setOnClickListener {
+            val emailIDString: String = editTextBox.text.toString()
+
+            if (emailIDString.isBlank()) {
+                Toast.makeText(this, "Please Enter Your Email ID !!", Toast.LENGTH_SHORT).show()
+            } else {
+                progressDialog.show()
+                FirebaseAuth.getInstance().sendPasswordResetEmail(emailIDString)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            emailID.text = null
+                            progressDialog.dismiss()
+                            messageBoxInstance.dismiss()
+                            Toast.makeText(
+                                this,
+                                "Password Reset Email Sent.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+                    }
+            }
+        }
+    }
+
     private fun initialization() {
+
+        superbase = createSupabaseClient(
+            supabaseUrl = Constants.SUPERBASE_URL,
+            supabaseKey = Constants.SUPERBASE_KEY
+        ) {
+            install(Postgrest)
+        }
 
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
@@ -140,7 +157,7 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(userEmail, userPassword)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    retrieveDataFromtheFirebase()
+                    retrieveDataFromtheSuperBase(userEmail)
                 } else {
                     // If sign in fails, display a message to the user.
                     Toast.makeText(this, task.exception.toString(), Toast.LENGTH_SHORT).show()
@@ -149,51 +166,36 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    private fun retrieveDataFromtheFirebase() {
+    private fun retrieveDataFromtheSuperBase(userEmail: String) {
 
-        val db = Firebase.firestore
-        val auth: FirebaseAuth = FirebaseAuth.getInstance()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val user = superbase.postgrest.from("users")
+                    .select("user_email, user_codechef, user_codeforces, user_leetcode, user_name, linkedin_profile, is_public"){
+                        eq("user_email", userEmail)
+                    }.body.jsonArray[0].jsonObject
 
-        val userID = auth.currentUser?.uid.toString()
-        val docRef = db.collection("users").document(userID)
-        docRef.get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val document = task.result
-                if (document != null) {
-                    val userCodechef = document.getString("userCodechef")
-                    val userCodeforces = document.getString("userCodeforces")
-                    val userLeetcode = document.getString("userLeetcode")
-                    val userName = document.getString("userName")
-                    val userEmail = document.getString("userEmail")
-                    val linkedin_profile = document.getString("linkedin_profile")
-                    var is_public = document.getString("is_public")
 
-                    if(is_public==null){
-                        is_public = "false"
-                    }
+                val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
+                val myEdit = sharedPreferences.edit()
+                myEdit.putString("user_name",user["user_name"]?.jsonPrimitive?.contentOrNull)
+                myEdit.putString("user_email",user["user_email"]?.jsonPrimitive?.contentOrNull)
+                myEdit.putString("linkedin_profile",user["linkedin_profile"]?.jsonPrimitive?.contentOrNull)
+                myEdit.putString("is_public",user["is_public"]?.jsonPrimitive?.contentOrNull)
+                myEdit.apply()
 
-                    val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
-                    val myEdit = sharedPreferences.edit()
+                retrieveDataUSingAPI(
+                    user["user_leetcode"]?.jsonPrimitive?.contentOrNull,
+                    user["user_codeforces"]?.jsonPrimitive?.contentOrNull,
+                    user["user_codechef"]?.jsonPrimitive?.contentOrNull
+                )
 
-                    myEdit.putString("userName",userName)
-                    myEdit.putString("userEmail",userEmail)
-                    myEdit.putString("linkedin_profile",linkedin_profile.toString())
-                    myEdit.putString("is_public",is_public.toString())
-                    myEdit.apply()
 
-                    retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef)
-
-                } else {
-                    Toast.makeText(applicationContext, "No Such document", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            } else {
-                Toast.makeText(applicationContext, task.exception.toString(), Toast.LENGTH_SHORT)
-                    .show()
+            } catch (e: Exception) {
+                println("Error fetching users: ${e.message}")
             }
-
-
         }
+
     }
 
     private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?) {
@@ -244,28 +246,24 @@ class LoginActivity : AppCompatActivity() {
         val dateFormat = SimpleDateFormat("dd/MM/yy - hh:mm a", Locale.getDefault())
         myEdit.putString("lastUpdate",dateFormat.format(Date(currentTimestamp)))
 
+        myEdit.putString("leetcode_user_name", resultLeetCode?.get("userName")?.asString.toString())
+        myEdit.putString("leetcode_attended_contests_count",resultLeetCode?.get("attendedContestsCount")?.asString.toString())
+        myEdit.putString("leetcode_rating",resultLeetCode?.get("rating")?.asString.toString())
+        myEdit.putString("leetcode_global_ranking",resultLeetCode?.get("globalRanking")?.asString.toString())
+        myEdit.putString("leetcode_total_participants",resultLeetCode?.get("totalParticipants")?.asString.toString())
+        myEdit.putString("leetcode_top_percentage",resultLeetCode?.get("topPercentage")?.asString.toString())
 
-        myEdit.putString("LCuserName", resultLeetCode?.get("userName").toString())
-        myEdit.putString("LCattendedContestsCount",resultLeetCode?.get("attendedContestsCount").toString())
-        myEdit.putString("LCrating",resultLeetCode?.get("rating").toString())
-        myEdit.putString("LCglobalRanking",resultLeetCode?.get("globalRanking").toString())
-        myEdit.putString("LCtotalParticipants",resultLeetCode?.get("totalParticipants").toString())
-        myEdit.putString("LCtopPercentage",resultLeetCode?.get("topPercentage").toString())
+        myEdit.putString("codeforces_user_name",resultCodeforces?.get("userName")?.asString.toString())
+        myEdit.putString("codeforces_rating",resultCodeforces?.get("rating")?.asString.toString())
+        myEdit.putString("codeforces_max_rating",resultCodeforces?.get("maxRating")?.asString.toString())
+        myEdit.putString("codeforces_rank",resultCodeforces?.get("rank")?.asString.toString())
+        myEdit.putString("codeforces_max_rank",resultCodeforces?.get("maxRank")?.asString.toString())
 
-        myEdit.putString("CFuserName",resultCodeforces?.get("userName").toString())
-        myEdit.putString("CFrating",resultCodeforces?.get("rating").toString())
-        myEdit.putString("CFmaxRating",resultCodeforces?.get("maxRating").toString())
-        myEdit.putString("CFrank",resultCodeforces?.get("rank").toString())
-        myEdit.putString("CFmaxRank",resultCodeforces?.get("maxRank").toString())
-
-        myEdit.putString("CCuserName",resultCodeChef?.get("userName").toString())
-        myEdit.putString("CCrating",resultCodeChef?.get("rating").toString())
-
+        myEdit.putString("codechef_user_name",resultCodeChef?.get("userName")?.asString.toString())
+        myEdit.putString("codechef_rating",resultCodeChef?.get("rating")?.asString.toString())
 
         myEdit.apply()
 
     }
-
-
 
 }
