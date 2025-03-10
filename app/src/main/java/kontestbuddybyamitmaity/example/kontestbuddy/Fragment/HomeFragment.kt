@@ -14,22 +14,32 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.cardview.widget.CardView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonObject
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.postgrest
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.Compare.CompareActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Friends.FriendsActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.LeaderboardActivity
+import kontestbuddybyamitmaity.example.kontestbuddy.Services.Constants
 import kontestbuddybyamitmaity.example.kontestbuddy.questions_stats.QuestionsStatsActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -57,18 +67,10 @@ class HomeFragment : Fragment() {
     lateinit var daily_coding_stats_via_extension:CardView
     lateinit var monthly_coding_stats_via_extension:CardView
     lateinit var yearly_coding_stats_via_extension:CardView
+    private lateinit var superbase: SupabaseClient
 
-    val day_wise_list: MutableList<Any> = mutableListOf()
-    val week_wise_list: MutableList<Any> = mutableListOf()
-    val month_wise_list: MutableList<Any> = mutableListOf()
 
-//    lateinit var CompareButtonLeetCode:CardView
-//    lateinit var CompareButtonCodeForces:CardView
     val coroutineScope = CoroutineScope(Dispatchers.Main)
-//    lateinit var LeaderboardButtonLeetCode:TextView
-//    lateinit var LeaderboardButtonCodeForces:TextView
-//    lateinit var leetcode_leaderboard_Button:LinearLayout
-//    lateinit var codeforces_leaderboard_Button:CardView
 
 
 
@@ -83,12 +85,15 @@ class HomeFragment : Fragment() {
         // Initialization
         initialization(view)
         allDataSettoTheUI()
+        actions()
 
-        // Update the Refresh Button
-        // Retrieve the details from firebase -> Call the API to Fetch Latest Data -> set into Container -> Store Local Storage
+        return view
+    }
+
+    private fun actions() {
+
         mainHomePageRatingsRefresh_ImageView.setOnClickListener{
-            progressDialog.show()
-            retrieveDataFromtheFirebase()
+            retrieveDataFromtheSuperBase()
         }
 
         LeaderBoardButton_Homepage.setOnClickListener {
@@ -120,23 +125,21 @@ class HomeFragment : Fragment() {
 
 
         find_koding_buddy_button.setOnClickListener {
-            val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
-                AppCompatActivity.MODE_PRIVATE
-            )
-
-            Log.e("AllData", sharedPreferences?.all.toString())
-
-            val _is_public = sharedPreferences?.getString("is_public","false")
-            if(_is_public=="true"){
-                val intent:Intent = Intent(context, FriendsActivity::class.java)
-                startActivity(intent)
-            }else{
-                Toast.makeText(context, "Please make your profile public to use this feature, for this go to Profile Page", Toast.LENGTH_LONG).show()
-            }
+            find_koding_buddy_actions()
         }
+    }
 
-
-        return view
+    private fun find_koding_buddy_actions() {
+        val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        val _is_public = sharedPreferences?.getString("is_public","false")
+        if(_is_public=="true"){
+            val intent:Intent = Intent(context, FriendsActivity::class.java)
+            startActivity(intent)
+        }else{
+            Toast.makeText(context, "Please make your profile public to use this feature, for this go to Profile Page", Toast.LENGTH_LONG).show()
+        }
     }
 
 
@@ -186,34 +189,35 @@ class HomeFragment : Fragment() {
 
     }
 
-    private fun retrieveDataFromtheFirebase() {
+    private fun retrieveDataFromtheSuperBase() {
 
-        val db = Firebase.firestore
-        val auth: FirebaseAuth = FirebaseAuth.getInstance()
+        progressDialog.show()
 
-        val userID = auth.currentUser?.uid.toString()
-        val docRef = db.collection("users").document(userID)
-        docRef.get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val document = task.result
-                if (document != null) {
-                    val userCodechef = document.getString("userCodechef")
-                    val userCodeforces = document.getString("userCodeforces")
-                    val userLeetcode = document.getString("userLeetcode")
-                    val userName = document.getString("userName")
-                    val userEmail = document.getString("userEmail")
+        val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        var user_email = sharedPreferences?.getString("user_email","")
 
-                    retrieveDataUSingAPI(userLeetcode,userCodeforces,userCodechef)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val user = superbase.postgrest.from("users")
+                    .select("user_codechef, user_codeforces, user_leetcode"){
+                        eq("user_email", user_email?:"")
+                    }.body.jsonArray[0].jsonObject
 
-                } else {
-                    Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            } else {
-                Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                    .show()
+                retrieveDataUSingAPI(
+                    user["user_leetcode"]?.jsonPrimitive?.contentOrNull,
+                    user["user_codeforces"]?.jsonPrimitive?.contentOrNull,
+                    user["user_codechef"]?.jsonPrimitive?.contentOrNull
+                )
+
+            } catch (e: Exception) {
+                progressDialog.dismiss()
+                Toast.makeText(context, "Error fetching users: ${e.message}", Toast.LENGTH_SHORT).show()
+                println("Error fetching users: ${e.message}")
             }
         }
+
     }
 
     private fun retrieveDataUSingAPI(userLeetcode: String?, userCodeforces: String?, userCodechef: String?) {
@@ -240,9 +244,9 @@ class HomeFragment : Fragment() {
     ) {
         coroutineScope.launch {
 
-            val resultLeetCode = async { APIServices{}.execute(userLeetCode).get() }
-            val resultCodeforces = async { APIServices{}.execute(userCodeforces).get() }
-            val resultCodeChef = async { APIServices{}.execute(userCodechef).get() }
+            val resultLeetCode = async { APIServices{}.execute(userLeetCode, "isLCExist").get() }
+            val resultCodeforces = async { APIServices{}.execute(userCodeforces, "isCFExist").get() }
+            val resultCodeChef = async { APIServices{}.execute(userCodechef, "isCCExist").get() }
             val allResults = awaitAll(resultLeetCode, resultCodeforces, resultCodeChef)
             Log.e("DataAmit", "${allResults}")
             handleAllApiResults(allResults)
@@ -268,21 +272,21 @@ class HomeFragment : Fragment() {
             myEdit.putString("lastUpdate",dateFormat.format(Date(currentTimestamp)))
 
 
-            myEdit.putString("LCuserName", resultLeetCode?.get("userName").toString())
-            myEdit.putString("LCattendedContestsCount",resultLeetCode?.get("attendedContestsCount").toString())
-            myEdit.putString("LCrating",resultLeetCode?.get("rating").toString())
-            myEdit.putString("LCglobalRanking",resultLeetCode?.get("globalRanking").toString())
-            myEdit.putString("LCtotalParticipants",resultLeetCode?.get("totalParticipants").toString())
-            myEdit.putString("LCtopPercentage",resultLeetCode?.get("topPercentage").toString())
+            myEdit.putString("leetcode_user_name", resultLeetCode?.get("userName")?.asString.toString())
+            myEdit.putString("leetcode_attended_contests_count",resultLeetCode?.get("attendedContestsCount")?.asString.toString())
+            myEdit.putString("leetcode_rating",resultLeetCode?.get("rating")?.asString.toString())
+            myEdit.putString("leetcode_global_ranking",resultLeetCode?.get("globalRanking")?.asString.toString())
+            myEdit.putString("leetcode_total_participants",resultLeetCode?.get("totalParticipants")?.asString.toString())
+            myEdit.putString("leetcode_top_percentage",resultLeetCode?.get("topPercentage")?.asString.toString())
 
-            myEdit.putString("CFuserName",resultCodeforces?.get("userName").toString())
-            myEdit.putString("CFrating",resultCodeforces?.get("rating").toString())
-            myEdit.putString("CFmaxRating",resultCodeforces?.get("maxRating").toString())
-            myEdit.putString("CFrank",resultCodeforces?.get("rank").toString())
-            myEdit.putString("CFmaxRank",resultCodeforces?.get("maxRank").toString())
+            myEdit.putString("codeforces_user_name",resultCodeforces?.get("userName")?.asString.toString())
+            myEdit.putString("codeforces_rating",resultCodeforces?.get("rating")?.asString.toString())
+            myEdit.putString("codeforces_max_rating",resultCodeforces?.get("maxRating")?.asString.toString())
+            myEdit.putString("codeforces_rank",resultCodeforces?.get("rank")?.asString.toString())
+            myEdit.putString("codeforces_max_rank",resultCodeforces?.get("maxRank")?.asString.toString())
 
-            myEdit.putString("CCuserName",resultCodeChef?.get("userName").toString())
-            myEdit.putString("CCrating",resultCodeChef?.get("rating").toString())
+            myEdit.putString("codechef_user_name",resultCodeChef?.get("userName")?.asString.toString())
+            myEdit.putString("codechef_rating",resultCodeChef?.get("rating")?.asString.toString())
 
             myEdit.apply()
         }
@@ -294,6 +298,14 @@ class HomeFragment : Fragment() {
     }
 
     private fun initialization(view: View) {
+
+
+        superbase = createSupabaseClient(
+            supabaseUrl = Constants.SUPERBASE_URL,
+            supabaseKey = Constants.SUPERBASE_KEY
+        ) {
+            install(Postgrest)
+        }
 
         progressDialog = ProgressDialog(context)
         progressDialog.setCancelable(false)
