@@ -101,16 +101,22 @@ class ProfileFragment : Fragment() {
                 }) {
                     eq("user_email", user_email.toString())
                 }
-                if(myEdit != null) {
-                    myEdit.putString("is_public",value)
-                    myEdit.apply()
+
+                withContext(Dispatchers.Main) {
+                    if(myEdit != null) {
+                        myEdit.putString("is_public",value)
+                        myEdit.apply()
+                    }
+                    Toast.makeText(context,"Preference Updated...",Toast.LENGTH_SHORT).show()
+                    is_public_profile_textview.text = if (value=="true") "Public Profile: (on)" else "Public Profile: (off)"
+                    progressDialog.dismiss()
                 }
-                Toast.makeText(context,"Preference Updated...",Toast.LENGTH_SHORT).show()
-                is_public_profile_textview.text = if (value=="true") "Public Profile: (on)" else "Public Profile: (off)"
-                progressDialog.dismiss()
+
             } catch (e: Exception) {
-                progressDialog.dismiss()
-                println("Error updating user: ${e.message}")
+                withContext(Dispatchers.Main) {
+                    progressDialog.dismiss()
+                    println("Error updating user: ${e.message}")
+                }
             }
         }
 

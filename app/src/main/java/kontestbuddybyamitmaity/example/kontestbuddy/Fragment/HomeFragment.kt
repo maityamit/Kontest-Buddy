@@ -36,6 +36,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -205,16 +206,20 @@ class HomeFragment : Fragment() {
                         eq("user_email", user_email?:"")
                     }.body.jsonArray[0].jsonObject
 
-                retrieveDataUSingAPI(
-                    user["user_leetcode"]?.jsonPrimitive?.contentOrNull,
-                    user["user_codeforces"]?.jsonPrimitive?.contentOrNull,
-                    user["user_codechef"]?.jsonPrimitive?.contentOrNull
-                )
+                withContext(Dispatchers.Main) {
+                    retrieveDataUSingAPI(
+                        user["user_leetcode"]?.jsonPrimitive?.contentOrNull,
+                        user["user_codeforces"]?.jsonPrimitive?.contentOrNull,
+                        user["user_codechef"]?.jsonPrimitive?.contentOrNull
+                    )
+                }
 
             } catch (e: Exception) {
-                progressDialog.dismiss()
-                Toast.makeText(context, "Error fetching users: ${e.message}", Toast.LENGTH_SHORT).show()
-                println("Error fetching users: ${e.message}")
+                withContext(Dispatchers.Main) {
+                    progressDialog.dismiss()
+                    Toast.makeText(context, "Error fetching users: ${e.message}", Toast.LENGTH_SHORT).show()
+                    println("Error fetching users: ${e.message}")
+                }
             }
         }
 
@@ -290,10 +295,7 @@ class HomeFragment : Fragment() {
 
             myEdit.apply()
         }
-
         Toast.makeText(context, "Data refreshed !! at ${dateFormat.format(Date(currentTimestamp))}", Toast.LENGTH_SHORT).show()
-
-
 
     }
 

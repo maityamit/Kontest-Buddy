@@ -26,6 +26,7 @@ import kontestbuddybyamitmaity.example.kontestbuddy.Services.SharedPrefServices
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class RegisterActivity : AppCompatActivity() {
@@ -305,28 +306,35 @@ class RegisterActivity : AppCompatActivity() {
                                 val response = superbase.postgrest.from("users").insert(
                                     userData
                                 )
-                                userData["leetcode_user_name"] = leetcode_user_name;
-                                userData["leetcode_attended_contests_count"] = leetcode_attended_contests_count;
-                                userData["leetcode_rating"] = leetcode_rating;
-                                userData["leetcode_global_ranking"] = leetcode_global_ranking;
-                                userData["leetcode_total_participants"] = leetcode_total_participants;
-                                userData["leetcode_top_percentage"] = leetcode_top_percentage;
 
-                                userData["codeforces_user_name"] = codeforces_user_name;
-                                userData["codeforces_rating"] = codeforces_rating;
-                                userData["codeforces_max_rating"] = codeforces_max_rating;
-                                userData["codeforces_rank"] = codeforces_rank;
-                                userData["codeforces_max_rank"] = codeforces_max_rank;
+                                withContext(Dispatchers.Main) {
+                                    userData["leetcode_user_name"] = leetcode_user_name;
+                                    userData["leetcode_attended_contests_count"] = leetcode_attended_contests_count;
+                                    userData["leetcode_rating"] = leetcode_rating;
+                                    userData["leetcode_global_ranking"] = leetcode_global_ranking;
+                                    userData["leetcode_total_participants"] = leetcode_total_participants;
+                                    userData["leetcode_top_percentage"] = leetcode_top_percentage;
 
-                                userData["codechef_user_name"] = codechef_user_name;
-                                userData["codechef_rating"] = codechef_rating;
+                                    userData["codeforces_user_name"] = codeforces_user_name;
+                                    userData["codeforces_rating"] = codeforces_rating;
+                                    userData["codeforces_max_rating"] = codeforces_max_rating;
+                                    userData["codeforces_rank"] = codeforces_rank;
+                                    userData["codeforces_max_rank"] = codeforces_max_rank;
 
-                                val sharedPrefServices = SharedPrefServices(applicationContext)
-                                sharedPrefServices.store_data_in_shared_pref(userData)
-                                open_main_dashboard()
-                                println("User added successfully: $response")
+                                    userData["codechef_user_name"] = codechef_user_name;
+                                    userData["codechef_rating"] = codechef_rating;
+
+                                    val sharedPrefServices = SharedPrefServices(applicationContext)
+                                    sharedPrefServices.store_data_in_shared_pref(userData)
+                                    open_main_dashboard()
+                                    println("User added successfully: $response")
+                                }
+
                             } catch (e: Exception) {
-                                println("Error inserting user: ${e.message}")
+                                withContext(Dispatchers.Main) {
+                                    progressDialog.dismiss()
+                                    println("Error inserting user: ${e.message}")
+                                }
                             }
                         }
                     }else {

@@ -30,25 +30,24 @@ class FriendsAdapter(val withdrawList: List<FreindsModel>) : RecyclerView.Adapte
 
         val withdraw = withdrawList[position]
 
-        holder.friends_user_name.text = withdraw.userName
-        holder.friends_leetcode_name.text = withdraw.userLeetcode
-        holder.friends_codeforces_name.text = withdraw.userCodeforces
-        holder.friends_codechef_name.text = withdraw.userCodechef
+        holder.friends_user_name.text = withdraw.user_name
+        holder.friends_leetcode_name.text = withdraw.user_leetcode
+        holder.friends_codeforces_name.text = withdraw.user_codeforces
+        holder.friends_codechef_name.text = withdraw.user_codechef
 
-        if(withdraw.userLeetcode.isEmpty()) holder.friends_leetcode_name.text = "-"
-        if(withdraw.userCodeforces.isEmpty()) holder.friends_codeforces_name.text = "-"
-        if(withdraw.userCodechef.isEmpty()) holder.friends_codechef_name.text = "-"
+        if(withdraw.user_leetcode?.isEmpty() == true) holder.friends_leetcode_name.text = "-"
+        if(withdraw.user_codeforces?.isEmpty() == true) holder.friends_codeforces_name.text = "-"
+        if(withdraw.user_codechef?.isEmpty() == true) holder.friends_codechef_name.text = "-"
 
 
         holder.friends_linkedin_name.setOnClickListener {
-            if(withdraw.linkedin_profile.isNotBlank()){
+            if(withdraw.linkedin_profile?.isNotBlank() == true){
                 val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/in/${withdraw.linkedin_profile}/"))
                 holder.itemView.context.startActivity(browserIntent)
             }else{
                 Toast.makeText(holder.itemView.context, "No LinkedIn Profile Found", Toast.LENGTH_SHORT).show()
             }
         }
-
 
     }
 

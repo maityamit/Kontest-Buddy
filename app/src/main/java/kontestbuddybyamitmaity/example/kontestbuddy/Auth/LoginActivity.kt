@@ -26,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonArray
@@ -175,24 +176,29 @@ class LoginActivity : AppCompatActivity() {
                         eq("user_email", userEmail)
                     }.body.jsonArray[0].jsonObject
 
+                withContext(Dispatchers.Main) {
+                    val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
+                    val myEdit = sharedPreferences.edit()
+                    myEdit.putString("user_name",user["user_name"]?.jsonPrimitive?.contentOrNull)
+                    myEdit.putString("user_email",user["user_email"]?.jsonPrimitive?.contentOrNull)
+                    myEdit.putString("linkedin_profile",user["linkedin_profile"]?.jsonPrimitive?.contentOrNull)
+                    myEdit.putString("is_public",user["is_public"]?.jsonPrimitive?.contentOrNull)
+                    myEdit.apply()
 
-                val sharedPreferences = getSharedPreferences("userDataStoreLocal", MODE_PRIVATE)
-                val myEdit = sharedPreferences.edit()
-                myEdit.putString("user_name",user["user_name"]?.jsonPrimitive?.contentOrNull)
-                myEdit.putString("user_email",user["user_email"]?.jsonPrimitive?.contentOrNull)
-                myEdit.putString("linkedin_profile",user["linkedin_profile"]?.jsonPrimitive?.contentOrNull)
-                myEdit.putString("is_public",user["is_public"]?.jsonPrimitive?.contentOrNull)
-                myEdit.apply()
+                    retrieveDataUSingAPI(
+                        user["user_leetcode"]?.jsonPrimitive?.contentOrNull,
+                        user["user_codeforces"]?.jsonPrimitive?.contentOrNull,
+                        user["user_codechef"]?.jsonPrimitive?.contentOrNull
+                    )
 
-                retrieveDataUSingAPI(
-                    user["user_leetcode"]?.jsonPrimitive?.contentOrNull,
-                    user["user_codeforces"]?.jsonPrimitive?.contentOrNull,
-                    user["user_codechef"]?.jsonPrimitive?.contentOrNull
-                )
+                }
 
 
             } catch (e: Exception) {
-                println("Error fetching users: ${e.message}")
+                withContext(Dispatchers.Main) {
+                    progressDialog.dismiss()
+                    Toast.makeText(this@LoginActivity, "Error fetching users: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 

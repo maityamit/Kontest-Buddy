@@ -1,10 +1,10 @@
 package kontestbuddybyamitmaity.example.kontestbuddy.Friends
 
 data class FreindsModel(
-    val userName: String = "",
-    val userLeetcode: String = "",
-    val userCodeforces: String = "",
-    val userCodechef: String = "",
-    val is_public:String = "",
-    val linkedin_profile:String = ""
+    val user_name: String? = "",
+    val user_leetcode: String? = "",
+    val user_codeforces: String? = "",
+    val user_codechef: String? = "",
+    val is_public:String? = "",
+    val linkedin_profile:String? = ""
 )
