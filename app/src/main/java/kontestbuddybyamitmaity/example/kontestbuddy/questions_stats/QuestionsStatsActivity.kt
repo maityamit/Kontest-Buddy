@@ -43,7 +43,6 @@ class QuestionsStatsActivity : AppCompatActivity() {
         var LCuserName = sharedPreferences?.getString("leetcode_user_name",null)
 
         if(LCuserName != null && statType!= null){
-            LCuserName = LCuserName.substring(1,LCuserName.length-1)
             callTheAPI(LCuserName, statType)
         }else{
             Toast.makeText(this,"Please Set LeetCode User Name First",Toast.LENGTH_SHORT).show()
@@ -57,25 +56,31 @@ class QuestionsStatsActivity : AppCompatActivity() {
         progressDialog.show()
         val apiTask = APIServices { isValid ->
 
-//            val parser = JsonParser()
-//            val jsonObj = parser.parse(isValid).asJsonObject
-//            val daily_json_obj = jsonObj.get("dailySolved").asJsonObject
-//            val monthly_json_obj = jsonObj.get("monthlySolved").asJsonObject
-//            val yearly_json_obj = jsonObj.get("yearlySolved").asJsonObject
-//
-//            if (statType == "Daily") {
-//                for (element in daily_json_obj.entrySet()) {
-//                    userList.add(CustomData(element.key, element.value.asInt))
-//                }
-//            }else if (statType == "Monthly") {
-//                for (element in monthly_json_obj.entrySet()) {
-//                    userList.add(CustomData(element.key, element.value.asInt))
-//                }
-//            }else if (statType == "Yearly") {
-//                for (element in yearly_json_obj.entrySet()) {
-//                    userList.add(CustomData(element.key, element.value.asInt))
-//                }
-//            }
+
+
+            val daily_json_obj = isValid?.get("dailySolved")?.asJsonObject
+            val monthly_json_obj = isValid?.get("monthlySolved")?.asJsonObject
+            val yearly_json_obj = isValid?.get("yearlySolved")?.asJsonObject
+
+            if (statType == "Daily") {
+                if (daily_json_obj != null) {
+                    for (element in daily_json_obj.entrySet()) {
+                        userList.add(CustomData(element.key, element.value.asInt))
+                    }
+                }
+            }else if (statType == "Monthly") {
+                if (monthly_json_obj != null) {
+                    for (element in monthly_json_obj.entrySet()) {
+                        userList.add(CustomData(element.key, element.value.asInt))
+                    }
+                }
+            }else if (statType == "Yearly") {
+                if (yearly_json_obj != null) {
+                    for (element in yearly_json_obj.entrySet()) {
+                        userList.add(CustomData(element.key, element.value.asInt))
+                    }
+                }
+            }
 
             userList.reverse()
             val recyclerView: RecyclerView = findViewById(R.id.questions_stats_recycler_view)
@@ -84,7 +89,7 @@ class QuestionsStatsActivity : AppCompatActivity() {
             progressDialog.dismiss()
 
         }
-        apiTask.execute(LCuserName)
+        apiTask.execute(LCuserName, "lcStats")
     }
 
     data class CustomData(
