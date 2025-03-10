@@ -10,9 +10,11 @@ import com.github.mikephil.charting.charts.HorizontalBarChart
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import kotlinx.serialization.json.jsonPrimitive
 import com.google.gson.JsonParser
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.R
+import kotlinx.serialization.json.contentOrNull
 
 class CFcompareActivity : AppCompatActivity() {
 
@@ -28,16 +30,15 @@ class CFcompareActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cfcompare)
-        progressDialog= ProgressDialog(this)
-        progressDialog.setCancelable(false)
-        progressDialog.setCanceledOnTouchOutside(false)
-        progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
+
 
         initialization()
+
         val extras = intent.extras
         val userName1 = extras?.getString("userName1")
         val userName2 = extras?.getString("userName2")
         callTheAPI(userName1,userName2)
+
     }
 
     private fun callTheAPI(userName1: String?, userName2: String?) {
@@ -50,17 +51,20 @@ class CFcompareActivity : AppCompatActivity() {
             codeforcesCmp_userName_user11.text = userName1
             codeforcesCmp_userName_user22.text = userName2
 
+            val user_1 = isValid?.get("result")?.asJsonArray?.get(0)?.asJsonObject
+            val user_2 = isValid?.get("result")?.asJsonArray?.get(1)?.asJsonObject
 
-            val user1Rating:String = isValid?.get("result")?.asJsonArray?.get(0)?.asJsonObject?.get("maxRating").toString()
-            val user2Rating:String = isValid?.get("result")?.asJsonArray?.get(1)?.asJsonObject?.get("maxRating").toString()
+
+            val user1Rating:String = user_1?.get("maxRating").toString()
+            val user2Rating:String = user_2?.get("maxRating").toString()
             secondBarChart(user1Rating.toFloat(),user2Rating.toFloat())
 
-            val user1Contest:String = isValid?.get("result")?.asJsonArray?.get(0)?.asJsonObject?.get("rating").toString()
-            val user2Contest:String = isValid?.get("result")?.asJsonArray?.get(1)?.asJsonObject?.get("rating").toString()
+            val user1Contest:String = user_1?.get("rating").toString()
+            val user2Contest:String = user_2?.get("rating").toString()
             firstBarChart(user1Contest.toFloat(),user2Contest.toFloat())
 
-            val user1Global:String = isValid?.get("result")?.asJsonArray?.get(0)?.asJsonObject?.get("rank").toString()
-            val user2Global:String = isValid?.get("result")?.asJsonArray?.get(1)?.asJsonObject?.get("rank").toString()
+            val user1Global:String = user_1?.get("rank").toString()
+            val user2Global:String = user_2?.get("rank").toString()
             codeforcesCmp_globalRank_user1.text = user1Global
             codeforcesCmp_globalRank_user2.text = user2Global
 
@@ -68,10 +72,16 @@ class CFcompareActivity : AppCompatActivity() {
             progressDialog.dismiss()
 
         }
-        apiTask.execute(str)
+        apiTask.execute(str, "cfCompare")
     }
 
     private fun initialization() {
+
+        progressDialog= ProgressDialog(this)
+        progressDialog.setCancelable(false)
+        progressDialog.setCanceledOnTouchOutside(false)
+        progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
+
         codeforcesCmp_userName_user1 = findViewById(R.id.codeforcesCmp_userName_user1)
         codeforcesCmp_userName_user2 = findViewById(R.id.codeforcesCmp_userName_user2)
         codeforcesCmp_userName_user11 = findViewById(R.id.codeforcesCmp_userName_user11)

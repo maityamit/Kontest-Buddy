@@ -55,6 +55,17 @@ class APIServices(private val callback: (JsonObject?) -> Unit) : AsyncTask<Strin
             return jsonObject
         } catch (e: Exception) {
             Log.e("ApiTask", "Error parsing JSON response: ${e.message}")
+
+            try {
+                val jsonArray = jsonResponse?.let { JsonParser().parse(it).asJsonArray }
+                val jsonObject = JsonObject()
+                jsonObject.add("result", jsonArray)
+                return jsonObject
+
+            } catch (e: Exception) {
+                Log.e("ApiTask", "Error parsing JSON response: ${e.message}")
+            }
+
         }
 
         return null

@@ -23,14 +23,19 @@ class CompareActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_compare)
 
-        enter_codeforces_compare_button = findViewById(R.id.enter_codeforces_compare_button)
-        enter_leetcode_compare_button = findViewById(R.id.enter_leetcode_compare_button)
+        initalizations()
+
         enter_codeforces_compare_button.setOnClickListener {
             CustomDialog2(this).show()
         }
         enter_leetcode_compare_button.setOnClickListener {
             CustomDialog(this).show()
         }
+    }
+
+    private fun initalizations() {
+        enter_codeforces_compare_button = findViewById(R.id.enter_codeforces_compare_button)
+        enter_leetcode_compare_button = findViewById(R.id.enter_leetcode_compare_button)
     }
 
 
@@ -61,7 +66,7 @@ class CompareActivity : AppCompatActivity() {
                 }else {
                     progressDialog.show()
                     val apiTask = APIServices { isValid ->
-                        if(isValid?.get("isValid").toString()=="\"true\""){
+                        if(isValid?.get("isValid")?.asString.toString()=="true"){
                             verify1.text = "Verified"
                             verify1.setTextColor(Color.GREEN)
                             verify1.isEnabled = false
@@ -74,7 +79,7 @@ class CompareActivity : AppCompatActivity() {
                         }
                         progressDialog.dismiss()
                     }
-                    apiTask.execute(user_leetcode)
+                    apiTask.execute(user_leetcode, "isLCExist")
                 }
             }
 
@@ -85,7 +90,7 @@ class CompareActivity : AppCompatActivity() {
                 }else {
                     progressDialog.show()
                     val apiTask = APIServices { isValid ->
-                        if(isValid?.get("isValid").toString()=="\"true\""){
+                        if(isValid?.get("isValid")?.asString.toString()=="true"){
                             verify2.text = "Verified"
                             verify2.setTextColor(Color.GREEN)
                             verify2.isEnabled = false
@@ -98,7 +103,7 @@ class CompareActivity : AppCompatActivity() {
                         }
                         progressDialog.dismiss()
                     }
-                    apiTask.execute(user_leetcode)
+                    apiTask.execute(user_leetcode, "isLCExist")
                 }
             }
             okButton.setOnClickListener {
@@ -156,7 +161,7 @@ class CompareActivity : AppCompatActivity() {
                         }
                         progressDialog.dismiss()
                     }
-                    apiTask.execute(user_codeforces)
+                    apiTask.execute(user_codeforces, "isCFExist")
                 }
             }
 
@@ -180,7 +185,7 @@ class CompareActivity : AppCompatActivity() {
                         }
                         progressDialog.dismiss()
                     }
-                    apiTask.execute(user_codeforces)
+                    apiTask.execute(user_codeforces, "isCFExist")
                 }
             }
             okButton.setOnClickListener {
@@ -192,11 +197,6 @@ class CompareActivity : AppCompatActivity() {
                 }
             }
 
-//            okButton.setOnClickListener {
-//                val inputText = editText.text.toString()
-//                listener.onDialogOkButtonClicked(inputText)
-//                dismiss()
-//            }
         }
 
         interface DialogListener {

@@ -3,6 +3,7 @@ package kontestbuddybyamitmaity.example.kontestbuddy.Compare
 import android.app.ProgressDialog
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.charts.BarChart
@@ -57,31 +58,32 @@ class LCcompareActivity : AppCompatActivity() {
             leetcodeCmp_userName_user11.text = userName1
             leetcodeCmp_userName_user22.text = userName2
 
-            val parser = JsonParser()
-//            val jsonArray = parser.parse(isValid).asJsonArray
+            val user_1 = isValid?.get("result")?.asJsonArray?.get(0)?.asJsonObject?.get("result")?.asJsonArray?.get(0)?.asJsonObject
+            val user_2 = isValid?.get("result")?.asJsonArray?.get(1)?.asJsonObject?.get("result")?.asJsonArray?.get(0)?.asJsonObject
 
-//            val user1Rating:String = isValid?.get(0.toString())?.asJsonObject?.get("result").asJsonArray.get(0).asJsonObject.get("rating").toString()
-//            val user2Rating:String = jsonArray.get(1).asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("rating").toString()
-//            secondBarChart(user1Rating.toFloat(),user2Rating.toFloat())
-//
-//            val user1Contest:String = jsonArray.get(0).asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("attendedContestsCount").toString()
-//            val user2Contest:String = jsonArray.get(1).asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("attendedContestsCount").toString()
-//            firstBarChart(user1Contest.toFloat(),user2Contest.toFloat())
-//
-//            val user1Global:String = jsonArray.get(0).asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("globalRanking").toString()
-//            val user2Global:String = jsonArray.get(1).asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("globalRanking").toString()
-//            leetcodeCmp_globalRank_user1.text = user1Global
-//            leetcodeCmp_globalRank_user2.text = user2Global
 
-//            val user1Pos:String = jsonArray.get(0).asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("topPercentage").toString()
-//            val user2Pos:String = jsonArray.get(1).asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("topPercentage").toString()
-//            thirdLineCHart(100-user1Pos.toFloat(),100-user2Pos.toFloat())
+            val user1Rating:String = user_1?.get("rating").toString()
+            val user2Rating:String = user_2?.get("rating").toString()
+            secondBarChart(user1Rating.toFloat(),user2Rating.toFloat())
+
+            val user1Contest:String = user_1?.get("attendedContestsCount").toString()
+            val user2Contest:String = user_2?.get("attendedContestsCount").toString()
+            firstBarChart(user1Contest.toFloat(),user2Contest.toFloat())
+
+            val user1Global:String = user_1?.get("globalRanking").toString()
+            val user2Global:String = user_2?.get("globalRanking").toString()
+            leetcodeCmp_globalRank_user1.text = user1Global
+            leetcodeCmp_globalRank_user2.text = user2Global
+
+            val user1Pos:String = user_1?.get("topPercentage").toString()
+            val user2Pos:String = user_2?.get("topPercentage").toString()
+            thirdLineCHart(100-user1Pos.toFloat(),100-user2Pos.toFloat())
 
 
             progressDialog.dismiss()
 
         }
-        apiTask.execute(str)
+        apiTask.execute(str, "lcCompare")
     }
 
     private fun initialization() {
