@@ -40,8 +40,7 @@ class QuestionsStatsActivity : AppCompatActivity() {
         val sharedPreferences = this.getSharedPreferences("userDataStoreLocal",
             AppCompatActivity.MODE_PRIVATE
         )
-        var LCuserName = sharedPreferences?.getString("LCuserName",null)
-
+        var LCuserName = sharedPreferences?.getString("leetcode_user_name",null)
 
         if(LCuserName != null && statType!= null){
             LCuserName = LCuserName.substring(1,LCuserName.length-1)
