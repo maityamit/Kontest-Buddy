@@ -16,10 +16,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.postgrest
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.CurrentFriends.CodeForcesFrndAdapter
 import kontestbuddybyamitmaity.example.kontestbuddy.CurrentFriends.LeetCodeCurrentFrndAdapter
 import kontestbuddybyamitmaity.example.kontestbuddy.R
+import kontestbuddybyamitmaity.example.kontestbuddy.Services.Constants
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 class LeaderboardActivity : AppCompatActivity() {
 
@@ -29,11 +42,136 @@ class LeaderboardActivity : AppCompatActivity() {
     lateinit var codeforces_show_leaderboard_button:CardView
     lateinit var codechef_leaderboard_edit_friends_button:CardView
     lateinit var codechef_show_leaderboard_button:CardView
+    private lateinit var superbase: SupabaseClient
 
     private lateinit var progressDialog: ProgressDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_leaderboard)
+
+        initalizations()
+
+
+        val sharedPreferences = this.getSharedPreferences("userDataStoreLocal",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        var user_email = sharedPreferences?.getString("user_email","")
+
+        var user_email_string = user_email.toString()
+
+//        leetcode_leaderboard_edit_friends_button.setOnClickListener {
+//            CustomDialog3(this).show()
+//        }
+//        codeforces_leaderboard_edit_friends_button.setOnClickListener {
+//            CustomDialog4(this).show()
+//        }
+//
+//        codechef_leaderboard_edit_friends_button.setOnClickListener{
+//            CustomDialog5(this).show()
+//        }
+
+        leetcode_show_leaderboard_button.setOnClickListener {
+            progressDialog.show()
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val user = superbase.postgrest.from("users")
+                        .select("user_email, lc_leader"){
+                            eq("user_email", user_email_string)
+                        }.body.jsonArray[0].jsonObject
+                    withContext(Dispatchers.Main) {
+                        val LCleader = user["lc_leader"]?.jsonPrimitive?.contentOrNull.toString()
+                        if(LCleader.isNotBlank()){
+                            progressDialog.dismiss()
+                            val intent:Intent = Intent(this@LeaderboardActivity,LCrankingActivity::class.java)
+                            intent.putExtra("userNames",LCleader)
+                            startActivity(intent)
+                        }else{
+                            progressDialog.dismiss()
+                            Toast.makeText(this@LeaderboardActivity,"You have not any friends !!",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        progressDialog.dismiss()
+                        Toast.makeText(this@LeaderboardActivity, "Error fetching users: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+        }
+
+        codeforces_show_leaderboard_button.setOnClickListener {
+
+            progressDialog.show()
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val user = superbase.postgrest.from("users")
+                        .select("user_email, cf_leader"){
+                            eq("user_email", user_email_string)
+                        }.body.jsonArray[0].jsonObject
+                    withContext(Dispatchers.Main) {
+                        val LCleader = user["cf_leader"]?.jsonPrimitive?.contentOrNull.toString()
+                        if(LCleader.isNotBlank()){
+                            progressDialog.dismiss()
+                            val intent:Intent = Intent(this@LeaderboardActivity,LCrankingActivity::class.java)
+                            intent.putExtra("userNames",LCleader)
+                            startActivity(intent)
+                        }else{
+                            progressDialog.dismiss()
+                            Toast.makeText(this@LeaderboardActivity,"You have not any friends !!",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        progressDialog.dismiss()
+                        Toast.makeText(this@LeaderboardActivity, "Error fetching users: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+        }
+
+        codechef_show_leaderboard_button.setOnClickListener{
+            progressDialog.show()
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val user = superbase.postgrest.from("users")
+                        .select("user_email, cc_leader"){
+                            eq("user_email", user_email_string)
+                        }.body.jsonArray[0].jsonObject
+                    withContext(Dispatchers.Main) {
+                        val LCleader = user["cc_leader"]?.jsonPrimitive?.contentOrNull.toString()
+                        if(LCleader.isNotBlank()){
+                            progressDialog.dismiss()
+                            val intent:Intent = Intent(this@LeaderboardActivity,CCrankingActivity::class.java)
+                            intent.putExtra("userNames",LCleader)
+                            startActivity(intent)
+                        }else{
+                            progressDialog.dismiss()
+                            Toast.makeText(this@LeaderboardActivity,"You have not any friends !!",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        progressDialog.dismiss()
+                        Toast.makeText(this@LeaderboardActivity, "Error fetching users: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    private fun initalizations() {
+
+        superbase = createSupabaseClient(
+            supabaseUrl = Constants.SUPERBASE_URL,
+            supabaseKey = Constants.SUPERBASE_KEY
+        ) {
+            install(Postgrest)
+        }
+
 
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
@@ -46,203 +184,312 @@ class LeaderboardActivity : AppCompatActivity() {
         codeforces_show_leaderboard_button = findViewById(R.id.codeforces_show_leaderboard_button)
         codechef_leaderboard_edit_friends_button = findViewById(R.id.codechef_leaderboard_edit_friends_button)
         codechef_show_leaderboard_button = findViewById(R.id.codechef_show_leaderboard_button)
-
-        leetcode_leaderboard_edit_friends_button.setOnClickListener {
-            CustomDialog3(this).show()
-        }
-        codeforces_leaderboard_edit_friends_button.setOnClickListener {
-            CustomDialog4(this).show()
-        }
-
-        codechef_leaderboard_edit_friends_button.setOnClickListener{
-            CustomDialog5(this).show()
-        }
-
-        leetcode_show_leaderboard_button.setOnClickListener {
-            progressDialog.show()
-            val db = Firebase.firestore
-            val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-            val userID = auth.currentUser?.uid.toString()
-            val docRef = db.collection("users").document(userID)
-            docRef.get().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val document = task.result
-                    if (document != null) {
-
-                        val LCleader = document.getString("LCleader")
-                        if(LCleader?.isNotBlank()==true){
-                            progressDialog.dismiss()
-                            val intent:Intent = Intent(this,LCrankingActivity::class.java)
-                            intent.putExtra("userNames",LCleader)
-                            startActivity(intent)
-                        }else{
-                            progressDialog.dismiss()
-                            Toast.makeText(this,"You have not any friends !!",Toast.LENGTH_SHORT).show()
-                        }
-
-                    } else {
-                        progressDialog.dismiss()
-                        Toast.makeText(this, "No Such document", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                } else {
-                    progressDialog.dismiss()
-                    Toast.makeText(this, task.exception.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-        }
-
-        codeforces_show_leaderboard_button.setOnClickListener {
-            progressDialog.show()
-            val db = Firebase.firestore
-            val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-            val userID = auth.currentUser?.uid.toString()
-            val docRef = db.collection("users").document(userID)
-            docRef.get().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val document = task.result
-                    if (document != null) {
-
-                        val LCleader = document.getString("CFleader")
-                        if(LCleader?.isNotBlank()==true){
-                            progressDialog.dismiss()
-                            val intent:Intent = Intent(this, CFrankingActivity::class.java)
-                            intent.putExtra("userNames",LCleader)
-                            startActivity(intent)
-                        }else{
-                            progressDialog.dismiss()
-                            Toast.makeText(this,"You have not any friends !!",Toast.LENGTH_SHORT).show()
-                        }
-
-                    } else {
-                        progressDialog.dismiss()
-                        Toast.makeText(this, "No Such document", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                } else {
-                    progressDialog.dismiss()
-                    Toast.makeText(this, task.exception.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-        }
-
-        codechef_show_leaderboard_button.setOnClickListener{
-            progressDialog.show()
-            val db = Firebase.firestore
-            val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-            val userID = auth.currentUser?.uid.toString()
-            val docRef = db.collection("users").document(userID)
-            docRef.get().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val document = task.result
-                    if (document != null) {
-
-                        val LCleader = document.getString("CCleader") ?: ""
-                        if(LCleader?.isNotBlank()==true){
-                            progressDialog.dismiss()
-                            val intent:Intent = Intent(this, CCrankingActivity::class.java)
-                            intent.putExtra("userNames",LCleader)
-                            startActivity(intent)
-                        }else{
-                            progressDialog.dismiss()
-                            Toast.makeText(this,"You have not any friends !!",Toast.LENGTH_SHORT).show()
-                        }
-
-                    } else {
-                        progressDialog.dismiss()
-                        Toast.makeText(this, "No Such document", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                } else {
-                    progressDialog.dismiss()
-                    Toast.makeText(this, task.exception.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-        }
-
-
     }
 
 
-    class CustomDialog3(context: Context) : Dialog(context) {
-
-        var progressDialog: ProgressDialog = ProgressDialog(this.context)
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(R.layout.leetcode_leaderboard_dialoguebox)
-
-
-            val current_user_list_show_recyclerView_leetcode: RecyclerView = findViewById(R.id.current_user_list_show_recyclerView_leetcode)
-            progressDialog.show()
-            val db = Firebase.firestore
-            val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-            val userID = auth.currentUser?.uid.toString()
-            val docRef = db.collection("users").document(userID)
-            docRef.get().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val document = task.result
-                    if (document != null) {
-                        val LCleader = document.getString("LCleader")
-                        // Toast.makeText(context,LCleader.toString(),Toast.LENGTH_SHORT).show()
-
-                        if (LCleader != null) {
-                            if (LCleader.isBlank()){
-                                Toast.makeText(context,"You haven't any friends yet!",Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                        val list:MutableList<String> = mutableListOf()
-                        var temp:String = ""
-                        if (LCleader != null) {
-                            for(ele in LCleader){
-                                if(ele==';'){
-                                    list.add(temp)
-                                    temp = ""
-                                }else{
-                                    temp+=ele
-                                }
-                            }
-                        }
-                        current_user_list_show_recyclerView_leetcode.layoutManager = LinearLayoutManager(context)
-                        current_user_list_show_recyclerView_leetcode.adapter = list.let { it1 ->
-                            LeetCodeCurrentFrndAdapter(
-                                it1
-                            )
-                        }
-                        progressDialog.dismiss()
-
-                    } else {
-                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                            .show()
-                        progressDialog.dismiss()
-                    }
-                } else {
-                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                    progressDialog.dismiss()
-                }
-            }
-
-            val leetcode_leaderboard_inputUser1:EditText = findViewById(R.id.leetcode_leaderboard_inputUser1)
-            val leetcode_leaderboard_inputUser1_Verify:TextView = findViewById(R.id.leetcode_leaderboard_inputUser1_Verify)
-            val leetcode_leaderboard_all_frinds_show:TextView = findViewById(R.id.show_leetcode_current_friends)
-
-            leetcode_leaderboard_inputUser1_Verify.setOnClickListener {
-                val strUser:String = leetcode_leaderboard_inputUser1.text.toString()
-                if(strUser.isBlank()){
-                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
-                }else{
-                    progressDialog.show()
-                    val apiTask = APIServices { isValid ->
-                        if(isValid?.get("isValid").toString()=="\"true\""){
-
+//    class CustomDialog3(context: Context) : Dialog(context) {
+//
+//        var progressDialog: ProgressDialog = ProgressDialog(this.context)
+//        override fun onCreate(savedInstanceState: Bundle?) {
+//            super.onCreate(savedInstanceState)
+//            requestWindowFeature(Window.FEATURE_NO_TITLE)
+//            setContentView(R.layout.leetcode_leaderboard_dialoguebox)
+//
+//
+//            val current_user_list_show_recyclerView_leetcode: RecyclerView = findViewById(R.id.current_user_list_show_recyclerView_leetcode)
+//            progressDialog.show()
+//            val db = Firebase.firestore
+//            val auth: FirebaseAuth = FirebaseAuth.getInstance()
+//
+//            val userID = auth.currentUser?.uid.toString()
+//            val docRef = db.collection("users").document(userID)
+//            docRef.get().addOnCompleteListener { task ->
+//                if (task.isSuccessful) {
+//                    val document = task.result
+//                    if (document != null) {
+//                        val LCleader = document.getString("LCleader")
+//                        // Toast.makeText(context,LCleader.toString(),Toast.LENGTH_SHORT).show()
+//
+//                        if (LCleader != null) {
+//                            if (LCleader.isBlank()){
+//                                Toast.makeText(context,"You haven't any friends yet!",Toast.LENGTH_SHORT).show()
+//                            }
+//                        }
+//                        val list:MutableList<String> = mutableListOf()
+//                        var temp:String = ""
+//                        if (LCleader != null) {
+//                            for(ele in LCleader){
+//                                if(ele==';'){
+//                                    list.add(temp)
+//                                    temp = ""
+//                                }else{
+//                                    temp+=ele
+//                                }
+//                            }
+//                        }
+//                        current_user_list_show_recyclerView_leetcode.layoutManager = LinearLayoutManager(context)
+//                        current_user_list_show_recyclerView_leetcode.adapter = list.let { it1 ->
+//                            LeetCodeCurrentFrndAdapter(
+//                                it1
+//                            )
+//                        }
+//                        progressDialog.dismiss()
+//
+//                    } else {
+//                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                            .show()
+//                        progressDialog.dismiss()
+//                    }
+//                } else {
+//                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+//                        .show()
+//                    progressDialog.dismiss()
+//                }
+//            }
+//
+//            val leetcode_leaderboard_inputUser1:EditText = findViewById(R.id.leetcode_leaderboard_inputUser1)
+//            val leetcode_leaderboard_inputUser1_Verify:TextView = findViewById(R.id.leetcode_leaderboard_inputUser1_Verify)
+//            val leetcode_leaderboard_all_frinds_show:TextView = findViewById(R.id.show_leetcode_current_friends)
+//
+//            leetcode_leaderboard_inputUser1_Verify.setOnClickListener {
+//                val strUser:String = leetcode_leaderboard_inputUser1.text.toString()
+//                if(strUser.isBlank()){
+//                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
+//                }else{
+//                    progressDialog.show()
+//                    val apiTask = APIServices { isValid ->
+//                        if(isValid?.get("isValid").toString()=="\"true\""){
+//
+////                            val db = Firebase.firestore
+////                            val auth: FirebaseAuth = FirebaseAuth.getInstance()
+////
+////                            val userID = auth.currentUser?.uid.toString()
+////                            val docRef = db.collection("users").document(userID)
+////                            docRef.get().addOnCompleteListener { task ->
+////                                if (task.isSuccessful) {
+////                                    val document = task.result
+////                                    if (document != null) {
+////
+////                                        var LCleader = document.getString("LCleader")
+////                                        if(LCleader?.isBlank() == true){
+////                                            LCleader = strUser+";"
+////                                        }else if(LCleader?.contains(strUser) == false){
+////                                            LCleader = LCleader+strUser+";"
+////                                        }
+////
+////                                        docRef.update("LCleader",LCleader).addOnSuccessListener {
+////                                            leetcode_leaderboard_inputUser1.text.clear()
+////                                            progressDialog.dismiss()
+////                                            Toast.makeText(context, "User Added Done !", Toast.LENGTH_SHORT)
+////                                                .show()
+////                                        }.addOnFailureListener{
+////                                            progressDialog.dismiss()
+////                                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+////                                                .show()
+////                                        }
+////
+////
+////                                    } else {
+////                                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+////                                            .show()
+////                                    }
+////                                } else {
+////                                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+////                                        .show()
+////                                }
+////                            }
+//
+//                        }else{
+//                            progressDialog.dismiss()
+//                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+//                        }
+//                    }
+//                    apiTask.execute(strUser)
+//                }
+//            }
+//
+//            val leetcode_leaderboard_inputUser2:EditText = findViewById(R.id.leetcode_leaderboard_inputUser2)
+//            val leetcode_leaderboard_inputUser2_Verify:TextView = findViewById(R.id.leetcode_leaderboard_inputUser2_verify)
+//            leetcode_leaderboard_inputUser2_Verify.setOnClickListener {
+//                var strUser:String = leetcode_leaderboard_inputUser2.text.toString()
+//                if(strUser.isBlank()){
+//                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
+//                }else{
+//                    strUser+=";"
+//                    progressDialog.show()
+//                    val db = Firebase.firestore
+//                    val auth: FirebaseAuth = FirebaseAuth.getInstance()
+//
+//                    val userID = auth.currentUser?.uid.toString()
+//                    val docRef = db.collection("users").document(userID)
+//                    docRef.get().addOnCompleteListener { task ->
+//                        if (task.isSuccessful) {
+//                            val document = task.result
+//                            if (document != null) {
+//
+//                                val LCleader = document.getString("LCleader")
+//
+//                                if(LCleader?.isBlank() == false) {
+//                                    val resultString:String = LCleader.replace(strUser, "")
+//                                    docRef.update("LCleader",resultString).addOnSuccessListener {
+//                                        leetcode_leaderboard_inputUser2.text.clear()
+//                                        progressDialog.dismiss()
+//                                        Toast.makeText(context, "User Removed Done !", Toast.LENGTH_SHORT)
+//                                            .show()
+//                                    }.addOnFailureListener{
+//                                        progressDialog.dismiss()
+//                                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                                            .show()
+//                                    }
+//                                }else{
+//                                    progressDialog.dismiss()
+//                                    Toast.makeText(context, "No Such User in your Friends", Toast.LENGTH_SHORT)
+//                                        .show()
+//                                }
+//
+//                            } else {
+//                                progressDialog.dismiss()
+//                                Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                                    .show()
+//                            }
+//                        } else {
+//                            progressDialog.dismiss()
+//                            Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+//                                .show()
+//                        }
+//                    }
+//                }
+//            }
+//
+//            leetcode_leaderboard_all_frinds_show.setOnClickListener {
+//                progressDialog.show()
+//                val db = Firebase.firestore
+//                val auth: FirebaseAuth = FirebaseAuth.getInstance()
+//
+//                val userID = auth.currentUser?.uid.toString()
+//                val docRef = db.collection("users").document(userID)
+//                docRef.get().addOnCompleteListener { task ->
+//                    if (task.isSuccessful) {
+//                        val document = task.result
+//                        if (document != null) {
+//                            val LCleader = document.getString("LCleader")
+//                            // Toast.makeText(context,LCleader.toString(),Toast.LENGTH_SHORT).show()
+//                            val list:MutableList<String> = mutableListOf()
+//                            var temp:String = ""
+//                            if (LCleader != null) {
+//                                for(ele in LCleader){
+//                                    if(ele==';'){
+//                                        list.add(temp)
+//                                        temp = ""
+//                                    }else{
+//                                        temp+=ele
+//                                    }
+//                                }
+//                            }
+//                            current_user_list_show_recyclerView_leetcode.layoutManager = LinearLayoutManager(context)
+//                            current_user_list_show_recyclerView_leetcode.adapter = list.let { it1 ->
+//                                LeetCodeCurrentFrndAdapter(
+//                                    it1
+//                                )
+//                            }
+//                            progressDialog.dismiss()
+//
+//                        } else {
+//                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                                .show()
+//                            progressDialog.dismiss()
+//                        }
+//                    } else {
+//                        Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+//                            .show()
+//                        progressDialog.dismiss()
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//        override fun dismiss() {
+//            super.dismiss()
+//            progressDialog.dismiss()
+//        }
+//
+//        interface DialogListener {
+//            fun onDialogOkButtonClicked(inputText: String)
+//        }
+//    }
+//
+//    class CustomDialog4(context: Context) : Dialog(context) {
+//
+//        var progressDialog: ProgressDialog = ProgressDialog(this.context)
+//        override fun onCreate(savedInstanceState: Bundle?) {
+//            super.onCreate(savedInstanceState)
+//            requestWindowFeature(Window.FEATURE_NO_TITLE)
+//            setContentView(R.layout.codeforces_leaderboard_dialoguebox)
+//
+//            val current_user_list_show_recyclerView_codeforces:RecyclerView = findViewById(R.id.current_user_list_show_recyclerView_codeforces)
+//            progressDialog.show()
+//            val db = Firebase.firestore
+//            val auth: FirebaseAuth = FirebaseAuth.getInstance()
+//
+//            val userID = auth.currentUser?.uid.toString()
+//            val docRef = db.collection("users").document(userID)
+//            docRef.get().addOnCompleteListener { task ->
+//                if (task.isSuccessful) {
+//                    val document = task.result
+//                    if (document != null) {
+//                        val LCleader = document.getString("CFleader")
+//                        // Toast.makeText(context,LCleader.toString(),Toast.LENGTH_SHORT).show()
+//
+//                        if (LCleader != null) {
+//                            if (LCleader.isBlank()){
+//                                Toast.makeText(context,"You haven't any friends yet!",Toast.LENGTH_SHORT).show()
+//                            }
+//                        }
+//                        val list:MutableList<String> = mutableListOf()
+//                        var temp:String = ""
+//                        if (LCleader != null) {
+//                            for(ele in LCleader){
+//                                if(ele==';'){
+//                                    list.add(temp)
+//                                    temp = ""
+//                                }else{
+//                                    temp+=ele
+//                                }
+//                            }
+//                        }
+//                        current_user_list_show_recyclerView_codeforces.layoutManager = LinearLayoutManager(context)
+//                        current_user_list_show_recyclerView_codeforces.adapter = list.let { it1 ->
+//                            CodeForcesFrndAdapter(
+//                                it1
+//                            )
+//                        }
+//                        progressDialog.dismiss()
+//
+//                    } else {
+//                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                            .show()
+//                        progressDialog.dismiss()
+//                    }
+//                } else {
+//                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+//                        .show()
+//                    progressDialog.dismiss()
+//                }
+//            }
+//
+//
+//            val codeforces_leaderboard_inputUser1:EditText = findViewById(R.id.codeforces_leaderboard_inputUser1)
+//            val codeforces_leaderboard_inputUser1_Verify:TextView = findViewById(R.id.codeforces_leaderboard_inputUser1_Verify)
+//            codeforces_leaderboard_inputUser1_Verify.setOnClickListener {
+//                val strUser:String = codeforces_leaderboard_inputUser1.text.toString()
+//                if(strUser.isBlank()){
+//                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
+//                }else{
+//                    progressDialog.show()
+//                    val apiTask = APIServices { isValid ->
+//                        if(isValid?.get("isValid").toString()=="\"true\""){
+//
 //                            val db = Firebase.firestore
 //                            val auth: FirebaseAuth = FirebaseAuth.getInstance()
 //
@@ -253,15 +500,15 @@ class LeaderboardActivity : AppCompatActivity() {
 //                                    val document = task.result
 //                                    if (document != null) {
 //
-//                                        var LCleader = document.getString("LCleader")
+//                                        var LCleader = document.getString("CFleader")
 //                                        if(LCleader?.isBlank() == true){
 //                                            LCleader = strUser+";"
 //                                        }else if(LCleader?.contains(strUser) == false){
 //                                            LCleader = LCleader+strUser+";"
 //                                        }
 //
-//                                        docRef.update("LCleader",LCleader).addOnSuccessListener {
-//                                            leetcode_leaderboard_inputUser1.text.clear()
+//                                        docRef.update("CFleader",LCleader).addOnSuccessListener {
+//                                            codeforces_leaderboard_inputUser1.text.clear()
 //                                            progressDialog.dismiss()
 //                                            Toast.makeText(context, "User Added Done !", Toast.LENGTH_SHORT)
 //                                                .show()
@@ -281,578 +528,348 @@ class LeaderboardActivity : AppCompatActivity() {
 //                                        .show()
 //                                }
 //                            }
-
-                        }else{
-                            progressDialog.dismiss()
-                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    apiTask.execute(strUser)
-                }
-            }
-
-            val leetcode_leaderboard_inputUser2:EditText = findViewById(R.id.leetcode_leaderboard_inputUser2)
-            val leetcode_leaderboard_inputUser2_Verify:TextView = findViewById(R.id.leetcode_leaderboard_inputUser2_verify)
-            leetcode_leaderboard_inputUser2_Verify.setOnClickListener {
-                var strUser:String = leetcode_leaderboard_inputUser2.text.toString()
-                if(strUser.isBlank()){
-                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
-                }else{
-                    strUser+=";"
-                    progressDialog.show()
-                    val db = Firebase.firestore
-                    val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-                    val userID = auth.currentUser?.uid.toString()
-                    val docRef = db.collection("users").document(userID)
-                    docRef.get().addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val document = task.result
-                            if (document != null) {
-
-                                val LCleader = document.getString("LCleader")
-
-                                if(LCleader?.isBlank() == false) {
-                                    val resultString:String = LCleader.replace(strUser, "")
-                                    docRef.update("LCleader",resultString).addOnSuccessListener {
-                                        leetcode_leaderboard_inputUser2.text.clear()
-                                        progressDialog.dismiss()
-                                        Toast.makeText(context, "User Removed Done !", Toast.LENGTH_SHORT)
-                                            .show()
-                                    }.addOnFailureListener{
-                                        progressDialog.dismiss()
-                                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                            .show()
-                                    }
-                                }else{
-                                    progressDialog.dismiss()
-                                    Toast.makeText(context, "No Such User in your Friends", Toast.LENGTH_SHORT)
-                                        .show()
-                                }
-
-                            } else {
-                                progressDialog.dismiss()
-                                Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
-                        } else {
-                            progressDialog.dismiss()
-                            Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    }
-                }
-            }
-
-            leetcode_leaderboard_all_frinds_show.setOnClickListener {
-                progressDialog.show()
-                val db = Firebase.firestore
-                val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-                val userID = auth.currentUser?.uid.toString()
-                val docRef = db.collection("users").document(userID)
-                docRef.get().addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val document = task.result
-                        if (document != null) {
-                            val LCleader = document.getString("LCleader")
-                            // Toast.makeText(context,LCleader.toString(),Toast.LENGTH_SHORT).show()
-                            val list:MutableList<String> = mutableListOf()
-                            var temp:String = ""
-                            if (LCleader != null) {
-                                for(ele in LCleader){
-                                    if(ele==';'){
-                                        list.add(temp)
-                                        temp = ""
-                                    }else{
-                                        temp+=ele
-                                    }
-                                }
-                            }
-                            current_user_list_show_recyclerView_leetcode.layoutManager = LinearLayoutManager(context)
-                            current_user_list_show_recyclerView_leetcode.adapter = list.let { it1 ->
-                                LeetCodeCurrentFrndAdapter(
-                                    it1
-                                )
-                            }
-                            progressDialog.dismiss()
-
-                        } else {
-                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                .show()
-                            progressDialog.dismiss()
-                        }
-                    } else {
-                        Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                            .show()
-                        progressDialog.dismiss()
-                    }
-                }
-            }
-
-        }
-
-        override fun dismiss() {
-            super.dismiss()
-            progressDialog.dismiss()
-        }
-
-        interface DialogListener {
-            fun onDialogOkButtonClicked(inputText: String)
-        }
-    }
-
-    class CustomDialog4(context: Context) : Dialog(context) {
-
-        var progressDialog: ProgressDialog = ProgressDialog(this.context)
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(R.layout.codeforces_leaderboard_dialoguebox)
-
-            val current_user_list_show_recyclerView_codeforces:RecyclerView = findViewById(R.id.current_user_list_show_recyclerView_codeforces)
-            progressDialog.show()
-            val db = Firebase.firestore
-            val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-            val userID = auth.currentUser?.uid.toString()
-            val docRef = db.collection("users").document(userID)
-            docRef.get().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val document = task.result
-                    if (document != null) {
-                        val LCleader = document.getString("CFleader")
-                        // Toast.makeText(context,LCleader.toString(),Toast.LENGTH_SHORT).show()
-
-                        if (LCleader != null) {
-                            if (LCleader.isBlank()){
-                                Toast.makeText(context,"You haven't any friends yet!",Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                        val list:MutableList<String> = mutableListOf()
-                        var temp:String = ""
-                        if (LCleader != null) {
-                            for(ele in LCleader){
-                                if(ele==';'){
-                                    list.add(temp)
-                                    temp = ""
-                                }else{
-                                    temp+=ele
-                                }
-                            }
-                        }
-                        current_user_list_show_recyclerView_codeforces.layoutManager = LinearLayoutManager(context)
-                        current_user_list_show_recyclerView_codeforces.adapter = list.let { it1 ->
-                            CodeForcesFrndAdapter(
-                                it1
-                            )
-                        }
-                        progressDialog.dismiss()
-
-                    } else {
-                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                            .show()
-                        progressDialog.dismiss()
-                    }
-                } else {
-                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                    progressDialog.dismiss()
-                }
-            }
-
-
-            val codeforces_leaderboard_inputUser1:EditText = findViewById(R.id.codeforces_leaderboard_inputUser1)
-            val codeforces_leaderboard_inputUser1_Verify:TextView = findViewById(R.id.codeforces_leaderboard_inputUser1_Verify)
-            codeforces_leaderboard_inputUser1_Verify.setOnClickListener {
-                val strUser:String = codeforces_leaderboard_inputUser1.text.toString()
-                if(strUser.isBlank()){
-                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
-                }else{
-                    progressDialog.show()
-                    val apiTask = APIServices { isValid ->
-                        if(isValid?.get("isValid").toString()=="\"true\""){
-
-                            val db = Firebase.firestore
-                            val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-                            val userID = auth.currentUser?.uid.toString()
-                            val docRef = db.collection("users").document(userID)
-                            docRef.get().addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    val document = task.result
-                                    if (document != null) {
-
-                                        var LCleader = document.getString("CFleader")
-                                        if(LCleader?.isBlank() == true){
-                                            LCleader = strUser+";"
-                                        }else if(LCleader?.contains(strUser) == false){
-                                            LCleader = LCleader+strUser+";"
-                                        }
-
-                                        docRef.update("CFleader",LCleader).addOnSuccessListener {
-                                            codeforces_leaderboard_inputUser1.text.clear()
-                                            progressDialog.dismiss()
-                                            Toast.makeText(context, "User Added Done !", Toast.LENGTH_SHORT)
-                                                .show()
-                                        }.addOnFailureListener{
-                                            progressDialog.dismiss()
-                                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                                .show()
-                                        }
-
-
-                                    } else {
-                                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                            .show()
-                                    }
-                                } else {
-                                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                                        .show()
-                                }
-                            }
-
-                        }else{
-                            progressDialog.dismiss()
-                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    apiTask.execute(strUser)
-                }
-            }
-
-            val codeforces_leaderboard_inputUser2:EditText = findViewById(R.id.codeforces_leaderboard_inputUser2)
-            val codeforces_leaderboard_inputUser2_Verify:TextView = findViewById(R.id.codeforces_leaderboard_inputUser2_verify)
-            codeforces_leaderboard_inputUser2_Verify.setOnClickListener {
-                var strUser:String = codeforces_leaderboard_inputUser2.text.toString()
-                if(strUser.isBlank()){
-                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
-                }else{
-                    strUser+=";"
-                    progressDialog.show()
-                    val db = Firebase.firestore
-                    val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-                    val userID = auth.currentUser?.uid.toString()
-                    val docRef = db.collection("users").document(userID)
-                    docRef.get().addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val document = task.result
-                            if (document != null) {
-
-                                val LCleader = document.getString("CFleader")
-
-                                if(LCleader?.isBlank() == false) {
-                                    val resultString:String = LCleader.replace(strUser, "")
-                                    docRef.update("CFleader",resultString).addOnSuccessListener {
-                                        codeforces_leaderboard_inputUser2.text.clear()
-                                        progressDialog.dismiss()
-                                        Toast.makeText(context, "User Removed Done !", Toast.LENGTH_SHORT)
-                                            .show()
-                                    }.addOnFailureListener{
-                                        progressDialog.dismiss()
-                                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                            .show()
-                                    }
-                                }else{
-                                    progressDialog.dismiss()
-                                    Toast.makeText(context, "No Such User in your Friends", Toast.LENGTH_SHORT)
-                                        .show()
-                                }
-
-                            } else {
-                                progressDialog.dismiss()
-                                Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
-                        } else {
-                            progressDialog.dismiss()
-                            Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    }
-                }
-            }
-
-            val show_codeforces_current_friends:TextView = findViewById(R.id.show_codeforces_current_friends)
-            show_codeforces_current_friends.setOnClickListener {
-                progressDialog.show()
-                val db = Firebase.firestore
-                val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-                val userID = auth.currentUser?.uid.toString()
-                val docRef = db.collection("users").document(userID)
-                docRef.get().addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val document = task.result
-                        if (document != null) {
-                            val LCleader = document.getString("CFleader")
-                            // Toast.makeText(context,LCleader.toString(),Toast.LENGTH_SHORT).show()
-                            val list:MutableList<String> = mutableListOf()
-                            var temp:String = ""
-                            if (LCleader != null) {
-                                for(ele in LCleader){
-                                    if(ele==';'){
-                                        list.add(temp)
-                                        temp = ""
-                                    }else{
-                                        temp+=ele
-                                    }
-                                }
-                            }
-                            current_user_list_show_recyclerView_codeforces.layoutManager = LinearLayoutManager(context)
-                            current_user_list_show_recyclerView_codeforces.adapter = list.let { it1 ->
-                                CodeForcesFrndAdapter(
-                                    it1
-                                )
-                            }
-                            progressDialog.dismiss()
-
-                        } else {
-                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                .show()
-                            progressDialog.dismiss()
-                        }
-                    } else {
-                        Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                            .show()
-                        progressDialog.dismiss()
-                    }
-                }
-            }
-
-
-        }
-
-        interface DialogListener {
-            fun onDialogOkButtonClicked(inputText: String)
-        }
-    }
-
-    class CustomDialog5(context: Context) : Dialog(context) {
-
-        var progressDialog: ProgressDialog = ProgressDialog(this.context)
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(R.layout.codechef_leaderboard_dialoguebox)
-
-            val current_user_list_show_recyclerView_codeforces:RecyclerView = findViewById(R.id.current_user_list_show_recyclerView_codechef)
-            progressDialog.show()
-            val db = Firebase.firestore
-            val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-            val userID = auth.currentUser?.uid.toString()
-            val docRef = db.collection("users").document(userID)
-            docRef.get().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val document = task.result
-                    if (document != null) {
-
-                        val LCleader = document.getString("CCleader") ?: ""
-
-                        if(LCleader.isBlank()) {
-                            Toast.makeText(context,"You haven't any friends yet!",Toast.LENGTH_SHORT).show()
-                        }
-
-                        val list:MutableList<String> = mutableListOf()
-                        var temp:String = ""
-                        if (LCleader != "") {
-                            for(ele in LCleader){
-                                if(ele==';'){
-                                    list.add(temp)
-                                    temp = ""
-                                }else{
-                                    temp+=ele
-                                }
-                            }
-                        }
-                        current_user_list_show_recyclerView_codeforces.layoutManager = LinearLayoutManager(context)
-                        current_user_list_show_recyclerView_codeforces.adapter = list.let { it1 ->
-                            CodeForcesFrndAdapter(
-                                it1
-                            )
-                        }
-                        progressDialog.dismiss()
-
-                    } else {
-                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                            .show()
-                        progressDialog.dismiss()
-                    }
-                } else {
-                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                    progressDialog.dismiss()
-                }
-            }
-
-
-            val codeforces_leaderboard_inputUser1:EditText = findViewById(R.id.codechef_leaderboard_inputUser1)
-            val codeforces_leaderboard_inputUser1_Verify:TextView = findViewById(R.id.codechef_leaderboard_inputUser1_Verify)
-            codeforces_leaderboard_inputUser1_Verify.setOnClickListener {
-                val strUser:String = codeforces_leaderboard_inputUser1.text.toString()
-                if(strUser.isBlank()){
-                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
-                }else{
-                    progressDialog.show()
-                    val apiTask = APIServices { isValid ->
-                        if(isValid?.get("isValid").toString()=="\"true\""){
-
-                            val db = Firebase.firestore
-                            val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-                            val userID = auth.currentUser?.uid.toString()
-                            val docRef = db.collection("users").document(userID)
-                            docRef.get().addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    val document = task.result
-                                    if (document != null) {
-
-                                        var LCleader = document.getString("CCleader") ?: ""
-                                        if(LCleader.isBlank()){
-                                            LCleader = strUser+";"
-                                        }else if(LCleader?.contains(strUser) == false){
-                                            LCleader = LCleader+strUser+";"
-                                        }
-
-                                        docRef.update("CCleader",LCleader).addOnSuccessListener {
-                                            codeforces_leaderboard_inputUser1.text.clear()
-                                            progressDialog.dismiss()
-                                            Toast.makeText(context, "User Added Done !", Toast.LENGTH_SHORT)
-                                                .show()
-                                        }.addOnFailureListener{
-                                            progressDialog.dismiss()
-                                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                                .show()
-                                        }
-
-
-                                    } else {
-                                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                            .show()
-                                    }
-                                } else {
-                                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                                        .show()
-                                }
-                            }
-
-                        }else{
-                            progressDialog.dismiss()
-                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    apiTask.execute(strUser)
-                }
-            }
-
-            val codeforces_leaderboard_inputUser2:EditText = findViewById(R.id.codechef_leaderboard_inputUser2)
-            val codeforces_leaderboard_inputUser2_Verify:TextView = findViewById(R.id.codechef_leaderboard_inputUser2_verify)
-            codeforces_leaderboard_inputUser2_Verify.setOnClickListener {
-                var strUser:String = codeforces_leaderboard_inputUser2.text.toString()
-                if(strUser.isBlank()){
-                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
-                }else{
-                    strUser+=";"
-                    progressDialog.show()
-                    val db = Firebase.firestore
-                    val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-                    val userID = auth.currentUser?.uid.toString()
-                    val docRef = db.collection("users").document(userID)
-                    docRef.get().addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val document = task.result
-                            if (document != null) {
-
-                                val LCleader = document.getString("CCleader") ?: ""
-
-                                if(!LCleader.isBlank()) {
-                                    val resultString:String = LCleader.replace(strUser, "")
-                                    docRef.update("CCleader",resultString).addOnSuccessListener {
-                                        codeforces_leaderboard_inputUser2.text.clear()
-                                        progressDialog.dismiss()
-                                        Toast.makeText(context, "User Removed Done !", Toast.LENGTH_SHORT)
-                                            .show()
-                                    }.addOnFailureListener{
-                                        progressDialog.dismiss()
-                                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                            .show()
-                                    }
-                                }else{
-                                    progressDialog.dismiss()
-                                    Toast.makeText(context, "No Such User in your Friends", Toast.LENGTH_SHORT)
-                                        .show()
-                                }
-
-                            } else {
-                                progressDialog.dismiss()
-                                Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
-                        } else {
-                            progressDialog.dismiss()
-                            Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    }
-                }
-            }
-
-            val show_codeforces_current_friends:TextView = findViewById(R.id.show_codechef_current_friends)
-            show_codeforces_current_friends.setOnClickListener {
-                progressDialog.show()
-                val db = Firebase.firestore
-                val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-                val userID = auth.currentUser?.uid.toString()
-                val docRef = db.collection("users").document(userID)
-                docRef.get().addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val document = task.result
-                        if (document != null) {
-                            val LCleader = document.getString("CCleader")
-                            // Toast.makeText(context,LCleader.toString(),Toast.LENGTH_SHORT).show()
-                            val list:MutableList<String> = mutableListOf()
-                            var temp:String = ""
-                            if (LCleader != null) {
-                                for(ele in LCleader){
-                                    if(ele==';'){
-                                        list.add(temp)
-                                        temp = ""
-                                    }else{
-                                        temp+=ele
-                                    }
-                                }
-                            }
-                            current_user_list_show_recyclerView_codeforces.layoutManager = LinearLayoutManager(context)
-                            current_user_list_show_recyclerView_codeforces.adapter = list.let { it1 ->
-                                CodeForcesFrndAdapter(
-                                    it1
-                                )
-                            }
-                            progressDialog.dismiss()
-
-                        } else {
-                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
-                                .show()
-                            progressDialog.dismiss()
-                        }
-                    } else {
-                        Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
-                            .show()
-                        progressDialog.dismiss()
-                    }
-                }
-            }
-
-
-        }
-
-        interface DialogListener {
-            fun onDialogOkButtonClicked(inputText: String)
-        }
-    }
+//
+//                        }else{
+//                            progressDialog.dismiss()
+//                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+//                        }
+//                    }
+//                    apiTask.execute(strUser)
+//                }
+//            }
+//
+//            val codeforces_leaderboard_inputUser2:EditText = findViewById(R.id.codeforces_leaderboard_inputUser2)
+//            val codeforces_leaderboard_inputUser2_Verify:TextView = findViewById(R.id.codeforces_leaderboard_inputUser2_verify)
+//            codeforces_leaderboard_inputUser2_Verify.setOnClickListener {
+//                var strUser:String = codeforces_leaderboard_inputUser2.text.toString()
+//                if(strUser.isBlank()){
+//                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
+//                }else{
+//                    strUser+=";"
+//                    progressDialog.show()
+//                    val db = Firebase.firestore
+//                    val auth: FirebaseAuth = FirebaseAuth.getInstance()
+//
+//                    val userID = auth.currentUser?.uid.toString()
+//                    val docRef = db.collection("users").document(userID)
+//                    docRef.get().addOnCompleteListener { task ->
+//                        if (task.isSuccessful) {
+//                            val document = task.result
+//                            if (document != null) {
+//
+//                                val LCleader = document.getString("CFleader")
+//
+//                                if(LCleader?.isBlank() == false) {
+//                                    val resultString:String = LCleader.replace(strUser, "")
+//                                    docRef.update("CFleader",resultString).addOnSuccessListener {
+//                                        codeforces_leaderboard_inputUser2.text.clear()
+//                                        progressDialog.dismiss()
+//                                        Toast.makeText(context, "User Removed Done !", Toast.LENGTH_SHORT)
+//                                            .show()
+//                                    }.addOnFailureListener{
+//                                        progressDialog.dismiss()
+//                                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                                            .show()
+//                                    }
+//                                }else{
+//                                    progressDialog.dismiss()
+//                                    Toast.makeText(context, "No Such User in your Friends", Toast.LENGTH_SHORT)
+//                                        .show()
+//                                }
+//
+//                            } else {
+//                                progressDialog.dismiss()
+//                                Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                                    .show()
+//                            }
+//                        } else {
+//                            progressDialog.dismiss()
+//                            Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+//                                .show()
+//                        }
+//                    }
+//                }
+//            }
+//
+//            val show_codeforces_current_friends:TextView = findViewById(R.id.show_codeforces_current_friends)
+//            show_codeforces_current_friends.setOnClickListener {
+//                progressDialog.show()
+//                val db = Firebase.firestore
+//                val auth: FirebaseAuth = FirebaseAuth.getInstance()
+//
+//                val userID = auth.currentUser?.uid.toString()
+//                val docRef = db.collection("users").document(userID)
+//                docRef.get().addOnCompleteListener { task ->
+//                    if (task.isSuccessful) {
+//                        val document = task.result
+//                        if (document != null) {
+//                            val LCleader = document.getString("CFleader")
+//                            // Toast.makeText(context,LCleader.toString(),Toast.LENGTH_SHORT).show()
+//                            val list:MutableList<String> = mutableListOf()
+//                            var temp:String = ""
+//                            if (LCleader != null) {
+//                                for(ele in LCleader){
+//                                    if(ele==';'){
+//                                        list.add(temp)
+//                                        temp = ""
+//                                    }else{
+//                                        temp+=ele
+//                                    }
+//                                }
+//                            }
+//                            current_user_list_show_recyclerView_codeforces.layoutManager = LinearLayoutManager(context)
+//                            current_user_list_show_recyclerView_codeforces.adapter = list.let { it1 ->
+//                                CodeForcesFrndAdapter(
+//                                    it1
+//                                )
+//                            }
+//                            progressDialog.dismiss()
+//
+//                        } else {
+//                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                                .show()
+//                            progressDialog.dismiss()
+//                        }
+//                    } else {
+//                        Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+//                            .show()
+//                        progressDialog.dismiss()
+//                    }
+//                }
+//            }
+//
+//
+//        }
+//
+//        interface DialogListener {
+//            fun onDialogOkButtonClicked(inputText: String)
+//        }
+//    }
+//
+//    class CustomDialog5(context: Context) : Dialog(context) {
+//
+//        var progressDialog: ProgressDialog = ProgressDialog(this.context)
+//        override fun onCreate(savedInstanceState: Bundle?) {
+//            super.onCreate(savedInstanceState)
+//            requestWindowFeature(Window.FEATURE_NO_TITLE)
+//            setContentView(R.layout.codechef_leaderboard_dialoguebox)
+//
+//            val current_user_list_show_recyclerView_codeforces:RecyclerView = findViewById(R.id.current_user_list_show_recyclerView_codechef)
+//            progressDialog.show()
+//            val db = Firebase.firestore
+//            val auth: FirebaseAuth = FirebaseAuth.getInstance()
+//
+//            val userID = auth.currentUser?.uid.toString()
+//            val docRef = db.collection("users").document(userID)
+//            docRef.get().addOnCompleteListener { task ->
+//                if (task.isSuccessful) {
+//                    val document = task.result
+//                    if (document != null) {
+//
+//                        val LCleader = document.getString("CCleader") ?: ""
+//
+//                        if(LCleader.isBlank()) {
+//                            Toast.makeText(context,"You haven't any friends yet!",Toast.LENGTH_SHORT).show()
+//                        }
+//
+//                        val list:MutableList<String> = mutableListOf()
+//                        var temp:String = ""
+//                        if (LCleader != "") {
+//                            for(ele in LCleader){
+//                                if(ele==';'){
+//                                    list.add(temp)
+//                                    temp = ""
+//                                }else{
+//                                    temp+=ele
+//                                }
+//                            }
+//                        }
+//                        current_user_list_show_recyclerView_codeforces.layoutManager = LinearLayoutManager(context)
+//                        current_user_list_show_recyclerView_codeforces.adapter = list.let { it1 ->
+//                            CodeForcesFrndAdapter(
+//                                it1
+//                            )
+//                        }
+//                        progressDialog.dismiss()
+//
+//                    } else {
+//                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                            .show()
+//                        progressDialog.dismiss()
+//                    }
+//                } else {
+//                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+//                        .show()
+//                    progressDialog.dismiss()
+//                }
+//            }
+//
+//
+//            val codeforces_leaderboard_inputUser1:EditText = findViewById(R.id.codechef_leaderboard_inputUser1)
+//            val codeforces_leaderboard_inputUser1_Verify:TextView = findViewById(R.id.codechef_leaderboard_inputUser1_Verify)
+//            codeforces_leaderboard_inputUser1_Verify.setOnClickListener {
+//                val strUser:String = codeforces_leaderboard_inputUser1.text.toString()
+//                if(strUser.isBlank()){
+//                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
+//                }else{
+//                    progressDialog.show()
+//                    val apiTask = APIServices { isValid ->
+//                        if(isValid?.get("isValid").toString()=="\"true\""){
+//
+//                            val db = Firebase.firestore
+//                            val auth: FirebaseAuth = FirebaseAuth.getInstance()
+//
+//                            val userID = auth.currentUser?.uid.toString()
+//                            val docRef = db.collection("users").document(userID)
+//                            docRef.get().addOnCompleteListener { task ->
+//                                if (task.isSuccessful) {
+//                                    val document = task.result
+//                                    if (document != null) {
+//
+//                                        var LCleader = document.getString("CCleader") ?: ""
+//                                        if(LCleader.isBlank()){
+//                                            LCleader = strUser+";"
+//                                        }else if(LCleader?.contains(strUser) == false){
+//                                            LCleader = LCleader+strUser+";"
+//                                        }
+//
+//                                        docRef.update("CCleader",LCleader).addOnSuccessListener {
+//                                            codeforces_leaderboard_inputUser1.text.clear()
+//                                            progressDialog.dismiss()
+//                                            Toast.makeText(context, "User Added Done !", Toast.LENGTH_SHORT)
+//                                                .show()
+//                                        }.addOnFailureListener{
+//                                            progressDialog.dismiss()
+//                                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                                                .show()
+//                                        }
+//
+//
+//                                    } else {
+//                                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                                            .show()
+//                                    }
+//                                } else {
+//                                    Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+//                                        .show()
+//                                }
+//                            }
+//
+//                        }else{
+//                            progressDialog.dismiss()
+//                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+//                        }
+//                    }
+//                    apiTask.execute(strUser)
+//                }
+//            }
+//
+//            val codeforces_leaderboard_inputUser2:EditText = findViewById(R.id.codechef_leaderboard_inputUser2)
+//            val codeforces_leaderboard_inputUser2_Verify:TextView = findViewById(R.id.codechef_leaderboard_inputUser2_verify)
+//            codeforces_leaderboard_inputUser2_Verify.setOnClickListener {
+//                var strUser:String = codeforces_leaderboard_inputUser2.text.toString()
+//                if(strUser.isBlank()){
+//                    Toast.makeText(context,"Enter the UserName",Toast.LENGTH_SHORT).show()
+//                }else{
+//                    strUser+=";"
+//                    progressDialog.show()
+//                    val db = Firebase.firestore
+//                    val auth: FirebaseAuth = FirebaseAuth.getInstance()
+//
+//                    val userID = auth.currentUser?.uid.toString()
+//                    val docRef = db.collection("users").document(userID)
+//                    docRef.get().addOnCompleteListener { task ->
+//                        if (task.isSuccessful) {
+//                            val document = task.result
+//                            if (document != null) {
+//
+//                                val LCleader = document.getString("CCleader") ?: ""
+//
+//                                if(!LCleader.isBlank()) {
+//                                    val resultString:String = LCleader.replace(strUser, "")
+//                                    docRef.update("CCleader",resultString).addOnSuccessListener {
+//                                        codeforces_leaderboard_inputUser2.text.clear()
+//                                        progressDialog.dismiss()
+//                                        Toast.makeText(context, "User Removed Done !", Toast.LENGTH_SHORT)
+//                                            .show()
+//                                    }.addOnFailureListener{
+//                                        progressDialog.dismiss()
+//                                        Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                                            .show()
+//                                    }
+//                                }else{
+//                                    progressDialog.dismiss()
+//                                    Toast.makeText(context, "No Such User in your Friends", Toast.LENGTH_SHORT)
+//                                        .show()
+//                                }
+//
+//                            } else {
+//                                progressDialog.dismiss()
+//                                Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                                    .show()
+//                            }
+//                        } else {
+//                            progressDialog.dismiss()
+//                            Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+//                                .show()
+//                        }
+//                    }
+//                }
+//            }
+//
+//            val show_codeforces_current_friends:TextView = findViewById(R.id.show_codechef_current_friends)
+//            show_codeforces_current_friends.setOnClickListener {
+//                progressDialog.show()
+//                val db = Firebase.firestore
+//                val auth: FirebaseAuth = FirebaseAuth.getInstance()
+//
+//                val userID = auth.currentUser?.uid.toString()
+//                val docRef = db.collection("users").document(userID)
+//                docRef.get().addOnCompleteListener { task ->
+//                    if (task.isSuccessful) {
+//                        val document = task.result
+//                        if (document != null) {
+//                            val LCleader = document.getString("CCleader")
+//                            // Toast.makeText(context,LCleader.toString(),Toast.LENGTH_SHORT).show()
+//                            val list:MutableList<String> = mutableListOf()
+//                            var temp:String = ""
+//                            if (LCleader != null) {
+//                                for(ele in LCleader){
+//                                    if(ele==';'){
+//                                        list.add(temp)
+//                                        temp = ""
+//                                    }else{
+//                                        temp+=ele
+//                                    }
+//                                }
+//                            }
+//                            current_user_list_show_recyclerView_codeforces.layoutManager = LinearLayoutManager(context)
+//                            current_user_list_show_recyclerView_codeforces.adapter = list.let { it1 ->
+//                                CodeForcesFrndAdapter(
+//                                    it1
+//                                )
+//                            }
+//                            progressDialog.dismiss()
+//
+//                        } else {
+//                            Toast.makeText(context, "No Such document", Toast.LENGTH_SHORT)
+//                                .show()
+//                            progressDialog.dismiss()
+//                        }
+//                    } else {
+//                        Toast.makeText(context, task.exception.toString(), Toast.LENGTH_SHORT)
+//                            .show()
+//                        progressDialog.dismiss()
+//                    }
+//                }
+//            }
+//
+//
+//        }
+//
+//        interface DialogListener {
+//            fun onDialogOkButtonClicked(inputText: String)
+//        }
+//    }
 
 }

@@ -17,9 +17,6 @@ class LCrankingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lcranking)
-        progressDialog= ProgressDialog(this)
-        progressDialog.setCancelable(false)
-        progressDialog.setTitle("Sometimes it takes too longer !! \n Please wait")
 
         initialization()
         val extras = intent.extras
@@ -32,30 +29,32 @@ class LCrankingActivity : AppCompatActivity() {
         progressDialog.show()
         val apiTask = APIServices { isValid ->
 
-//            val parser = JsonParser()
-//            val jsonArray = parser.parse(isValid).asJsonArray
-//
-//            for(element in jsonArray){
-//                val tempName:String = element.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("username").toString()
-//                val tempRat:String = element.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("rating").toString().split(".")[0]
-//                val tempRank:String = element.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("globalRanking").toString()
-//                userList.add(CustomData(tempName,tempRat.toInt(),tempRank.toFloat()))
-//            }
-//
-//            val sortedList = userList.sortedByDescending { it.rating }
-//
-//            val recyclerView: RecyclerView = findViewById(R.id.lclistRecyclerView)
-//            recyclerView.layoutManager = LinearLayoutManager(this)
-//            recyclerView.adapter = LCCustomAdapter(sortedList)
-//
-//            progressDialog.dismiss()
+            val users = isValid?.get("result")?.asJsonArray
+
+            if (users != null) {
+                for(user in users){
+                    val tempName:String = user.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("username").toString()
+                val tempRat:String = user.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("rating").toString().split(".")[0]
+                val tempRank:String = user.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("globalRanking").toString()
+                userList.add(CustomData(tempName,tempRat.toInt(),tempRank.toFloat()))
+                }
+            }
+
+            val sortedList = userList.sortedByDescending { it.rating }
+            val recyclerView: RecyclerView = findViewById(R.id.lclistRecyclerView)
+            recyclerView.layoutManager = LinearLayoutManager(this)
+            recyclerView.adapter = LCCustomAdapter(sortedList)
+            progressDialog.dismiss()
 
         }
-        apiTask.execute(userNames)
+        apiTask.execute(userNames, "lcLeader")
+
     }
 
     private fun initialization() {
-
+        progressDialog= ProgressDialog(this)
+        progressDialog.setCancelable(false)
+        progressDialog.setTitle("Sometimes it takes too longer !! \n Please wait")
     }
 
     data class CustomData(

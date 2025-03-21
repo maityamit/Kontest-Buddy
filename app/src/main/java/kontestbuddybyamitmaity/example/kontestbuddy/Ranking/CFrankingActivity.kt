@@ -9,6 +9,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonParser
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.R
+import kontestbuddybyamitmaity.example.kontestbuddy.Ranking.LCrankingActivity.CustomData
 
 class CFrankingActivity : AppCompatActivity() {
 
@@ -31,30 +32,30 @@ class CFrankingActivity : AppCompatActivity() {
     }
 
     private fun callTheAPI(userNames: String?) {
+
+
         progressDialog.show()
         val apiTask = APIServices { isValid ->
+            val users = isValid?.get("result")?.asJsonArray
+            if (users != null) {
+                for(user in users){
+                    val tempName:String = user.asJsonObject?.get("username").toString()
+                    val tempRat:String = user.asJsonObject.get("rating").toString()
+                    val tempRank:String = user.asJsonObject.get("rank").toString()
+                    userList.add(CustomData(tempName,tempRat.toInt(),tempRank))
+                    userList.add(CustomData(tempName,tempRat.toInt(),tempRank))
+                }
+            }
 
-//            val jsonArray: JsonArray? = isValid?.let { JsonParser().parse(it).asJsonObject }?.get("result")?.asJsonArray
-//
-//            if (jsonArray != null) {
-//                for(element in jsonArray){
-//                    val tempName:String = element.asJsonObject?.get("username").toString()
-//                    val tempRat:String = element.asJsonObject.get("rating").toString()
-//                    val tempRank:String = element.asJsonObject.get("rank").toString()
-//                    userList.add(CustomData(tempName,tempRat.toInt(),tempRank))
-//                }
-//            }
-//
-//            val sortedList = userList.sortedByDescending { it.rating }
-//
-//            val recyclerView: RecyclerView = findViewById(R.id.cflistRecyclerView)
-//            recyclerView.layoutManager = LinearLayoutManager(this)
-//            recyclerView.adapter = CFCustomAdapter(sortedList)
-//
-//            progressDialog.dismiss()
+            val sortedList = userList.sortedByDescending { it.rating }
+            val recyclerView: RecyclerView = findViewById(R.id.cflistRecyclerView)
+            recyclerView.layoutManager = LinearLayoutManager(this)
+            recyclerView.adapter = CFCustomAdapter(sortedList)
+            progressDialog.dismiss()
 
         }
-        apiTask.execute(userNames)
+        apiTask.execute(userNames, "cfLeader")
+
     }
 
     data class CustomData(

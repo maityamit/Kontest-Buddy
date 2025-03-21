@@ -41,8 +41,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    implementation 'org.jsoup:jsoup:1.14.3'
-    implementation 'com.android.volley:volley:1.2.1'
+//    implementation 'org.jsoup:jsoup:1.14.3'
+//    implementation 'com.android.volley:volley:1.2.1'
 
 
     implementation platform('com.google.firebase:firebase-bom:32.7.4')
@@ -50,12 +50,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:22.3.1'
     implementation 'com.google.firebase:firebase-database-ktx:20.3.1'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.11.0'
-    implementation 'com.google.firebase:firebase-storage-ktx:20.3.0'
+//    implementation 'com.google.firebase:firebase-storage-ktx:20.3.0'
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-analytics'
 
-    implementation 'org.jsoup:jsoup:1.14.3'
-//    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+//    implementation 'org.jsoup:jsoup:1.14.3'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 
@@ -63,7 +62,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:23.4.1'
     implementation 'androidx.test:core-ktx:1.5.0'
 
-    implementation "com.squareup.okhttp3:okhttp:4.9.1"
+    implementation "com.squareup.okhttp3:okhttp:4.9.3"
 
     implementation 'io.github.jan-tennert.supabase-kt:supabase-kt:0.8.0'
     implementation 'io.github.jan-tennert.supabase-kt:postgrest-kt:0.8.0'
