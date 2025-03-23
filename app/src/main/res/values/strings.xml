@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Kontest Buddy</string>
+    <string name="forget_password">Forget Password</string>
+    <string name="welcome_back">Welcome back !</string>
+    <string name="login_message">Please log in to continue and get the best from our app</string>
+    <string name="login_or_signup">Login or Sign up !</string>
+    <string name="enter_email">Enter your Email</string>
+    <string name="enter_password">Enter your Password</string>
+    <string name="continue_button">Continue</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
+    <string name="sign_up">Sign up</string>
+    <string name="max_ratings">Max Ratings</string>
+    <string name="verify">Verify</string>
+    <string name="sign_in">Sign In</string>
+    <string name="verifyandadd">Verify &amp; add</string>
+    <string name="verifyandremove">Verify &amp; remove</string>
+</resources>
