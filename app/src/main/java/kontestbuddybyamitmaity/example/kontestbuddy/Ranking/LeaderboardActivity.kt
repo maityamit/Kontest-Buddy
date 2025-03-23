@@ -80,8 +80,9 @@ class LeaderboardActivity : AppCompatActivity() {
                 var leader_board_names = leader_board_data_fetch(user_email_string, "lc_leader")
                 if(leader_board_names.isNotBlank()){
                     progressDialog.dismiss()
-                    val intent:Intent = Intent(this@LeaderboardActivity,LCrankingActivity::class.java)
+                    val intent:Intent = Intent(this@LeaderboardActivity,CommonRankingActivity::class.java)
                     intent.putExtra("userNames",leader_board_names)
+                    intent.putExtra("type", "leetcode")
                     startActivity(intent)
                 }else{
                     progressDialog.dismiss()
@@ -98,8 +99,9 @@ class LeaderboardActivity : AppCompatActivity() {
                 if (leader_board_names.isNotBlank()) {
                     progressDialog.dismiss()
                     val intent: Intent =
-                        Intent(this@LeaderboardActivity, CFrankingActivity::class.java)
+                        Intent(this@LeaderboardActivity, CommonRankingActivity::class.java)
                     intent.putExtra("userNames", leader_board_names)
+                    intent.putExtra("type", "codeforces")
                     startActivity(intent)
                 } else {
                     progressDialog.dismiss()
@@ -120,8 +122,9 @@ class LeaderboardActivity : AppCompatActivity() {
                 if (leader_board_names.isNotBlank()) {
                     progressDialog.dismiss()
                     val intent: Intent =
-                        Intent(this@LeaderboardActivity, CCrankingActivity::class.java)
+                        Intent(this@LeaderboardActivity, CommonRankingActivity::class.java)
                     intent.putExtra("userNames", leader_board_names)
+                    intent.putExtra("type", "codechef")
                     startActivity(intent)
                 } else {
                     progressDialog.dismiss()
