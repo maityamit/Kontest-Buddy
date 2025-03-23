@@ -134,7 +134,7 @@ class HomeFragment : Fragment() {
         val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
             AppCompatActivity.MODE_PRIVATE
         )
-        val _is_public = sharedPreferences?.getString("is_public","false")
+        val _is_public = sharedPreferences?.getString("is_public","false").toString().lowercase()
         if(_is_public=="true"){
             val intent:Intent = Intent(context, FriendsActivity::class.java)
             startActivity(intent)
@@ -181,7 +181,7 @@ class HomeFragment : Fragment() {
         ratingsLC_TextView.text = if(LCrating!=null) LCrating.split(".")[0] else "-"
         toppercentageLC_TextView.text = if(LCtopPercentage!=null) "$LCtopPercentage%" else "-"
         livecontestLC_TextView.text = LCattendedContestsCount?:"-"
-        globalrankingLC_TextView.text = LCglobalRanking?.substring(1, LCglobalRanking.length - 1) ?: "-"
+        globalrankingLC_TextView.text = LCglobalRanking ?: "-"
         ratingsCF_TextView.text = CFrating?: "-"
         ratingCC_TextView.text = CCrating?: "-"
         cfUserName_TextView.text = CFuserName?: "-"

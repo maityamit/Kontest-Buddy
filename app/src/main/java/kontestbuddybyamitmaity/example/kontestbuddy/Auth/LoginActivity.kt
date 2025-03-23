@@ -182,7 +182,7 @@ class LoginActivity : AppCompatActivity() {
                     myEdit.putString("user_name",user["user_name"]?.jsonPrimitive?.contentOrNull)
                     myEdit.putString("user_email",user["user_email"]?.jsonPrimitive?.contentOrNull)
                     myEdit.putString("linkedin_profile",user["linkedin_profile"]?.jsonPrimitive?.contentOrNull)
-                    myEdit.putString("is_public",user["is_public"]?.jsonPrimitive?.contentOrNull)
+                    myEdit.putString("is_public",user["is_public"]?.jsonPrimitive?.contentOrNull.toString().lowercase())
                     myEdit.apply()
 
                     retrieveDataUSingAPI(

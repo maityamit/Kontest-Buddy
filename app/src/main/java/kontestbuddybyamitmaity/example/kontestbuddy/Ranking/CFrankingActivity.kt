@@ -37,12 +37,14 @@ class CFrankingActivity : AppCompatActivity() {
         progressDialog.show()
         val apiTask = APIServices { isValid ->
             val users = isValid?.get("result")?.asJsonArray
+
+
+
             if (users != null) {
                 for(user in users){
                     val tempName:String = user.asJsonObject?.get("username").toString()
                     val tempRat:String = user.asJsonObject.get("rating").toString()
                     val tempRank:String = user.asJsonObject.get("rank").toString()
-                    userList.add(CustomData(tempName,tempRat.toInt(),tempRank))
                     userList.add(CustomData(tempName,tempRat.toInt(),tempRank))
                 }
             }

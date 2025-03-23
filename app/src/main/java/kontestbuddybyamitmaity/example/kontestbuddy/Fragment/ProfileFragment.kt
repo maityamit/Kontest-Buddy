@@ -7,6 +7,7 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.icu.text.CaseMap.Lower
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -80,7 +81,7 @@ class ProfileFragment : Fragment() {
         }
 
         is_profile_public_switch_button.setOnCheckedChangeListener { _, isChecked ->
-            set_is_public_profile(isChecked.toString())
+            set_is_public_profile(isChecked.toString().lowercase())
         }
     }
 
@@ -97,18 +98,18 @@ class ProfileFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 superbase.postgrest.from("users").update({
-                    set("is_public", value)
+                    set("is_public", value.lowercase())
                 }) {
                     eq("user_email", user_email.toString())
                 }
 
                 withContext(Dispatchers.Main) {
                     if(myEdit != null) {
-                        myEdit.putString("is_public",value)
+                        myEdit.putString("is_public",value.lowercase())
                         myEdit.apply()
                     }
                     Toast.makeText(context,"Preference Updated...",Toast.LENGTH_SHORT).show()
-                    is_public_profile_textview.text = if (value=="true") "Public Profile: (on)" else "Public Profile: (off)"
+                    is_public_profile_textview.text = if (value.lowercase()=="true") "Public Profile: (on)" else "Public Profile: (off)"
                     progressDialog.dismiss()
                 }
 
@@ -365,7 +366,7 @@ class ProfileFragment : Fragment() {
         var CFuserName = sharedPreferences?.getString("codeforces_user_name",null)
         var CCuserName = sharedPreferences?.getString("codechef_user_name",null)
         var linkedin_profile = sharedPreferences?.getString("linkedin_profile",null)
-        val is_public_from_store = sharedPreferences?.getString("is_public","false")
+        val is_public_from_store = sharedPreferences?.getString("is_public","false").toString()
 
         if(LCuserName!=null && LCuserName=="") LCuserName = null
         if(CFuserName!=null && CFuserName=="") CFuserName = null
@@ -380,7 +381,7 @@ class ProfileFragment : Fragment() {
         profile_frag_userCC.text = CCuserName?: "-"
         profile_frag_userLinkedin.text = linkedin_profile?: "-"
 
-        if(is_public_from_store=="false") {
+        if(is_public_from_store.lowercase()=="false") {
             view.findViewById<TextView>(R.id.is_public_profile_textview).text =
                 "Public Profile: (off)"
             view.findViewById<Switch>(R.id.is_profile_public_switch_button).isChecked = false

@@ -89,7 +89,7 @@ class FriendsActivity : AppCompatActivity() {
                     val linkedin_profile = user["linkedin_profile"]?.jsonPrimitive?.contentOrNull
 
 
-                    if(is_public!=null && is_public=="true"){
+                    if(is_public!=null && is_public.lowercase()=="true"){
                         val withdraw = FreindsModel(userName, userLeetcode, userCodeforces, userCodechef, "is_public", linkedin_profile)
                         Log.e("User_AMIT", withdraw.toString())
                         newFriendsList.add(withdraw)
