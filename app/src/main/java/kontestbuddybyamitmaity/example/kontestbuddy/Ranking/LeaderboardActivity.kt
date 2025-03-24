@@ -77,16 +77,28 @@ class LeaderboardActivity : AppCompatActivity() {
             progressDialog.show()
 
             CoroutineScope(Dispatchers.IO).launch {
-                var leader_board_names = leader_board_data_fetch(user_email_string, "lc_leader")
-                if(leader_board_names.isNotBlank()){
-                    progressDialog.dismiss()
-                    val intent:Intent = Intent(this@LeaderboardActivity,CommonRankingActivity::class.java)
-                    intent.putExtra("userNames",leader_board_names)
-                    intent.putExtra("type", "leetcode")
-                    startActivity(intent)
-                }else{
-                    progressDialog.dismiss()
-                    Toast.makeText(this@LeaderboardActivity,"You have not any friends !!",Toast.LENGTH_SHORT).show()
+                val leader_board_names = leader_board_data_fetch(user_email_string, "lc_leader")
+
+                withContext(Dispatchers.Main) {
+
+                    Toast.makeText(this@LeaderboardActivity, leader_board_names, Toast.LENGTH_SHORT)
+                        .show()
+
+                    if (leader_board_names != "") {
+                        progressDialog.dismiss()
+                        val intent: Intent =
+                            Intent(this@LeaderboardActivity, CommonRankingActivity::class.java)
+                        intent.putExtra("userNames", leader_board_names)
+                        intent.putExtra("type", "leetcode")
+                        startActivity(intent)
+                    } else {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            this@LeaderboardActivity,
+                            "You have not any friends !!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
         }
@@ -95,21 +107,23 @@ class LeaderboardActivity : AppCompatActivity() {
 
             progressDialog.show()
             CoroutineScope(Dispatchers.IO).launch {
-                var leader_board_names = leader_board_data_fetch(user_email_string, "cf_leader")
-                if (leader_board_names.isNotBlank()) {
-                    progressDialog.dismiss()
-                    val intent: Intent =
-                        Intent(this@LeaderboardActivity, CommonRankingActivity::class.java)
-                    intent.putExtra("userNames", leader_board_names)
-                    intent.putExtra("type", "codeforces")
-                    startActivity(intent)
-                } else {
-                    progressDialog.dismiss()
-                    Toast.makeText(
-                        this@LeaderboardActivity,
-                        "You have not any friends !!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                val leader_board_names = leader_board_data_fetch(user_email_string, "cf_leader")
+                withContext(Dispatchers.Main) {
+                    if (leader_board_names != "") {
+                        progressDialog.dismiss()
+                        val intent: Intent =
+                            Intent(this@LeaderboardActivity, CommonRankingActivity::class.java)
+                        intent.putExtra("userNames", leader_board_names)
+                        intent.putExtra("type", "codeforces")
+                        startActivity(intent)
+                    } else {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            this@LeaderboardActivity,
+                            "You have not any friends !!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
 
@@ -119,20 +133,22 @@ class LeaderboardActivity : AppCompatActivity() {
             progressDialog.show()
             CoroutineScope(Dispatchers.IO).launch {
                 var leader_board_names = leader_board_data_fetch(user_email_string, "cc_leader")
-                if (leader_board_names.isNotBlank()) {
-                    progressDialog.dismiss()
-                    val intent: Intent =
-                        Intent(this@LeaderboardActivity, CommonRankingActivity::class.java)
-                    intent.putExtra("userNames", leader_board_names)
-                    intent.putExtra("type", "codechef")
-                    startActivity(intent)
-                } else {
-                    progressDialog.dismiss()
-                    Toast.makeText(
-                        this@LeaderboardActivity,
-                        "You have not any friends !!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                withContext(Dispatchers.Main) {
+                    if (leader_board_names != "") {
+                        progressDialog.dismiss()
+                        val intent: Intent =
+                            Intent(this@LeaderboardActivity, CommonRankingActivity::class.java)
+                        intent.putExtra("userNames", leader_board_names)
+                        intent.putExtra("type", "codechef")
+                        startActivity(intent)
+                    } else {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            this@LeaderboardActivity,
+                            "You have not any friends !!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
         }
@@ -316,6 +332,7 @@ class LeaderboardActivity : AppCompatActivity() {
 
                         withContext(Dispatchers.Main){
                             if (LCleader.isBlank()){
+                                progressDialog.dismiss()
                                 Toast.makeText(context,"You haven't any friends yet!",Toast.LENGTH_SHORT).show()
                             }else{
                                 val list:MutableList<String> = mutableListOf()
@@ -508,6 +525,7 @@ class LeaderboardActivity : AppCompatActivity() {
 
                         withContext(Dispatchers.Main){
                             if (LCleader.isBlank()){
+                                progressDialog.dismiss()
                                 Toast.makeText(context,"You haven't any friends yet!",Toast.LENGTH_SHORT).show()
                             }else{
                                 val list:MutableList<String> = mutableListOf()
@@ -695,6 +713,7 @@ class LeaderboardActivity : AppCompatActivity() {
 
                         withContext(Dispatchers.Main){
                             if (LCleader.isBlank()){
+                                progressDialog.dismiss()
                                 Toast.makeText(context,"You haven't any friends yet!",Toast.LENGTH_SHORT).show()
                             }else{
                                 val list:MutableList<String> = mutableListOf()
@@ -741,9 +760,10 @@ class LeaderboardActivity : AppCompatActivity() {
                 val user = superbase.postgrest.from("users")
                     .select("user_email, $paramter"){
                         eq("user_email", user_email_string)
-                    }.body.jsonArray[0].jsonObject
-                val LCleader = user[paramter]?.jsonPrimitive?.contentOrNull.toString()
-                LCleader
+                    }.body.jsonArray[0].jsonObject.get(paramter)
+
+                var LCleader = user?.jsonPrimitive?.contentOrNull
+                LCleader.toString()
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@LeaderboardActivity, "Error fetching users: ${e.message}", Toast.LENGTH_SHORT).show()

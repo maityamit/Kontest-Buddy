@@ -144,7 +144,7 @@ class RegisterActivity : AppCompatActivity() {
 
                         codeforces_verify = true
                         codeforces_user_name = isValid?.get("userName")?.asString.toString()
-                        codechef_rating = isValid?.get("rating")?.asString.toString()
+                        codeforces_rating = isValid?.get("rating")?.asString.toString()
                         codeforces_max_rating = isValid?.get("maxRating")?.asString.toString()
                         codeforces_rank = isValid?.get("rank")?.asString.toString()
                         codeforces_max_rank = isValid?.get("maxRank")?.asString.toString()
@@ -187,7 +187,7 @@ class RegisterActivity : AppCompatActivity() {
                         leetcode_attended_contests_count = isValid?.get("attendedContestsCount")?.asString.toString()
                         leetcode_rating = isValid?.get("rating")?.asString.toString()
                         leetcode_global_ranking = isValid?.get("globalRanking")?.asString.toString()
-                        leetcode_global_ranking = isValid?.get("totalParticipants")?.asString.toString()
+                        leetcode_total_participants = isValid?.get("totalParticipants")?.asString.toString()
                         leetcode_top_percentage = isValid?.get("topPercentage")?.asString.toString()
 
                     }else{
