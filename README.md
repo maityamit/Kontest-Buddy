@@ -1,7 +1,7 @@
 # Kontest Buddy
 Compare with your peers and compete !
 
-## 🔗 Download the App [200+ Downloads]
+## 🔗 Download the App [500+ Downloads]
 
 <a href="https://play.google.com/store/apps/details?id=kontestbuddybyamitmaity.example.kontestbuddy">
 <img src="https://github.com/maityamit/Heritsm-Heritage_of_India-Application/blob/master/Demo/800px-Google_Play_Store_badge_EN.svg.png" width="20%" /></a>
@@ -16,6 +16,9 @@ The main two features of this application are Compare Two Users and Ranking with
 Compare Two Users: You can compare two users of LeetCode or CodeForces and compare between them and compete.
 
 Ranking with your peers: You can add your friends or remove your friends and automatically it will show a leaderboard with your friends.
+
+## Design 
+https://miro.com/app/board/uXjVITxJuJI=/?share_link_id=606869765974
 
 ## 📸 Screenshots
 
