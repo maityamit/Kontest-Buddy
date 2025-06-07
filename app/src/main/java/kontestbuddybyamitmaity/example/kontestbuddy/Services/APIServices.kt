@@ -4,21 +4,21 @@ import android.os.AsyncTask
 import android.util.Log
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import java.io.IOException
 import kontestbuddybyamitmaity.example.kontestbuddy.Services.Constants
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.io.IOException
 
-class APIServices(private val callback: (JsonObject?) -> Unit) : AsyncTask<String, Void, JsonObject?>() {
+class APIServices(private val callback: (JsonObject?) -> Unit) :
+    AsyncTask<String, Void, JsonObject?>() {
 
     override fun doInBackground(vararg params: String): JsonObject? {
-
         val username = params[0]
         val endpoint = params[1]
         val baseUrl = Constants.BASE_URL
         val fullurl = "$baseUrl/$endpoint?userName=$username"
 
-        if(username.isEmpty()){
+        if (username.isEmpty()) {
             return null
         }
 
@@ -44,7 +44,6 @@ class APIServices(private val callback: (JsonObject?) -> Unit) : AsyncTask<Strin
         return null
     }
 
-
     override fun onPostExecute(result: JsonObject?) {
         callback(result)
     }
@@ -61,11 +60,9 @@ class APIServices(private val callback: (JsonObject?) -> Unit) : AsyncTask<Strin
                 val jsonObject = JsonObject()
                 jsonObject.add("result", jsonArray)
                 return jsonObject
-
             } catch (e: Exception) {
                 Log.e("ApiTask", "Error parsing JSON response: ${e.message}")
             }
-
         }
 
         return null

@@ -7,9 +7,7 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.icu.text.CaseMap.Lower
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +20,7 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
@@ -35,7 +34,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
 
 class ProfileFragment : Fragment() {
 
@@ -54,14 +52,14 @@ class ProfileFragment : Fragment() {
     private lateinit var is_public_profile_textview: TextView
     private lateinit var superbase: SupabaseClient
 
-
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view:View = inflater.inflate(R.layout.fragment_profile, container, false)
+        val view: View = inflater.inflate(R.layout.fragment_profile, container, false)
 
         initializations(view)
         retrieveData(view)
@@ -72,11 +70,11 @@ class ProfileFragment : Fragment() {
     }
 
     private fun actions() {
-        profile_logout_button.setOnClickListener{
+        profile_logout_button.setOnClickListener {
             logout_actions()
         }
 
-        profile_frag_user_edit.setOnClickListener{
+        profile_frag_user_edit.setOnClickListener {
             context?.let { it1 -> CustomDialog(it1, this) }?.show()
         }
 
@@ -86,14 +84,14 @@ class ProfileFragment : Fragment() {
     }
 
     private fun set_is_public_profile(value: String) {
-
         progressDialog.show()
 
-        val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
+        val sharedPreferences = getActivity()?.getSharedPreferences(
+            "userDataStoreLocal",
             AppCompatActivity.MODE_PRIVATE
         )
         val myEdit = sharedPreferences?.edit()
-        var user_email = sharedPreferences?.getString("user_email","")
+        var user_email = sharedPreferences?.getString("user_email", "")
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -104,15 +102,18 @@ class ProfileFragment : Fragment() {
                 }
 
                 withContext(Dispatchers.Main) {
-                    if(myEdit != null) {
-                        myEdit.putString("is_public",value.lowercase())
+                    if (myEdit != null) {
+                        myEdit.putString("is_public", value.lowercase())
                         myEdit.apply()
                     }
-                    Toast.makeText(context,"Preference Updated...",Toast.LENGTH_SHORT).show()
-                    is_public_profile_textview.text = if (value.lowercase()=="true") "Public Profile: (on)" else "Public Profile: (off)"
+                    Toast.makeText(context, "Preference Updated...", Toast.LENGTH_SHORT).show()
+                    if (value.lowercase() == "true") {
+                        is_public_profile_textview.text = "Public Profile: (on)"
+                    } else {
+                        is_public_profile_textview.text = "Public Profile: (off)"
+                    }
                     progressDialog.dismiss()
                 }
-
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     progressDialog.dismiss()
@@ -120,7 +121,6 @@ class ProfileFragment : Fragment() {
                 }
             }
         }
-
     }
 
     private fun logout_actions() {
@@ -130,7 +130,7 @@ class ProfileFragment : Fragment() {
         builder.setMessage("Are you sure you want to logout?")
         builder.setPositiveButton("Yes") { _, _ ->
             auth.signOut()
-            val intent: Intent = Intent(context,LoginActivity::class.java)
+            val intent: Intent = Intent(context, LoginActivity::class.java)
             startActivity(intent)
             activity?.finish()
         }
@@ -139,7 +139,6 @@ class ProfileFragment : Fragment() {
     }
 
     private fun initializations(view: View) {
-
         superbase = createSupabaseClient(
             supabaseUrl = Constants.SUPERBASE_URL,
             supabaseKey = Constants.SUPERBASE_KEY
@@ -163,7 +162,6 @@ class ProfileFragment : Fragment() {
         profile_frag_user_edit = view.findViewById(R.id.profile_frag_user_edit)
         is_profile_public_switch_button = view.findViewById(R.id.is_profile_public_switch_button)
         is_public_profile_textview = view.findViewById(R.id.is_public_profile_textview)
-
     }
 
     class CustomDialog(
@@ -182,40 +180,47 @@ class ProfileFragment : Fragment() {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.profile_update_layout)
 
-            val sharedPreferences = context.getSharedPreferences("userDataStoreLocal",
+            val sharedPreferences = context.getSharedPreferences(
+                "userDataStoreLocal",
                 AppCompatActivity.MODE_PRIVATE
             )
-            var LCuserName = sharedPreferences?.getString("leetcode_user_name",null)
-            var CFuserName = sharedPreferences?.getString("codeforces_user_name",null)
-            var CCuserName = sharedPreferences?.getString("codechef_user_name",null)
-            var linkedin_profile = sharedPreferences?.getString("linkedin_profile",null)
+            var LCuserName = sharedPreferences?.getString("leetcode_user_name", null)
+            var CFuserName = sharedPreferences?.getString("codeforces_user_name", null)
+            var CCuserName = sharedPreferences?.getString("codechef_user_name", null)
+            var linkedin_profile = sharedPreferences?.getString("linkedin_profile", null)
 
-            if(LCuserName!=null && LCuserName=="") LCuserName = null
-            if(CFuserName!=null && CFuserName=="") CFuserName = null
-            if(CCuserName!=null && CCuserName=="") CCuserName = null
-            if(linkedin_profile!=null && linkedin_profile=="") linkedin_profile = null
+            if (LCuserName != null && LCuserName == "") LCuserName = null
+            if (CFuserName != null && CFuserName == "") CFuserName = null
+            if (CCuserName != null && CCuserName == "") CCuserName = null
+            if (linkedin_profile != null && linkedin_profile == "") linkedin_profile = null
 
-            findViewById<EditText>(R.id._register_user_leetcode).setText(LCuserName?: "-")
-            findViewById<EditText>(R.id._register_user_codeforces).setText(CFuserName?: "-")
-            findViewById<EditText>(R.id._register_user_codechef).setText(CCuserName?: "-")
-            findViewById<EditText>(R.id._register_user_linkedin_account).setText(linkedin_profile?: "-")
+            findViewById<EditText>(R.id._register_user_leetcode).setText(LCuserName ?: "-")
+            findViewById<EditText>(R.id._register_user_codeforces).setText(CFuserName ?: "-")
+            findViewById<EditText>(R.id._register_user_codechef).setText(CCuserName ?: "-")
+            findViewById<EditText>(R.id._register_user_linkedin_account).setText(
+                linkedin_profile ?: "-"
+            )
 
             findViewById<TextView>(R.id._leetcode_verify_button).setOnClickListener {
                 val user_leetcode = findViewById<EditText>(R.id._register_user_leetcode)
-                if(user_leetcode.text.toString().isBlank()){
+                if (user_leetcode.text.toString().isBlank()) {
                     user_leetcode.error = "Enter the LeetCode UserName"
-                }else {
+                } else {
                     progressDialog.show()
                     val apiTask = APIServices { isValid ->
-                        if(isValid?.get("isValid")?.asString.toString()=="true"){
+                        if (isValid?.get("isValid")?.asString.toString() == "true") {
                             val txt = findViewById<TextView>(R.id._leetcode_verify_button)
                             txt.text = "Verified"
                             txt.setTextColor(Color.GREEN)
                             findViewById<EditText>(R.id._register_user_leetcode).isEnabled = false
                             findViewById<TextView>(R.id._leetcode_verify_button).isEnabled = false
                             leetcode_verify = true
-                        }else{
-                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "This UserName is not valid",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                         progressDialog.dismiss()
                     }
@@ -224,91 +229,97 @@ class ProfileFragment : Fragment() {
             }
 
             findViewById<TextView>(R.id._codeforces_verify_button).setOnClickListener {
-
                 val user_codeforces = findViewById<EditText>(R.id._register_user_codeforces)
-                if(user_codeforces.text.toString().isBlank()){
+                if (user_codeforces.text.toString().isBlank()) {
                     user_codeforces.error = "Enter the Codeforces UserName"
-                }else {
+                } else {
                     progressDialog.show()
                     val apiTask = APIServices { isValid ->
-                        if(isValid?.get("isValid")?.asString.toString()=="true"){
+                        if (isValid?.get("isValid")?.asString.toString() == "true") {
                             val txt = findViewById<TextView>(R.id._codeforces_verify_button)
                             txt.text = "Verified"
                             txt.setTextColor(Color.GREEN)
                             findViewById<EditText>(R.id._register_user_codeforces).isEnabled = false
                             findViewById<TextView>(R.id._codeforces_verify_button).isEnabled = false
                             codeforces_verify = true
-
-                        }else{
-                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "This UserName is not valid",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
 
                         progressDialog.dismiss()
-
                     }
                     apiTask.execute(user_codeforces.text.toString(), "isCFExist")
                 }
             }
 
             findViewById<TextView>(R.id._codechef_verify_button).setOnClickListener {
-
                 val user_codechef = findViewById<EditText>(R.id._register_user_codechef)
-                if(user_codechef.text.toString().isBlank()){
+                if (user_codechef.text.toString().isBlank()) {
                     user_codechef.error = "Enter the CodeChef UserName"
-                }else {
+                } else {
                     progressDialog.show()
                     val apiTask = APIServices { isValid ->
-                        if(isValid?.get("isValid")?.asString.toString()=="true"){
+                        if (isValid?.get("isValid")?.asString.toString() == "true") {
                             val txt = findViewById<TextView>(R.id._codechef_verify_button)
                             txt.text = "Verified"
                             txt.setTextColor(Color.GREEN)
                             findViewById<EditText>(R.id._register_user_codechef).isEnabled = false
                             findViewById<TextView>(R.id._codechef_verify_button).isEnabled = false
                             codechef_verify = true
-
-                        }else{
-                            Toast.makeText(context, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "This UserName is not valid",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                         progressDialog.dismiss()
-
                     }
                     apiTask.execute(user_codechef.text.toString(), "isCCExist")
                 }
             }
 
-
-
-            findViewById<Button>(R.id._register_user_button).setOnClickListener{
-
+            findViewById<Button>(R.id._register_user_button).setOnClickListener {
                 val user_leetcode = findViewById<EditText>(R.id._register_user_leetcode)
                 val user_codeforces = findViewById<EditText>(R.id._register_user_codeforces)
-                val user_codechef= findViewById<EditText>(R.id._register_user_codechef)
-                var user_linkedin = findViewById<EditText>(R.id._register_user_linkedin_account).text.toString()
+                val user_codechef = findViewById<EditText>(R.id._register_user_codechef)
+                var user_linkedin =
+                    findViewById<EditText>(R.id._register_user_linkedin_account).text.toString()
 
-                if(user_leetcode.text.toString().isNotBlank() && !leetcode_verify){
+                if (user_leetcode.text.toString().isNotBlank() && !leetcode_verify) {
                     user_leetcode.error = "Please verify the LC account"
-                }else if(user_codeforces.text.toString().isNotBlank() && !codeforces_verify){
+                } else if (user_codeforces.text.toString().isNotBlank() && !codeforces_verify) {
                     user_codeforces.error = "Please verify the CF account"
-                }else if(user_codechef.text.toString().isNotBlank() && !codechef_verify){
+                } else if (user_codechef.text.toString().isNotBlank() && !codechef_verify) {
                     user_codechef.error = "Please verify the CC account"
-                }else{
-                    if(user_linkedin.isNotBlank()){
+                } else {
+                    if (user_linkedin.isNotBlank()) {
                         val result = extractLinkedInUsername(user_linkedin)
                         user_linkedin = result ?: user_linkedin
                     }
                     progressDialog.show()
-                    var lc = "";
-                    var cf = "";
-                    var cc = "";
-                    if(user_leetcode.text.toString().isNotBlank()) lc = user_leetcode.text.toString();
-                    if(user_codeforces.text.toString().isNotBlank()) cf = user_codeforces.text.toString();
-                    if(user_codechef.text.toString().isNotBlank()) cc = user_codechef.text.toString();
+                    var lc = ""
+                    var cf = ""
+                    var cc = ""
+                    if (user_leetcode.text.toString().isNotBlank()) {
+                        lc = user_leetcode.text.toString()
+                    }
+                    if (user_codeforces.text.toString().isNotBlank()) {
+                        cf = user_codeforces.text.toString()
+                    }
+                    if (user_codechef.text.toString().isNotBlank()) {
+                        cc = user_codechef.text.toString()
+                    }
 
-
-                    val sharedPreferences = context.getSharedPreferences("userDataStoreLocal",
+                    val sharedPreferences = context.getSharedPreferences(
+                        "userDataStoreLocal",
                         AppCompatActivity.MODE_PRIVATE
                     )
-                    var user_email = sharedPreferences?.getString("user_email","")
+                    var user_email = sharedPreferences?.getString("user_email", "")
 
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
@@ -322,10 +333,14 @@ class ProfileFragment : Fragment() {
                             }.body
 
                             withContext(Dispatchers.Main) {
-                                Toast.makeText(context,"Data Updated, Please Sign in Once!",Toast.LENGTH_SHORT).show()
-                                val auth:FirebaseAuth = FirebaseAuth.getInstance()
+                                Toast.makeText(
+                                    context,
+                                    "Data Updated, Please Sign in Once!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                val auth: FirebaseAuth = FirebaseAuth.getInstance()
                                 auth.signOut()
-                                val intent:Intent = Intent(context, LoginActivity::class.java)
+                                val intent: Intent = Intent(context, LoginActivity::class.java)
                                 context.startActivity(intent)
                                 listener.activity?.finish()
                                 progressDialog.dismiss()
@@ -337,11 +352,8 @@ class ProfileFragment : Fragment() {
                             }
                         }
                     }
-
                 }
             }
-
-
         }
 
         private fun extractLinkedInUsername(userLinkedin: String): String? {
@@ -357,40 +369,38 @@ class ProfileFragment : Fragment() {
     }
 
     private fun retrieveData(view: View) {
-
-        val sharedPreferences = getActivity()?.getSharedPreferences("userDataStoreLocal",
+        val sharedPreferences = getActivity()?.getSharedPreferences(
+            "userDataStoreLocal",
             AppCompatActivity.MODE_PRIVATE
         )
 
-        var LCuserName = sharedPreferences?.getString("leetcode_user_name",null)
-        var CFuserName = sharedPreferences?.getString("codeforces_user_name",null)
-        var CCuserName = sharedPreferences?.getString("codechef_user_name",null)
-        var linkedin_profile = sharedPreferences?.getString("linkedin_profile",null)
-        val is_public_from_store = sharedPreferences?.getString("is_public","false").toString()
+        var LCuserName = sharedPreferences?.getString("leetcode_user_name", null)
+        var CFuserName = sharedPreferences?.getString("codeforces_user_name", null)
+        var CCuserName = sharedPreferences?.getString("codechef_user_name", null)
+        var linkedin_profile = sharedPreferences?.getString("linkedin_profile", null)
+        val is_public_from_store = sharedPreferences?.getString("is_public", "false").toString()
 
-        if(LCuserName!=null && LCuserName=="") LCuserName = null
-        if(CFuserName!=null && CFuserName=="") CFuserName = null
-        if(CCuserName!=null && CCuserName=="") CCuserName = null
-        if(linkedin_profile!=null && linkedin_profile=="") linkedin_profile = null
+        if (LCuserName != null && LCuserName == "") LCuserName = null
+        if (CFuserName != null && CFuserName == "") CFuserName = null
+        if (CCuserName != null && CCuserName == "") CCuserName = null
+        if (linkedin_profile != null && linkedin_profile == "") linkedin_profile = null
 
-        profile_frag_userName.text = sharedPreferences?.getString("user_name","-")
-        profile_frag_userEmail.text = sharedPreferences?.getString("user_email","-")
+        profile_frag_userName.text = sharedPreferences?.getString("user_name", "-")
+        profile_frag_userEmail.text = sharedPreferences?.getString("user_email", "-")
 
-        profile_frag_userLC.text = LCuserName?: "-"
-        profile_frag_userCF.text = CFuserName?: "-"
-        profile_frag_userCC.text = CCuserName?: "-"
-        profile_frag_userLinkedin.text = linkedin_profile?: "-"
+        profile_frag_userLC.text = LCuserName ?: "-"
+        profile_frag_userCF.text = CFuserName ?: "-"
+        profile_frag_userCC.text = CCuserName ?: "-"
+        profile_frag_userLinkedin.text = linkedin_profile ?: "-"
 
-        if(is_public_from_store.lowercase()=="false") {
+        if (is_public_from_store.lowercase() == "false") {
             view.findViewById<TextView>(R.id.is_public_profile_textview).text =
                 "Public Profile: (off)"
             view.findViewById<Switch>(R.id.is_profile_public_switch_button).isChecked = false
-        }else{
+        } else {
             view.findViewById<TextView>(R.id.is_public_profile_textview).text =
                 "Public Profile: (on)"
             view.findViewById<Switch>(R.id.is_profile_public_switch_button).isChecked = true
         }
-
     }
-
 }

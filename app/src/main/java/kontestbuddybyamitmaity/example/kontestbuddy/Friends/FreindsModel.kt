@@ -5,6 +5,6 @@ data class FreindsModel(
     val user_leetcode: String? = "",
     val user_codeforces: String? = "",
     val user_codechef: String? = "",
-    val is_public:String? = "",
-    val linkedin_profile:String? = ""
+    val is_public: String? = "",
+    val linkedin_profile: String? = ""
 )

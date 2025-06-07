@@ -1,8 +1,8 @@
 package kontestbuddybyamitmaity.example.kontestbuddy
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationBarView
 import kontestbuddybyamitmaity.example.kontestbuddy.Fragment.HomeFragment
@@ -11,7 +11,7 @@ import kontestbuddybyamitmaity.example.kontestbuddy.Fragment.SettingsFragment
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var linearLayout:LinearLayout
+    lateinit var linearLayout: LinearLayout
     lateinit var navigationBarView: NavigationBarView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,13 +23,15 @@ class MainActivity : AppCompatActivity() {
         loadFragment(HomeFragment())
 
         navigationBarView.setOnItemSelectedListener { item ->
-            when(item.itemId) {
+            when (item.itemId) {
                 R.id.home_menu -> {
                     loadFragment(HomeFragment())
                 }
+
                 R.id.profile_menu -> {
                     loadFragment(ProfileFragment())
                 }
+
                 R.id.about_menu -> {
                     loadFragment(SettingsFragment())
                 }
@@ -38,13 +40,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-    private  fun loadFragment(fragment: Fragment){
+    private fun loadFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.main_act_nav_layout,fragment)
+        transaction.replace(R.id.main_act_nav_layout, fragment)
         transaction.commit()
     }
-
-
 }
-

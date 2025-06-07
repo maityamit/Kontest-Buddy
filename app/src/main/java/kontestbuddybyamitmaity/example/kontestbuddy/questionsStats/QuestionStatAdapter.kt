@@ -1,4 +1,4 @@
-package kontestbuddybyamitmaity.example.kontestbuddy.questions_stats
+package kontestbuddybyamitmaity.example.kontestbuddy.questionsStats
 
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +17,7 @@ class QuestionStatAdapter(private val dataList: List<QuestionsStatsActivity.Cust
     }
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-        holder.bind(dataList[position],position)
+        holder.bind(dataList[position], position)
     }
 
     override fun getItemCount(): Int {
@@ -26,10 +26,9 @@ class QuestionStatAdapter(private val dataList: List<QuestionsStatsActivity.Cust
 
     inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val solved_date: TextView = itemView.findViewById(R.id.qn_stats_solved_date)
-        private val no_of_qns:TextView = itemView.findViewById(R.id.qn_solved_no_of_qns)
+        private val no_of_qns: TextView = itemView.findViewById(R.id.qn_solved_no_of_qns)
 
-
-        fun bind(data: QuestionsStatsActivity.CustomData, position:Int) {
+        fun bind(data: QuestionsStatsActivity.CustomData, position: Int) {
             solved_date.text = data.date
             no_of_qns.text = data.no_of_qns.toString()
         }

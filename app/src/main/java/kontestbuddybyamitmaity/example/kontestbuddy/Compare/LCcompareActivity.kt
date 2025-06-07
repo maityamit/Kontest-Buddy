@@ -3,7 +3,6 @@ package kontestbuddybyamitmaity.example.kontestbuddy.Compare
 import android.app.ProgressDialog
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.charts.BarChart
@@ -17,40 +16,37 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.google.gson.JsonParser
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 
-
 class LCcompareActivity : AppCompatActivity() {
 
-    lateinit var leetcodeCmp_userName_user1:TextView
-    lateinit var leetcodeCmp_userName_user2:TextView
-    lateinit var leetcodeCmp_userName_user11:TextView
-    lateinit var leetcodeCmp_userName_user22:TextView
-    lateinit var leetcodeCmp_globalRank_user1:TextView
-    lateinit var leetcodeCmp_globalRank_user2:TextView
+    lateinit var leetcodeCmp_userName_user1: TextView
+    lateinit var leetcodeCmp_userName_user2: TextView
+    lateinit var leetcodeCmp_userName_user11: TextView
+    lateinit var leetcodeCmp_userName_user22: TextView
+    lateinit var leetcodeCmp_globalRank_user1: TextView
+    lateinit var leetcodeCmp_globalRank_user2: TextView
     private lateinit var progressDialog: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lccompare)
-        progressDialog= ProgressDialog(this)
+        progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
         progressDialog.setCanceledOnTouchOutside(false)
         progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
-
 
         initialization()
         val extras = intent.extras
         val userName1 = extras?.getString("userName1")
         val userName2 = extras?.getString("userName2")
-        callTheAPI(userName1,userName2)
+        callTheAPI(userName1, userName2)
     }
 
     private fun callTheAPI(userName1: String?, userName2: String?) {
         progressDialog.show()
-        val str:String = userName1+";"+userName2
+        val str: String = userName1 + ";" + userName2
         val apiTask = APIServices { isValid ->
 
             leetcodeCmp_userName_user1.text = userName1
@@ -58,30 +54,37 @@ class LCcompareActivity : AppCompatActivity() {
             leetcodeCmp_userName_user11.text = userName1
             leetcodeCmp_userName_user22.text = userName2
 
-            val user_1 = isValid?.get("result")?.asJsonArray?.get(0)?.asJsonObject?.get("result")?.asJsonArray?.get(0)?.asJsonObject
-            val user_2 = isValid?.get("result")?.asJsonArray?.get(1)?.asJsonObject?.get("result")?.asJsonArray?.get(0)?.asJsonObject
+            val user_1 =
+                isValid?.get("result")?.asJsonArray?.get(0)?.asJsonObject?.get(
+                    "result"
+                )?.asJsonArray?.get(
+                    0
+                )?.asJsonObject
+            val user_2 =
+                isValid?.get("result")?.asJsonArray?.get(1)?.asJsonObject?.get(
+                    "result"
+                )?.asJsonArray?.get(
+                    0
+                )?.asJsonObject
 
+            val user1Rating: String = user_1?.get("rating").toString()
+            val user2Rating: String = user_2?.get("rating").toString()
+            secondBarChart(user1Rating.toFloat(), user2Rating.toFloat())
 
-            val user1Rating:String = user_1?.get("rating").toString()
-            val user2Rating:String = user_2?.get("rating").toString()
-            secondBarChart(user1Rating.toFloat(),user2Rating.toFloat())
+            val user1Contest: String = user_1?.get("attendedContestsCount").toString()
+            val user2Contest: String = user_2?.get("attendedContestsCount").toString()
+            firstBarChart(user1Contest.toFloat(), user2Contest.toFloat())
 
-            val user1Contest:String = user_1?.get("attendedContestsCount").toString()
-            val user2Contest:String = user_2?.get("attendedContestsCount").toString()
-            firstBarChart(user1Contest.toFloat(),user2Contest.toFloat())
-
-            val user1Global:String = user_1?.get("globalRanking").toString()
-            val user2Global:String = user_2?.get("globalRanking").toString()
+            val user1Global: String = user_1?.get("globalRanking").toString()
+            val user2Global: String = user_2?.get("globalRanking").toString()
             leetcodeCmp_globalRank_user1.text = user1Global
             leetcodeCmp_globalRank_user2.text = user2Global
 
-            val user1Pos:String = user_1?.get("topPercentage").toString()
-            val user2Pos:String = user_2?.get("topPercentage").toString()
-            thirdLineCHart(100-user1Pos.toFloat(),100-user2Pos.toFloat())
-
+            val user1Pos: String = user_1?.get("topPercentage").toString()
+            val user2Pos: String = user_2?.get("topPercentage").toString()
+            thirdLineCHart(100 - user1Pos.toFloat(), 100 - user2Pos.toFloat())
 
             progressDialog.dismiss()
-
         }
         apiTask.execute(str, "lcCompare")
     }
@@ -95,7 +98,7 @@ class LCcompareActivity : AppCompatActivity() {
         leetcodeCmp_globalRank_user2 = findViewById(R.id.leetcodeCmp_globalRank_user2)
     }
 
-    private fun thirdLineCHart(fl:Float, fl1:Float) {
+    private fun thirdLineCHart(fl: Float, fl1: Float) {
         val lineChart = findViewById<LineChart>(R.id.LCchart3)
 
         // Sample data for the chart
@@ -177,23 +180,21 @@ class LCcompareActivity : AppCompatActivity() {
     }
 
     private fun firstBarChart(fl: Float, fl1: Float) {
+        lateinit var barData: BarData
+        lateinit var barDataSet: BarDataSet
 
-        lateinit var barData:BarData
-        lateinit var barDataSet:BarDataSet
-
-        val barChart:BarChart = findViewById(R.id.LCchart1)
+        val barChart: BarChart = findViewById(R.id.LCchart1)
         barChart.xAxis.setDrawGridLines(false)
         barChart.axisLeft.axisMinimum = 0f
         barChart.axisRight.axisMinimum = 0f
         barChart.axisLeft.textColor = Color.parseColor("#6F6F6F")
         barChart.axisRight.textColor = Color.parseColor("#6F6F6F")
 
-        val arrayList:ArrayList<BarEntry> = ArrayList<BarEntry>()
+        val arrayList: ArrayList<BarEntry> = ArrayList<BarEntry>()
         arrayList.add(BarEntry(1f, fl))
         arrayList.add(BarEntry(2f, fl1))
 
         barDataSet = BarDataSet(arrayList, "")
-
 
         barData = BarData(barDataSet)
 
@@ -208,7 +209,7 @@ class LCcompareActivity : AppCompatActivity() {
         barDataSet.colors = mutableColorList
 
         barDataSet.setValueTextColors(mutableColorList)
-        barDataSet.valueTextSize = (16f);
+        barDataSet.valueTextSize = (16f)
         barChart.description.isEnabled = false
     }
 }

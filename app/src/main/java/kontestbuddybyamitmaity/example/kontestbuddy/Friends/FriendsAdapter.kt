@@ -11,8 +11,8 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 
-
-class FriendsAdapter(val withdrawList: List<FreindsModel>) : RecyclerView.Adapter<FriendsAdapter.ViewHolder>() {
+class FriendsAdapter(val withdrawList: List<FreindsModel>) :
+    RecyclerView.Adapter<FriendsAdapter.ViewHolder>() {
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val friends_user_name: TextView = itemView.findViewById(R.id.friends_user_name)
         val friends_leetcode_name: TextView = itemView.findViewById(R.id.friends_leetcode_name)
@@ -22,12 +22,15 @@ class FriendsAdapter(val withdrawList: List<FreindsModel>) : RecyclerView.Adapte
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.friends_show_layout, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(
+            R.layout.friends_show_layout,
+            parent,
+            false
+        )
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         val withdraw = withdrawList[position]
 
         holder.friends_user_name.text = withdraw.user_name
@@ -35,20 +38,25 @@ class FriendsAdapter(val withdrawList: List<FreindsModel>) : RecyclerView.Adapte
         holder.friends_codeforces_name.text = withdraw.user_codeforces
         holder.friends_codechef_name.text = withdraw.user_codechef
 
-        if(withdraw.user_leetcode?.isEmpty() == true) holder.friends_leetcode_name.text = "-"
-        if(withdraw.user_codeforces?.isEmpty() == true) holder.friends_codeforces_name.text = "-"
-        if(withdraw.user_codechef?.isEmpty() == true) holder.friends_codechef_name.text = "-"
-
+        if (withdraw.user_leetcode?.isEmpty() == true) holder.friends_leetcode_name.text = "-"
+        if (withdraw.user_codeforces?.isEmpty() == true) holder.friends_codeforces_name.text = "-"
+        if (withdraw.user_codechef?.isEmpty() == true) holder.friends_codechef_name.text = "-"
 
         holder.friends_linkedin_name.setOnClickListener {
-            if(withdraw.linkedin_profile?.isNotBlank() == true){
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/in/${withdraw.linkedin_profile}/"))
+            if (withdraw.linkedin_profile?.isNotBlank() == true) {
+                val browserIntent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://www.linkedin.com/in/${withdraw.linkedin_profile}/")
+                )
                 holder.itemView.context.startActivity(browserIntent)
-            }else{
-                Toast.makeText(holder.itemView.context, "No LinkedIn Profile Found", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    holder.itemView.context,
+                    "No LinkedIn Profile Found",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
-
     }
 
     override fun getItemCount(): Int {

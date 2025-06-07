@@ -28,7 +28,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
@@ -51,26 +50,25 @@ class RegisterActivity : AppCompatActivity() {
     private var codechef_user_name = ""
     private var codechef_rating = ""
 
-
     // Define all the Input Fields
-    private lateinit var user_name:EditText
-    private lateinit var user_email:EditText
-    private lateinit var user_mobile:EditText
-    private lateinit var user_password:EditText
-    private lateinit var user_leetcode:EditText
-    private lateinit var user_codeforces:EditText
-    private lateinit var user_codechef:EditText
-    private lateinit var user_linkedin:EditText
-    private lateinit var user_register_button:Button
-    private lateinit var already_sign_in:TextView
-    private lateinit var leetcode_verify_button:TextView
-    private lateinit var codeforces_verify_button:TextView
-    private lateinit var codechef_verify_button:TextView
+    private lateinit var user_name: EditText
+    private lateinit var user_email: EditText
+    private lateinit var user_mobile: EditText
+    private lateinit var user_password: EditText
+    private lateinit var user_leetcode: EditText
+    private lateinit var user_codeforces: EditText
+    private lateinit var user_codechef: EditText
+    private lateinit var user_linkedin: EditText
+    private lateinit var user_register_button: Button
+    private lateinit var already_sign_in: TextView
+    private lateinit var leetcode_verify_button: TextView
+    private lateinit var codeforces_verify_button: TextView
+    private lateinit var codechef_verify_button: TextView
 
     private lateinit var superbase: SupabaseClient
 
-
     private lateinit var progressDialog: ProgressDialog
+
     @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,29 +79,25 @@ class RegisterActivity : AppCompatActivity() {
 
         // Perform all the Actions
         actions()
-
     }
 
     @SuppressLint("CutPasteId", "SetTextI18n")
     private fun actions() {
-
         already_sign_in_actions()
         register_button_actions()
         leetcode_verify_button_actions()
         codeforces_verify_button_actions()
         codechef_verify_button_actions()
-
     }
 
     private fun codechef_verify_button_actions() {
-
         codechef_verify_button.setOnClickListener {
-            if(user_codechef.text.toString().trim().isBlank()){
+            if (user_codechef.text.toString().trim().isBlank()) {
                 user_codechef.error = "Enter Your Codechef UserName"
-            }else {
+            } else {
                 progressDialog.show()
                 val apiTask = APIServices { isValid ->
-                    if(isValid?.get("isValid")?.asString.toString()=="true"){
+                    if (isValid?.get("isValid")?.asString.toString() == "true") {
                         codechef_verify_button.text = "Verified"
                         codechef_verify_button.setTypeface(null, Typeface.BOLD)
                         codechef_verify_button.setTextColor(Color.parseColor("#FF115E14"))
@@ -114,12 +108,14 @@ class RegisterActivity : AppCompatActivity() {
 
                         codechef_user_name = isValid?.get("userName")?.asString.toString()
                         codechef_rating = isValid?.get("rating")?.asString.toString()
-
-                    }else{
-                        Toast.makeText(applicationContext, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(
+                            applicationContext,
+                            "This UserName is not valid",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     progressDialog.dismiss()
-
                 }
                 apiTask.execute(user_codechef.text.toString(), "isCCExist")
             }
@@ -127,14 +123,13 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun codeforces_verify_button_actions() {
-
         codeforces_verify_button.setOnClickListener {
-            if(user_codeforces.text.toString().trim().isBlank()){
+            if (user_codeforces.text.toString().trim().isBlank()) {
                 user_codeforces.error = "Enter Your Codeforces UserName"
-            }else {
+            } else {
                 progressDialog.show()
                 val apiTask = APIServices { isValid ->
-                    if(isValid?.get("isValid")?.asString.toString()=="true"){
+                    if (isValid?.get("isValid")?.asString.toString() == "true") {
                         codeforces_verify_button.text = "Verified"
                         codeforces_verify_button.setTypeface(null, Typeface.BOLD)
                         codeforces_verify_button.setTextColor(Color.parseColor("#FF115E14"))
@@ -148,32 +143,30 @@ class RegisterActivity : AppCompatActivity() {
                         codeforces_max_rating = isValid?.get("maxRating")?.asString.toString()
                         codeforces_rank = isValid?.get("rank")?.asString.toString()
                         codeforces_max_rank = isValid?.get("maxRank")?.asString.toString()
-
-
-                    }else{
-                        Toast.makeText(applicationContext, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(
+                            applicationContext,
+                            "This UserName is not valid",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
 
                     progressDialog.dismiss()
-
                 }
                 apiTask.execute(user_codeforces.text.toString(), "isCFExist")
             }
         }
-
     }
 
     private fun leetcode_verify_button_actions() {
-
         leetcode_verify_button.setOnClickListener {
-            if(user_leetcode.text.toString().trim().isEmpty()){
+            if (user_leetcode.text.toString().trim().isEmpty()) {
                 user_leetcode.error = "Enter Your LeetCode UserName"
-            }else {
+            } else {
                 progressDialog.show()
                 val apiTask = APIServices { isValid ->
 
-                    if(isValid?.get("isValid")?.asString.toString()=="true"){
-
+                    if (isValid?.get("isValid")?.asString.toString() == "true") {
                         leetcode_verify_button.text = "Verified"
                         leetcode_verify_button.setTypeface(null, Typeface.BOLD)
                         leetcode_verify_button.setTextColor(Color.parseColor("#FF115E14"))
@@ -184,15 +177,19 @@ class RegisterActivity : AppCompatActivity() {
                         leetcode_verify = true
 
                         leetcode_user_name = isValid?.get("userName")?.asString.toString()
-                        leetcode_attended_contests_count = isValid?.get("attendedContestsCount")?.asString.toString()
+                        leetcode_attended_contests_count =
+                            isValid?.get("attendedContestsCount")?.asString.toString()
                         leetcode_rating = isValid?.get("rating")?.asString.toString()
                         leetcode_global_ranking = isValid?.get("globalRanking")?.asString.toString()
-                        leetcode_total_participants = isValid?.get("totalParticipants")?.asString.toString()
+                        leetcode_total_participants =
+                            isValid?.get("totalParticipants")?.asString.toString()
                         leetcode_top_percentage = isValid?.get("topPercentage")?.asString.toString()
-
-                    }else{
-
-                        Toast.makeText(applicationContext, "This UserName is not valid",Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(
+                            applicationContext,
+                            "This UserName is not valid",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
 
                     progressDialog.dismiss()
@@ -203,25 +200,22 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun register_button_actions() {
-
-
-        user_register_button.setOnClickListener{
-            if(user_name.text.toString().trim().isEmpty()){
+        user_register_button.setOnClickListener {
+            if (user_name.text.toString().trim().isEmpty()) {
                 user_name.error = "Enter Your Name"
-            }else if(user_email.text.toString().trim().isEmpty()){
+            } else if (user_email.text.toString().trim().isEmpty()) {
                 user_email.error = "Enter Your Email"
-            }else if(user_password.text.toString().trim().isEmpty()){
+            } else if (user_password.text.toString().trim().isEmpty()) {
                 user_password.error = "Enter Your Password Number"
-            }else if(user_leetcode.text.toString().trim().isNotEmpty() && !leetcode_verify){
+            } else if (user_leetcode.text.toString().trim().isNotEmpty() && !leetcode_verify) {
                 user_leetcode.error = "Please verify the LC account"
-            }else if(user_codeforces.text.toString().trim().isNotEmpty() && !codeforces_verify){
+            } else if (user_codeforces.text.toString().trim().isNotEmpty() && !codeforces_verify) {
                 user_codeforces.error = "Please verify the CF account"
-            }else if(user_codechef.text.toString().trim().isNotEmpty() && !codechef_verify){
+            } else if (user_codechef.text.toString().trim().isNotEmpty() && !codechef_verify) {
                 user_codechef.error = "Please verify the CC account"
-            }else{
-
+            } else {
                 var linkedin_profile = ""
-                if(user_linkedin.text.toString().trim().isNotEmpty()){
+                if (user_linkedin.text.toString().trim().isNotEmpty()) {
                     val result = extractLinkedInUsername(user_linkedin.text.toString())
                     linkedin_profile = result ?: linkedin_profile
                 }
@@ -238,7 +232,6 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun intitialization() {
-
         auth = Firebase.auth
 
         superbase = createSupabaseClient(
@@ -266,18 +259,22 @@ class RegisterActivity : AppCompatActivity() {
         leetcode_verify_button = findViewById(R.id.leetcode_verify_button)
         codeforces_verify_button = findViewById(R.id.codeforces_verify_button)
         codechef_verify_button = findViewById(R.id.codechef_verify_button)
-
     }
 
     private fun already_sign_in_actions() {
         already_sign_in.setOnClickListener {
-            val intent = Intent(applicationContext,LoginActivity::class.java)
+            val intent = Intent(applicationContext, LoginActivity::class.java)
             startActivity(intent)
         }
     }
 
-    private fun createANewUserOnFirebase(userName: String, userPassword: String, userEmail: String, userMobile: String, linkedin_profile: String) {
-
+    private fun createANewUserOnFirebase(
+        userName: String,
+        userPassword: String,
+        userEmail: String,
+        userMobile: String,
+        linkedin_profile: String
+    ) {
         progressDialog.show()
 
         val userData = hashMapOf(
@@ -294,13 +291,12 @@ class RegisterActivity : AppCompatActivity() {
             "is_public" to "false"
         )
 
-
         auth.createUserWithEmailAndPassword(userEmail, userPassword)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     val user = FirebaseAuth.getInstance().currentUser
-                    if(user!=null){
+                    if (user != null) {
                         CoroutineScope(Dispatchers.IO).launch {
                             try {
                                 val response = superbase.postgrest.from("users").insert(
@@ -308,28 +304,29 @@ class RegisterActivity : AppCompatActivity() {
                                 )
 
                                 withContext(Dispatchers.Main) {
-                                    userData["leetcode_user_name"] = leetcode_user_name;
-                                    userData["leetcode_attended_contests_count"] = leetcode_attended_contests_count;
-                                    userData["leetcode_rating"] = leetcode_rating;
-                                    userData["leetcode_global_ranking"] = leetcode_global_ranking;
-                                    userData["leetcode_total_participants"] = leetcode_total_participants;
-                                    userData["leetcode_top_percentage"] = leetcode_top_percentage;
+                                    userData["leetcode_user_name"] = leetcode_user_name
+                                    userData["leetcode_attended_contests_count"] =
+                                        leetcode_attended_contests_count
+                                    userData["leetcode_rating"] = leetcode_rating
+                                    userData["leetcode_global_ranking"] = leetcode_global_ranking
+                                    userData["leetcode_total_participants"] =
+                                        leetcode_total_participants
+                                    userData["leetcode_top_percentage"] = leetcode_top_percentage
 
-                                    userData["codeforces_user_name"] = codeforces_user_name;
-                                    userData["codeforces_rating"] = codeforces_rating;
-                                    userData["codeforces_max_rating"] = codeforces_max_rating;
-                                    userData["codeforces_rank"] = codeforces_rank;
-                                    userData["codeforces_max_rank"] = codeforces_max_rank;
+                                    userData["codeforces_user_name"] = codeforces_user_name
+                                    userData["codeforces_rating"] = codeforces_rating
+                                    userData["codeforces_max_rating"] = codeforces_max_rating
+                                    userData["codeforces_rank"] = codeforces_rank
+                                    userData["codeforces_max_rank"] = codeforces_max_rank
 
-                                    userData["codechef_user_name"] = codechef_user_name;
-                                    userData["codechef_rating"] = codechef_rating;
+                                    userData["codechef_user_name"] = codechef_user_name
+                                    userData["codechef_rating"] = codechef_rating
 
                                     val sharedPrefServices = SharedPrefServices(applicationContext)
                                     sharedPrefServices.store_data_in_shared_pref(userData)
                                     open_main_dashboard()
                                     println("User added successfully: $response")
                                 }
-
                             } catch (e: Exception) {
                                 withContext(Dispatchers.Main) {
                                     progressDialog.dismiss()
@@ -337,11 +334,11 @@ class RegisterActivity : AppCompatActivity() {
                                 }
                             }
                         }
-                    }else {
+                    } else {
                         Toast.makeText(
                             baseContext,
                             "Creating User failed.",
-                            Toast.LENGTH_SHORT,
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
                 } else {
@@ -350,7 +347,6 @@ class RegisterActivity : AppCompatActivity() {
                 }
                 progressDialog.dismiss()
             }
-
     }
 
     fun extractLinkedInUsername(input: String): String? {
@@ -360,10 +356,8 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun open_main_dashboard() {
-        val intent:Intent = Intent(applicationContext, MainActivity::class.java)
+        val intent: Intent = Intent(applicationContext, MainActivity::class.java)
         startActivity(intent)
         finish()
     }
-
 }
-

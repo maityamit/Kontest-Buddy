@@ -1,10 +1,10 @@
 package kontestbuddybyamitmaity.example.kontestbuddy
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.Auth.LoginActivity
 
 class SpalshActivity : AppCompatActivity() {
@@ -21,6 +21,5 @@ class SpalshActivity : AppCompatActivity() {
             startActivity(loginIntent)
             finish()
         }, 2000)
-
     }
 }

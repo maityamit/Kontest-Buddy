@@ -19,7 +19,7 @@
             android:name=".Ranking.CommonRankingActivity"
             android:exported="false" />
         <activity
-            android:name=".questions_stats.QuestionsStatsActivity"
+            android:name=".questionsStats.QuestionsStatsActivity"
             android:exported="false" />
         <activity
             android:name=".Friends.FriendsActivity"

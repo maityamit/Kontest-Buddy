@@ -25,18 +25,17 @@ class CommonRankingActivity : AppCompatActivity() {
         val userNames = extras?.getString("userNames")?.dropLast(1)
         val type = extras?.getString("type").toString()
 
-        if(type.lowercase()=="leetcode"){
+        if (type.lowercase() == "leetcode") {
             callTheLeetCodeAPI(userNames)
-        }else if(type.lowercase()=="codeforces"){
+        } else if (type.lowercase() == "codeforces") {
             callTheCodeForcesAPI(userNames)
-        }else if(type.lowercase()=="codechef"){
+        } else if (type.lowercase() == "codechef") {
             callTheCodeChefAPI(userNames)
         }
-
     }
 
     private fun initialization() {
-        progressDialog= ProgressDialog(this)
+        progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
         progressDialog.setTitle("Sometimes it takes too longer !! \n Please wait")
         common_ranking_title = findViewById(R.id.common_ranking_title)
@@ -49,22 +48,36 @@ class CommonRankingActivity : AppCompatActivity() {
         val apiTask = APIServices { isValid ->
             val users = isValid?.get("result")?.asJsonArray
             if (users != null) {
-                for(user in users){
-                    val tempName:String = user.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("username").toString()
-                    val tempRat:String = user.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("rating").toString().split(".")[0]
-                    val tempRank:String = user.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("globalRanking").toString()
-                    userList.add(RankingModel(tempName.toString(),tempRat.toInt().toString(),tempRank.toFloat().toString(),"leetcode"))
+                for (user in users) {
+                    val tempName: String =
+                        user.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get(
+                            "username"
+                        ).toString()
+                    val tempRat: String =
+                        user.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get(
+                            "rating"
+                        ).toString().split(".")[0]
+                    val tempRank: String =
+                        user.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get(
+                            "globalRanking"
+                        ).toString()
+                    userList.add(
+                        RankingModel(
+                            tempName.toString(),
+                            tempRat.toInt().toString(),
+                            tempRank.toFloat().toString(),
+                            "leetcode"
+                        )
+                    )
                 }
             }
             val sortedList = userList.sortedByDescending { it.rating }
             recyclerView.layoutManager = LinearLayoutManager(this)
             recyclerView.adapter = CommonRankingAdapter(sortedList)
             progressDialog.dismiss()
-
         }
         apiTask.execute(userNames, "lcLeader")
     }
-
 
     private fun callTheCodeForcesAPI(userNames: String?) {
         common_ranking_title.text = "CodeForces Ranking"
@@ -72,11 +85,18 @@ class CommonRankingActivity : AppCompatActivity() {
         val apiTask = APIServices { isValid ->
             val users = isValid?.get("result")?.asJsonArray
             if (users != null) {
-                for(user in users){
-                    val tempName:String = user.asJsonObject?.get("username").toString()
-                    val tempRat:String = user.asJsonObject.get("rating").toString()
-                    val tempRank:String = user.asJsonObject.get("rank").toString()
-                    userList.add(RankingModel(tempName, tempRat.toInt().toString(), tempRank.toString(), "codeforces"))
+                for (user in users) {
+                    val tempName: String = user.asJsonObject?.get("username").toString()
+                    val tempRat: String = user.asJsonObject.get("rating").toString()
+                    val tempRank: String = user.asJsonObject.get("rank").toString()
+                    userList.add(
+                        RankingModel(
+                            tempName,
+                            tempRat.toInt().toString(),
+                            tempRank.toString(),
+                            "codeforces"
+                        )
+                    )
                 }
             }
             val sortedList = userList.sortedByDescending { it.rating }
@@ -93,11 +113,24 @@ class CommonRankingActivity : AppCompatActivity() {
         val apiTask = APIServices { isValid ->
             val users = isValid?.get("result")?.asJsonArray
             if (users != null) {
-                for(user in users){
-                    val tempName:String = user.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("username").toString()
-                    var tempRat:String = user.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get("rating").toString()
-                    tempRat = tempRat.substring(1,tempRat.length-1)
-                    userList.add(RankingModel(tempName.toString(), tempRat.toInt().toString(), "", "codechef"))
+                for (user in users) {
+                    val tempName: String =
+                        user.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get(
+                            "username"
+                        ).toString()
+                    var tempRat: String =
+                        user.asJsonObject.get("result").asJsonArray.get(0).asJsonObject.get(
+                            "rating"
+                        ).toString()
+                    tempRat = tempRat.substring(1, tempRat.length - 1)
+                    userList.add(
+                        RankingModel(
+                            tempName.toString(),
+                            tempRat.toInt().toString(),
+                            "",
+                            "codechef"
+                        )
+                    )
                 }
             }
             val sortedList = userList.sortedByDescending { it.rating }
@@ -106,7 +139,6 @@ class CommonRankingActivity : AppCompatActivity() {
             progressDialog.dismiss()
         }
         apiTask.execute(userNames, "ccLeader")
-
     }
 
     data class RankingModel(

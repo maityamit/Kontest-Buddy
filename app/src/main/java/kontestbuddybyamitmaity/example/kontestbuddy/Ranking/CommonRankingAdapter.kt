@@ -19,7 +19,7 @@ class CommonRankingAdapter(private val dataList: List<CommonRankingActivity.Rank
     }
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-        holder.bind(dataList[position],position)
+        holder.bind(dataList[position], position)
     }
 
     override fun getItemCount(): Int {
@@ -29,25 +29,32 @@ class CommonRankingAdapter(private val dataList: List<CommonRankingActivity.Rank
     inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val user_rank: TextView = itemView.findViewById(R.id.common_leader_board_rank)
-        private val contest_platform_image: ImageView = itemView.findViewById(R.id.common_leader_board_rank_image)
+        private val contest_platform_image: ImageView = itemView.findViewById(
+            R.id.common_leader_board_rank_image
+        )
 
-        private val user_name: TextView = itemView.findViewById(R.id.common_leader_board_rank_user_name)
-        private val user_ratings:TextView = itemView.findViewById(R.id.common_leader_board_rank_user_rating)
-        private val user_position:TextView = itemView.findViewById(R.id.common_leader_board_rank_user_rank)
-
+        private val user_name: TextView = itemView.findViewById(
+            R.id.common_leader_board_rank_user_name
+        )
+        private val user_ratings: TextView = itemView.findViewById(
+            R.id.common_leader_board_rank_user_rating
+        )
+        private val user_position: TextView = itemView.findViewById(
+            R.id.common_leader_board_rank_user_rank
+        )
 
         @SuppressLint("SetTextI18n")
-        fun bind(data: CommonRankingActivity.RankingModel, position:Int) {
-            user_name.text = data.name.substring(1,data.name.length-1)
-            user_rank.text = (position+1).toString()
+        fun bind(data: CommonRankingActivity.RankingModel, position: Int) {
+            user_name.text = data.name.substring(1, data.name.length - 1)
+            user_rank.text = (position + 1).toString()
             user_ratings.text = data.rating.toString()
             user_position.text = data.rank.toString()
 
-            if(data.type.lowercase()=="leetcode") {
+            if (data.type.lowercase() == "leetcode") {
                 contest_platform_image.setImageResource(R.drawable.leetcode)
-            }else if(data.type.lowercase()=="codeforces") {
+            } else if (data.type.lowercase() == "codeforces") {
                 contest_platform_image.setImageResource(R.drawable.codeforces)
-            }else if(data.type.lowercase()=="codechef") {
+            } else if (data.type.lowercase() == "codechef") {
                 contest_platform_image.setImageResource(R.drawable.codechef)
             }
         }

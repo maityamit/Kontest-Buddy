@@ -2,10 +2,9 @@ package kontestbuddybyamitmaity.example.kontestbuddy.Friends
 
 import android.annotation.SuppressLint
 import android.app.ProgressDialog
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.jan.supabase.SupabaseClient
@@ -31,18 +30,15 @@ class FriendsActivity : AppCompatActivity() {
     private lateinit var progressDialog: ProgressDialog
     private lateinit var superbase: SupabaseClient
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friends)
 
         initializations()
         fetchFreinds()
-
     }
 
     private fun initializations() {
-
         superbase = createSupabaseClient(
             supabaseUrl = Constants.SUPERBASE_URL,
             supabaseKey = Constants.SUPERBASE_KEY
@@ -50,19 +46,16 @@ class FriendsActivity : AppCompatActivity() {
             install(Postgrest)
         }
 
-
-        progressDialog= ProgressDialog(this)
+        progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
         progressDialog.setCanceledOnTouchOutside(false)
         progressDialog.setTitle("Sometimes it takes too longer !! \n Please waiiit")
         friends_recycler_view = findViewById(R.id.friends_recycler_view)
         freindsList = ArrayList()
 
-
         friendsAdapter = FriendsAdapter(freindsList)
         friends_recycler_view.layoutManager = LinearLayoutManager(applicationContext)
         friends_recycler_view.adapter = friendsAdapter
-
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -71,15 +64,17 @@ class FriendsActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val outer_user = superbase.postgrest.from("users")
-                    .select("user_email, user_codechef, user_codeforces, user_leetcode, user_name, linkedin_profile, is_public")
+                    .select(
+                        "user_email, user_codechef, " +
+                            "user_codeforces, user_leetcode, " +
+                            "user_name, linkedin_profile, is_public"
+                    )
                     .body
 
                 val users = outer_user.jsonArray
                 val newFriendsList = ArrayList<FreindsModel>()
 
-
                 for (i in 0 until users.size) {
-
                     val user = users[i].jsonObject
                     val userName = user["user_name"]?.jsonPrimitive?.contentOrNull
                     val userLeetcode = user["user_leetcode"]?.jsonPrimitive?.contentOrNull
@@ -88,13 +83,18 @@ class FriendsActivity : AppCompatActivity() {
                     val is_public = user["is_public"]?.jsonPrimitive?.contentOrNull
                     val linkedin_profile = user["linkedin_profile"]?.jsonPrimitive?.contentOrNull
 
-
-                    if(is_public!=null && is_public.lowercase()=="true"){
-                        val withdraw = FreindsModel(userName, userLeetcode, userCodeforces, userCodechef, "is_public", linkedin_profile)
+                    if (is_public != null && is_public.lowercase() == "true") {
+                        val withdraw = FreindsModel(
+                            userName,
+                            userLeetcode,
+                            userCodeforces,
+                            userCodechef,
+                            "is_public",
+                            linkedin_profile
+                        )
                         Log.e("User_AMIT", withdraw.toString())
                         newFriendsList.add(withdraw)
                     }
-
                 }
 
                 withContext(Dispatchers.Main) {
@@ -103,8 +103,6 @@ class FriendsActivity : AppCompatActivity() {
                     friendsAdapter.notifyDataSetChanged()
                     progressDialog.dismiss()
                 }
-
-
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     progressDialog.dismiss()
@@ -112,7 +110,5 @@ class FriendsActivity : AppCompatActivity() {
                 }
             }
         }
-
-
     }
 }

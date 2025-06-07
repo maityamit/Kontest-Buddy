@@ -25,7 +25,10 @@ class LeetCodeCurrentFrndAdapter(private val dataList: List<String>) :
     }
 
     inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val userName: TextView = itemView.findViewById(R.id.userNameindataModelCurrentFriends)
+        private val userName: TextView = itemView.findViewById(
+            R.id.userNameindataModelCurrentFriends
+        )
+
         fun bind(data: String) {
             userName.text = data
         }

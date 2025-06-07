@@ -2,19 +2,16 @@ package kontestbuddybyamitmaity.example.kontestbuddy.Compare
 
 import android.app.ProgressDialog
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.HorizontalBarChart
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import kotlinx.serialization.json.jsonPrimitive
-import com.google.gson.JsonParser
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.R
-import kotlinx.serialization.json.contentOrNull
 
 class CFcompareActivity : AppCompatActivity() {
 
@@ -25,8 +22,7 @@ class CFcompareActivity : AppCompatActivity() {
     lateinit var codeforcesCmp_globalRank_user1: TextView
     lateinit var codeforcesCmp_globalRank_user2: TextView
     private lateinit var progressDialog: ProgressDialog
-    
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cfcompare)
@@ -36,13 +32,12 @@ class CFcompareActivity : AppCompatActivity() {
         val extras = intent.extras
         val userName1 = extras?.getString("userName1")
         val userName2 = extras?.getString("userName2")
-        callTheAPI(userName1,userName2)
-
+        callTheAPI(userName1, userName2)
     }
 
     private fun callTheAPI(userName1: String?, userName2: String?) {
         progressDialog.show()
-        val str:String = userName1+";"+userName2
+        val str: String = userName1 + ";" + userName2
         val apiTask = APIServices { isValid ->
 
             codeforcesCmp_userName_user1.text = userName1
@@ -53,30 +48,26 @@ class CFcompareActivity : AppCompatActivity() {
             val user_1 = isValid?.get("result")?.asJsonArray?.get(0)?.asJsonObject
             val user_2 = isValid?.get("result")?.asJsonArray?.get(1)?.asJsonObject
 
+            val user1Rating: String = user_1?.get("maxRating").toString()
+            val user2Rating: String = user_2?.get("maxRating").toString()
+            secondBarChart(user1Rating.toFloat(), user2Rating.toFloat())
 
-            val user1Rating:String = user_1?.get("maxRating").toString()
-            val user2Rating:String = user_2?.get("maxRating").toString()
-            secondBarChart(user1Rating.toFloat(),user2Rating.toFloat())
+            val user1Contest: String = user_1?.get("rating").toString()
+            val user2Contest: String = user_2?.get("rating").toString()
+            firstBarChart(user1Contest.toFloat(), user2Contest.toFloat())
 
-            val user1Contest:String = user_1?.get("rating").toString()
-            val user2Contest:String = user_2?.get("rating").toString()
-            firstBarChart(user1Contest.toFloat(),user2Contest.toFloat())
-
-            val user1Global:String = user_1?.get("rank").toString()
-            val user2Global:String = user_2?.get("rank").toString()
+            val user1Global: String = user_1?.get("rank").toString()
+            val user2Global: String = user_2?.get("rank").toString()
             codeforcesCmp_globalRank_user1.text = user1Global
             codeforcesCmp_globalRank_user2.text = user2Global
 
-
             progressDialog.dismiss()
-
         }
         apiTask.execute(str, "cfCompare")
     }
 
     private fun initialization() {
-
-        progressDialog= ProgressDialog(this)
+        progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
         progressDialog.setCanceledOnTouchOutside(false)
         progressDialog.setTitle("Sometimes it takes too longer !! \n Free services")
@@ -120,7 +111,6 @@ class CFcompareActivity : AppCompatActivity() {
     }
 
     private fun firstBarChart(fl: Float, fl1: Float) {
-
         lateinit var barData: BarData
         lateinit var barDataSet: BarDataSet
 
@@ -131,12 +121,11 @@ class CFcompareActivity : AppCompatActivity() {
         barChart.axisLeft.textColor = Color.parseColor("#6F6F6F")
         barChart.axisRight.textColor = Color.parseColor("#6F6F6F")
 
-        val arrayList:ArrayList<BarEntry> = ArrayList<BarEntry>()
+        val arrayList: ArrayList<BarEntry> = ArrayList<BarEntry>()
         arrayList.add(BarEntry(1f, fl))
         arrayList.add(BarEntry(2f, fl1))
 
         barDataSet = BarDataSet(arrayList, "")
-
 
         barData = BarData(barDataSet)
 
@@ -151,8 +140,7 @@ class CFcompareActivity : AppCompatActivity() {
         barDataSet.colors = mutableColorList
 
         barDataSet.setValueTextColors(mutableColorList)
-        barDataSet.valueTextSize = (16f);
+        barDataSet.valueTextSize = (16f)
         barChart.description.isEnabled = false
     }
-
 }
