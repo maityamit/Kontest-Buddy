@@ -22,9 +22,6 @@
             android:name=".questions_stats.QuestionsStatsActivity"
             android:exported="false" />
         <activity
-            android:name=".Ranking.CCrankingActivity"
-            android:exported="false" />
-        <activity
             android:name=".Friends.FriendsActivity"
             android:exported="false" />
         <activity
@@ -48,12 +45,6 @@
         <activity
             android:name=".Auth.RegisterActivity"
             android:exported="false" />
-        <activity
-            android:name=".Ranking.CFrankingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Ranking.LCrankingActivity"
-            android:exported="true" />
         <activity
             android:name=".Compare.CFcompareActivity"
             android:exported="false" />

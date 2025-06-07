@@ -8,14 +8,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.JsonParser
 import kontestbuddybyamitmaity.example.kontestbuddy.Backend.APIServices
 import kontestbuddybyamitmaity.example.kontestbuddy.MainActivity
 import kontestbuddybyamitmaity.example.kontestbuddy.R
 
 class QuestionsStatsActivity : AppCompatActivity() {
 
-    lateinit var qns_stat_type_text:TextView
+    private lateinit var qns_stat_type_text:TextView
     private lateinit var progressDialog: ProgressDialog
     private val userList = mutableListOf<CustomData>()
 
