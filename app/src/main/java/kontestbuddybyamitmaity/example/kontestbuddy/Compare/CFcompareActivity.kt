@@ -31,7 +31,6 @@ class CFcompareActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cfcompare)
 
-
         initialization()
 
         val extras = intent.extras
