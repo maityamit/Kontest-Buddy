@@ -19,8 +19,8 @@ android {
         applicationId "kontestbuddybyamitmaity.example.kontestbuddy"
         minSdk 24
         targetSdk 35
-        versionCode 14
-        versionName "2.0.000_V2_Fr_QNSTAT_02"
+        versionCode 15
+        versionName "2.0.000_V2_Fr_QNSTAT_03"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
