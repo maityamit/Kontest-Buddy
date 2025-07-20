@@ -1,13 +1,12 @@
 package kontestbuddybyamitmaity.example.kontestbuddy.Fragment
 
 import android.annotation.SuppressLint
-import android.app.Fragment
-import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.fragment.app.Fragment
+import kontestbuddybyamitmaity.example.kontestbuddy.R
 
 class SettingsFragment : Fragment() {
 
