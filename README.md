@@ -44,7 +44,7 @@ A comprehensive Android application designed for competitive programmers to trac
 
 ### **Technology Stack**
 - **Language**: Kotlin
-- **Platform**: Android (minSdk 24, targetSdk 35)
+- **Platform**: Android (minSdk 24, targetSdk 36)
 - **Authentication**: Firebase Auth
 - **Backend Database**: Supabase (PostgreSQL)
 - **API Integration**: Custom Express.js backend

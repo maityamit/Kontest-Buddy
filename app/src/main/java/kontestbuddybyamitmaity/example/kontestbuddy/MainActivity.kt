@@ -2,6 +2,7 @@ package kontestbuddybyamitmaity.example.kontestbuddy
 
 import android.os.Bundle
 import android.widget.LinearLayout
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationBarView
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var navigationBarView: NavigationBarView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
